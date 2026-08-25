@@ -26,6 +26,7 @@ Create Table Clientes (
 Create Table Proveedores (
     idProveedor Serial,
     nombreProveedor Varchar(45) Not Null,
+    -- identificador único para el proveedor, como un número de registro o RUC
     RUC Varchar(45) Unique,
     teléfonoProveedor Varchar(8),
     Constraint pk_proveedores Primary Key (idProveedor)
