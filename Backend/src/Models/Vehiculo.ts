@@ -5,5 +5,5 @@ export interface Vehiculo {
     marca: string;
     modelo: string;
     año: number;
-    kilometraje_actual: number;
+    kilometraje_actual: string;
 }
