@@ -1,5 +1,5 @@
 import { puestoEmpleado } from './enums/puestoEmpleado';
-import { estadoEmpleado } from './enums/estadoEmpleado';
+import { estadoEmpleado } from './enums/estadoEmpleados';
 
 export interface Empleado {
     idEmpleado: number;
