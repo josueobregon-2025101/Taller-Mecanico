@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import proveedoresRouter from '.././routes/proveedoresRoutes';
 
 
 //Leemos el archivo .env
@@ -14,6 +15,8 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
+app.use('/api/proveedores', proveedoresRouter);
 
 // Ruta de prueba
 app.get('/health', (req, res) => {
