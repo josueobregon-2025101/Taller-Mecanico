@@ -1,0 +1,1 @@
+export type estadoCita = 'Pendiente' | 'Confirmada' | 'Completada';
