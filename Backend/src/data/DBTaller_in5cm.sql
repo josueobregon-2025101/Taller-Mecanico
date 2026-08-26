@@ -28,7 +28,7 @@ Create Table Proveedores (
     nombreProveedor Varchar(45) Not Null,
     -- identificador único para el proveedor, como un número de registro o RUC
     RUC Varchar(45) Unique,
-    teléfonoProveedor Varchar(8),
+    telefonoProveedor Varchar(8),
     Constraint pk_proveedores Primary Key (idProveedor)
 );
 
@@ -221,7 +221,7 @@ Insert Into Clientes (nombreCliente, apellido, documento, telefono) Values
 ('María', 'Gómez', '5678', 5555678),
 ('Carlos', 'López', '9012', 5559012);
 
-Insert Into Proveedores (nombreProveedor, RUC, teléfonoProveedor) Values
+Insert Into Proveedores (nombreProveedor, RUC, telefonoProveedor) Values
 ('Repuestos El Rápido', '20123456789', '123'),
 ('Lubricantes Central', '20987654321', '456'),
 ('Frenos y Más', '20456789012', '789');
