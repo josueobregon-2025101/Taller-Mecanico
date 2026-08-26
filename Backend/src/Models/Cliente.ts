@@ -3,5 +3,5 @@ export interface Cliente {
     nombreCliente: string;
     apellido: string;
     documento: string;
-    telefono: number;
+    telefono: string;
 }
