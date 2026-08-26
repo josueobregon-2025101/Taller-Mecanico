@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import clienteRouter from '.././routes/clientesRoutes';
+import vehiculoRouter from '.././routes/vehiculosRoutes';
 import proveedoresRouter from '.././routes/proveedoresRoutes';
 
 
@@ -17,6 +19,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.use('/api/proveedores', proveedoresRouter);
+app.use('/api/clientes', clienteRouter);
+app.use('/api/vehiculos', vehiculoRouter);
 
 // Ruta de prueba
 app.get('/health', (req, res) => {
