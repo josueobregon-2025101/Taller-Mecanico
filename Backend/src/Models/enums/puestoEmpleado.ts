@@ -1,0 +1,1 @@
+export type puestoEmpleado = 'Mecánico' | 'Electromecánico' | 'Auxiliar' | 'Administrativo';

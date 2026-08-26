@@ -1,0 +1,1 @@
+export type estadoEmpleado = 'Activo' | 'Inactivo';
