@@ -19,7 +19,7 @@ Create Table Clientes (
     nombreCliente Varchar(45) Not Null,
     apellido Varchar(45) Not Null,
     documento Varchar(45) Unique,
-    telefono Int,
+    telefono Varchar(8),
     Constraint pk_clientes Primary Key (idClientes)
 );
 
