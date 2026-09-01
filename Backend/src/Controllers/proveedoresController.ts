@@ -36,7 +36,7 @@ export class ProveedoresController{
                 data: nuevoProveedor
             });
         } catch (error) {
-            res.status(500).json({ error: 'Error al crear proveedor' });
+            res.status(500).json({ error: 'Error al crear proveedor en controller' + error });
         }
     }
     static async updateProveedor(req:Request, res:Response){
