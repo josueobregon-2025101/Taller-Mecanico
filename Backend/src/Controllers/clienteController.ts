@@ -10,11 +10,15 @@ export class ClienteController {
 
             const clientes = await clienteService.getAllClientes();
 
-            res.status(200).json(clientes);
+            return res.status(200).json(clientes);
 
         } catch (error) {
 
-            res.status(500).json({ error: 'Error al obtener clientes' });
+            console.error('Error al obtener clientes:', error);
+
+            return res.status(500).json({
+                error: 'Error al obtener clientes'
+            });
 
         }
 
@@ -26,21 +30,35 @@ export class ClienteController {
 
             const id = parseInt(req.params.id as string);
 
+            if (isNaN(id)) {
+
+                return res.status(400).json({
+                    error: 'El ID debe ser un número válido'
+                });
+
+            }
+
             const cliente = await clienteService.getClienteById(id);
 
             if (cliente) {
 
-                res.status(200).json(cliente);
+                return res.status(200).json(cliente);
 
             } else {
 
-                res.status(404).json({ error: 'Cliente no encontrado' });
+                return res.status(404).json({
+                    error: 'Cliente no encontrado'
+                });
 
             }
 
         } catch (error) {
 
-            res.status(500).json({ error: 'Error al obtener cliente por ID' });
+            console.error('Error al obtener cliente por ID:', error);
+
+            return res.status(500).json({
+                error: 'Error al obtener cliente por ID'
+            });
 
         }
 
@@ -57,7 +75,12 @@ export class ClienteController {
                 telefono
             } = req.body;
 
-            if (!nombreCliente || !apellido || !documento || !telefono) {
+            if (
+                !nombreCliente?.trim() ||
+                !apellido?.trim() ||
+                !documento?.trim() ||
+                !telefono?.trim()
+            ) {
 
                 return res.status(400).json({
                     error: 'Faltan datos requeridos'
@@ -72,7 +95,7 @@ export class ClienteController {
                 telefono
             });
 
-            res.status(201).json({
+            return res.status(201).json({
                 status: 'success',
                 message: 'Cliente creado exitosamente',
                 data: nuevoCliente
@@ -80,7 +103,9 @@ export class ClienteController {
 
         } catch (error) {
 
-            res.status(500).json({
+            console.error('Error al crear cliente:', error);
+
+            return res.status(500).json({
                 error: 'Error al crear cliente'
             });
 
@@ -94,13 +119,22 @@ export class ClienteController {
 
             const id = parseInt(req.params.id as string);
 
+            if (isNaN(id)) {
+
+                return res.status(400).json({
+                    error: 'El ID debe ser un número válido'
+                });
+
+            }
+
             const cliente = req.body;
 
-            const clienteActualizado = await clienteService.updateCliente(id, cliente);
+            const clienteActualizado =
+                await clienteService.updateCliente(id, cliente);
 
             if (clienteActualizado) {
 
-                res.status(200).json({
+                return res.status(200).json({
                     status: 'success',
                     message: 'Cliente actualizado exitosamente',
                     data: clienteActualizado
@@ -108,7 +142,7 @@ export class ClienteController {
 
             } else {
 
-                res.status(404).json({
+                return res.status(404).json({
                     error: 'Cliente no encontrado'
                 });
 
@@ -116,7 +150,9 @@ export class ClienteController {
 
         } catch (error) {
 
-            res.status(500).json({
+            console.error('Error al actualizar cliente:', error);
+
+            return res.status(500).json({
                 error: 'Error al actualizar cliente'
             });
 
@@ -130,18 +166,26 @@ export class ClienteController {
 
             const id = parseInt(req.params.id as string);
 
+            if (isNaN(id)) {
+
+                return res.status(400).json({
+                    error: 'El ID debe ser un número válido'
+                });
+
+            }
+
             const eliminado = await clienteService.deleteCliente(id);
 
             if (eliminado) {
 
-                res.status(200).json({
+                return res.status(200).json({
                     status: 'success',
                     message: 'Cliente eliminado exitosamente'
                 });
 
             } else {
 
-                res.status(404).json({
+                return res.status(404).json({
                     error: 'Cliente no encontrado'
                 });
 
@@ -149,7 +193,9 @@ export class ClienteController {
 
         } catch (error) {
 
-            res.status(500).json({
+            console.error('Error al eliminar cliente:', error);
+
+            return res.status(500).json({
                 error: 'Error al eliminar cliente'
             });
 
