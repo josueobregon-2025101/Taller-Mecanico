@@ -54,56 +54,61 @@ export class VehiculoController {
 
     static async createVehiculo(req: Request, res: Response) {
 
-        try {
+    try {
 
-            const {
-                idClientes,
-                placa,
-                marca,
-                modelo,
-                año,
-                kilometraje_actual
-            } = req.body;
+        const {
+            idClientes,
+            placa,
+            marca,
+            modelo,
+            año,
+            kilometraje_actual
+        } = req.body;
 
-            if (
-                !idClientes ||
-                !placa ||
-                !marca ||
-                !modelo ||
-                !año ||
-                !kilometraje_actual
-            ) {
+        if (
+            idClientes === undefined ||
+            idClientes === null ||
+            !placa ||
+            !marca ||
+            !modelo ||
+            año === undefined ||
+            año === null ||
+            kilometraje_actual === undefined ||
+            kilometraje_actual === null
+        ) {
 
-                return res.status(400).json({
-                    error: 'Faltan datos requeridos'
-                });
-
-            }
-
-            const nuevoVehiculo = await vehiculoService.createVehiculo({
-                idClientes,
-                placa,
-                marca,
-                modelo,
-                año,
-                kilometraje_actual
-            });
-
-            res.status(201).json({
-                status: 'success',
-                message: 'Vehículo creado exitosamente',
-                data: nuevoVehiculo
-            });
-
-        } catch (error) {
-
-            res.status(500).json({
-                error: 'Error al crear vehículo'
+            return res.status(400).json({
+                error: 'Faltan datos requeridos'
             });
 
         }
 
+        const nuevoVehiculo = await vehiculoService.createVehiculo({
+            idClientes,
+            placa,
+            marca,
+            modelo,
+            año,
+            kilometraje_actual
+        });
+
+        return res.status(201).json({
+            status: 'success',
+            message: 'Vehículo creado exitosamente',
+            data: nuevoVehiculo
+        });
+
+    } catch (error) {
+
+        console.error('Error al crear vehículo:', error);
+
+        return res.status(500).json({
+            error: 'Error al crear vehículo'
+        });
+
     }
+
+}
 
     static async updateVehiculo(req: Request, res: Response) {
 
