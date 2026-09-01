@@ -36,7 +36,46 @@ export class ProveedoresController{
                 data: nuevoProveedor
             });
         } catch (error) {
-            res.status(500).json({ error: 'Error al crear proveedor' });
+            res.status(500).json({ error: 'Error al crear proveedor en controller' + error });
+        }
+    }
+    static async updateProveedor(req:Request, res:Response){
+        try {
+            const id = parseInt(req.params.id as string);
+            const{ nombreProveedor, RUC, telefonoProveedor}  = req.body;
+            const proveedor = {nombreProveedor,RUC,telefonoProveedor};
+            if (!nombreProveedor || !RUC || !telefonoProveedor) {
+                return res.status(400).json({ error: 'Faltan datos requeridos' });
+            }
+            const actualizado = await proveedoresService.updateProveedor(id,proveedor)
+            return  res.status(200).json({
+                status: 'succes',
+                message: 'Proveedor Actualizado Exitosamente',
+                result: actualizado
+            });            
+        } catch (error) {
+            res.status(500).json({error:'Error al intentar actualizar el proveedor en el Controlador'+error});
+            
+        }
+    }
+    static async deleteProveedor(req:Request,res:Response){
+        try {
+            const id = parseInt(req.params.id as string);
+            const eliminado = await proveedoresService.deleteProveedor(id);
+            if(eliminado === true){
+                return res.status(200).json({
+                status:'succes',
+                message:'Proveedor Eliminado correctamente',
+                result : eliminado
+            })
+            }
+            return res.status(404).json({
+                status:'Not Found',
+                message:'No se encontro el Proveedor',
+                result:eliminado
+            });
+        } catch (error) {
+            res.status(500).json({error:'Error al intentar eliminar un proveedor en el controlador error: ' + error});
         }
     }
 }
