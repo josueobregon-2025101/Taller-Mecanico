@@ -29,7 +29,7 @@ export const getClienteById = async (
     try {
 
         const result = await pool.query(
-            'SELECT * FROM Clientes WHERE "idClientes" = $1',
+            'SELECT * FROM Clientes WHERE idClientes = $1',
             [id]
         );
 
@@ -125,7 +125,7 @@ export const updateCliente = async (
         const result = await pool.query(
             `UPDATE Clientes
              SET ${fields}
-             WHERE "idClientes" = $${values.length + 1}
+             WHERE idClientes = $${values.length + 1}
              RETURNING *`,
             [
                 ...values,
@@ -153,7 +153,7 @@ export const deleteCliente = async (
     try {
 
         const result = await pool.query(
-            'DELETE FROM Clientes WHERE "idClientes" = $1 RETURNING *',
+            'DELETE FROM Clientes WHERE idClientes = $1 RETURNING *',
             [id]
         );
 
