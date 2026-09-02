@@ -45,7 +45,7 @@ export class VehiculoController {
         } catch (error) {
 
             res.status(500).json({
-                error: 'Error al obtener vehículo por ID'
+                error: 'Error al obtener vehículo por ID'+error
             });
 
         }
@@ -62,7 +62,7 @@ export class VehiculoController {
             marca,
             modelo,
             año,
-            kilometraje_actual
+            kilometraje_total
         } = req.body;
 
         if (
@@ -73,8 +73,8 @@ export class VehiculoController {
             !modelo ||
             año === undefined ||
             año === null ||
-            kilometraje_actual === undefined ||
-            kilometraje_actual === null
+            kilometraje_total === undefined ||
+            kilometraje_total === null
         ) {
 
             return res.status(400).json({
@@ -89,7 +89,7 @@ export class VehiculoController {
             marca,
             modelo,
             año,
-            kilometraje_actual
+            kilometraje_total
         });
 
         return res.status(201).json({
@@ -100,10 +100,10 @@ export class VehiculoController {
 
     } catch (error) {
 
-        console.error('Error al crear vehículo:', error);
+        console.error('Error al crear vehículo:' + error);
 
         return res.status(500).json({
-            error: 'Error al crear vehículo'
+            error: 'Error al crear vehículo' + error
         });
 
     }
@@ -140,7 +140,7 @@ export class VehiculoController {
         } catch (error) {
 
             res.status(500).json({
-                error: 'Error al actualizar vehículo'
+                error: 'Error al actualizar vehículo' + error
             });
 
         }
