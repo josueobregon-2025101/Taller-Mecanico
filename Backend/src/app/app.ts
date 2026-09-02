@@ -10,6 +10,8 @@ import proveedoresRouter from '.././routes/proveedoresRoutes';
 import inventarioRouter from '.././routes/inventarioRoutes';
 import servicioRouter from '.././routes/servicioRoutes';
 import detalleServicioRouter from '.././routes/detalleServicioRoutes';
+import clienteRouter from '../routes/clientesRoutes';
+import vehiculoRouter from '../routes/vehiculosRoutes';
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ app.use('/api/proveedores', proveedoresRouter);
 app.use('/api/inventario', inventarioRouter);
 app.use('/api/servicios', servicioRouter);
 app.use('/api/detalle-servicios', detalleServicioRouter);
+app.use('/api/clientes', clienteRouter);
+app.use('/api/vehiculos', vehiculoRouter);
 
 // Manejo de errores 404
 app.use((req, res) => {
