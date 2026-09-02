@@ -88,49 +88,39 @@ export const createCliente = async (
 
 export const updateCliente = async (
     id: number,
-    cliente: Partial<Cliente>
+    cliente: Partial<Omit<Cliente, "idClientes">>
 ): Promise<Cliente | null> => {
-
-    const camposPermitidos = [
-        'nombreCliente',
-        'apellido',
-        'documento',
-        'telefono'
-    ];
-
-    const campos = Object.keys(cliente)
-        .filter(key => camposPermitidos.includes(key));
-
-    if (campos.length === 0) {
-
-        throw new Error(
-            'No hay campos válidos para actualizar'
-        );
-
-    }
-
-    const values = campos.map(
-        campo => cliente[campo as keyof Cliente]
-    );
-
-    const fields = campos
-        .map(
-            (campo, index) =>
-                `"${campo}" = $${index + 1}`
-        )
-        .join(', ');
 
     try {
 
+        const existente = await getClienteById(id);
+
+        if (!existente) {
+            return null;
+        }
+
+        const keys = Object.keys(cliente);
+
+        if (keys.length === 0) {
+            return null;
+        }
+
+        const setClause = keys
+            .map((key, index) => `${key} = $${index + 1}`)
+            .join(', ');
+
+        const values: (string | number)[] = keys.map(
+            key => cliente[key as keyof typeof cliente]!
+        );
+
+        values.push(id);
+
         const result = await pool.query(
             `UPDATE Clientes
-             SET ${fields}
-             WHERE idClientes = $${values.length + 1}
+             SET ${setClause}
+             WHERE idClientes = $${values.length}
              RETURNING *`,
-            [
-                ...values,
-                id
-            ]
+            values
         );
 
         return result.rows[0] || null;
@@ -138,12 +128,12 @@ export const updateCliente = async (
     } catch (error) {
 
         throw new Error(
-            'Error al actualizar cliente: ' + error
+            'Error al intentar actualizar el cliente: ' + error
         );
 
     }
-
 };
+
 
 
 export const deleteCliente = async (
