@@ -19,16 +19,15 @@ Create Table Clientes (
     nombreCliente Varchar(45) Not Null,
     apellido Varchar(45) Not Null,
     documento Varchar(45) Unique,
-    telefono Varchar(8),
+    telefono Int,
     Constraint pk_clientes Primary Key (idClientes)
 );
 
 Create Table Proveedores (
     idProveedor Serial,
     nombreProveedor Varchar(45) Not Null,
-    -- identificador único para el proveedor, como un número de registro o RUC
     RUC Varchar(45) Unique,
-    telefonoProveedor Varchar(8),
+    teléfonoProveedor Varchar(8),
     Constraint pk_proveedores Primary Key (idProveedor)
 );
 
@@ -70,8 +69,8 @@ Create Table Inventario (
     descripcion Varchar(45),
     marca Varchar(45),
     categoría Varchar(45),
-    stock_atual Int Default 0,
-    precio_conpa Decimal(10,2) Not Null,
+    stock_actual Int Default 0,
+    precio_compra Decimal(10,2) Not Null,
     precio_venta Decimal(10,2) Not Null,
     idProveedor Int Not Null,
     Constraint pk_inventario Primary Key (idInventario)
@@ -221,7 +220,7 @@ Insert Into Clientes (nombreCliente, apellido, documento, telefono) Values
 ('María', 'Gómez', '5678', 5555678),
 ('Carlos', 'López', '9012', 5559012);
 
-Insert Into Proveedores (nombreProveedor, RUC, telefonoProveedor) Values
+Insert Into Proveedores (nombreProveedor, RUC, teléfonoProveedor) Values
 ('Repuestos El Rápido', '20123456789', '123'),
 ('Lubricantes Central', '20987654321', '456'),
 ('Frenos y Más', '20456789012', '789');
@@ -240,7 +239,7 @@ Insert Into Usuarios (nombreUsuario, password, email, rol, estadoUsuario) Values
 ('Admin', 'hash_admin', 'dueno@taller.com', 'Admin', 'Activo'),
 ('secre1', 'hash_secre', 'secre@taller.com', 'Secretario', 'Activo');
 
-Insert Into Inventario (nombre, descripcion, marca, categoría, stock_atual, precio_conpa, precio_venta, idProveedor) Values
+Insert Into Inventario (nombre, descripcion, marca, categoría, stock_actual, precio_compra, precio_venta, idProveedor) Values
 ('Aceite 5W-30', 'Aceite sintético para motor', 'Mobil', 'Lubricantes', 20, 15.00, 25.00, 2),
 ('Filtro de aceite', 'Filtro para motor 4 cilindros', 'Bosch', 'Filtros', 15, 8.00, 15.00, 1),
 ('Pastillas de freno', 'Juego de pastillas delanteras', 'Brembo', 'Frenos', 10, 30.00, 50.00, 3);
