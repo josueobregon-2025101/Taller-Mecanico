@@ -34,6 +34,9 @@ app.use('/api/empleados', empleadoRouter);
 app.use('/api/citas', citaRouter);
 app.use('/api/usuarios', usuarioRouter);
 app.use('/api/proveedores', proveedoresRouter); 
+app.use('/api/inventario', inventarioRouter);
+app.use('/api/servicios', servicioRouter);
+app.use('/api/detalle-servicios', detalleServicioRouter);
 
 // Manejo de errores 404
 app.use((req, res) => {
