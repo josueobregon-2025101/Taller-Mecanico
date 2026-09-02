@@ -1,0 +1,363 @@
+<div class="layout">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="logo">
+
+      <div class="logo-icon">
+        🚗
+      </div>
+
+      <div class="logo-text">
+        <strong>OCTANO</strong>
+        <span>Gestión de taller</span>
+      </div>
+
+    </div>
+
+
+    <nav class="menu">
+
+      <div class="menu-section">
+        Resumen
+      </div>
+
+      <a>
+        <span>▦</span>
+        Panel general
+      </a>
+
+
+      <div class="menu-section">
+        Operaciones
+      </div>
+
+      <a>
+        <span>▣</span>
+        Citas
+        <small>4</small>
+      </a>
+
+      <a>
+        <span>🔧</span>
+        Servicios
+        <small>3</small>
+      </a>
+
+      <a>
+        <span>☷</span>
+        Detalle de servicios
+        <small>4</small>
+      </a>
+
+
+      <div class="menu-section">
+        Clientes y flota
+      </div>
+
+      <a class="active">
+        <span>♙</span>
+        Clientes
+        <small>{{ clientes.length }}</small>
+      </a>
+
+      <a routerLink="/vehiculos">
+        <span>🚘</span>
+        Vehículos
+        <small>5</small>
+      </a>
+
+
+      <div class="menu-section">
+        Inventario
+      </div>
+
+      <a>
+        <span>◇</span>
+        Inventario
+        <small>5</small>
+      </a>
+
+      <a>
+        <span>▣</span>
+        Proveedores
+        <small>4</small>
+      </a>
+
+      <a>
+        <span>↔</span>
+        Movimientos de inventario
+        <small>4</small>
+      </a>
+
+
+      <div class="menu-section">
+        Personal y accesos
+      </div>
+
+      <a>
+        <span>♙</span>
+        Empleados
+        <small>4</small>
+      </a>
+
+      <a>
+        <span>♢</span>
+        Usuarios
+        <small>4</small>
+      </a>
+
+
+      <div class="menu-section">
+        Finanzas
+      </div>
+
+      <a>
+        <span>▤</span>
+        Control de ventas
+        <small>3</small>
+      </a>
+
+    </nav>
+
+
+    <div class="user">
+
+      <div class="avatar">
+        EM
+      </div>
+
+      <div>
+        <strong>Elena Marroquín</strong>
+        <span>Administradora</span>
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <!-- BARRA SUPERIOR AZUL -->
+
+    <header class="topbar">
+
+      <div class="title">
+
+        <h1>Clientes</h1>
+
+        <span>
+          {{ clientes.length }} registros
+        </span>
+
+      </div>
+
+
+      <div class="actions-top">
+
+        <div class="search">
+
+          <span>⌕</span>
+
+          <input
+            type="text"
+            placeholder="Buscar en esta tabla..."
+            (input)="buscar($event)"
+          >
+
+        </div>
+
+
+        <button
+          class="new-button"
+          (click)="nuevoCliente()"
+        >
+
+          <span>＋</span>
+
+          Nuevo cliente
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- CONTENIDO -->
+
+    <section class="content">
+
+      <div class="table-card">
+
+        <div class="table-header">
+
+          <div>
+
+            <h2>
+              Listado de clientes
+            </h2>
+
+            <p>
+              Administra la información de los clientes
+            </p>
+
+          </div>
+
+          <div class="total">
+
+            {{ clientesFiltrados.length }}
+            clientes
+
+          </div>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        <div
+          class="loading"
+          *ngIf="cargando"
+        >
+
+          <div class="spinner"></div>
+
+          <span>
+            Cargando clientes...
+          </span>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+          class="error"
+          *ngIf="error"
+        >
+
+          {{ error }}
+
+          <button
+            (click)="cargarClientes()"
+          >
+            Reintentar
+          </button>
+
+        </div>
+
+
+        <!-- TABLA -->
+
+        <div
+          class="table-container"
+          *ngIf="!cargando && !error"
+        >
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Documento</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              <tr
+                *ngFor="
+                  let cliente of clientesFiltrados
+                "
+              >
+
+                <td class="id">
+                  #{{ cliente.idClientes }}
+                </td>
+
+                <td class="name">
+                  {{ cliente.nombreCliente }}
+                </td>
+
+                <td>
+                  {{ cliente.apellido }}
+                </td>
+
+                <td class="document">
+                  {{ cliente.documento }}
+                </td>
+
+                <td class="phone">
+                  {{ cliente.telefono }}
+                </td>
+
+                <td>
+
+                  <div class="row-actions">
+
+                    <button
+                      class="edit"
+                      (click)="editarCliente(cliente)"
+                    >
+                      ✎ Editar
+                    </button>
+
+                    <button
+                      class="delete"
+                      (click)="eliminarCliente(cliente)"
+                    >
+                      × Eliminar
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+
+              <tr
+                *ngIf="
+                  clientesFiltrados.length === 0
+                "
+              >
+
+                <td
+                  colspan="6"
+                  class="empty"
+                >
+
+                  No hay clientes registrados.
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
