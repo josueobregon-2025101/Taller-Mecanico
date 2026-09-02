@@ -30,7 +30,7 @@ export const createInventario = async(
         // Inserta un nuevo producto en la tabla Inventario
         const respuesta = await pool.query(
             `INSERT INTO Inventario
-            (nombre,descripcion,marca,categoria,stock_actual,precio_compra,precio_venta,idProveedor)
+            (nombre,descripcion,marca,categoria,stock_atual,precio_conpa,precio_venta,idProveedor)
             VALUES($1,$2,$3,$4,$5,$6,$7,$8)
             RETURNING *`,
             [ inventario.nombre,inventario.descripcion,inventario.marca,inventario.categoria,inventario.stock_actual,
