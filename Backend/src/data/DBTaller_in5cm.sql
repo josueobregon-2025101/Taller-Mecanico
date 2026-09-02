@@ -68,7 +68,7 @@ Create Table Inventario (
     nombre Varchar(45) Not Null,
     descripcion Varchar(45),
     marca Varchar(45),
-    categoría Varchar(45),
+    categoria Varchar(45),
     stock_actual Int Default 0,
     precio_compra Decimal(10,2) Not Null,
     precio_venta Decimal(10,2) Not Null,
@@ -95,7 +95,7 @@ Create Table Servicios (
     idCita Int Null,
     fecha_ingreso Date Not Null,
     fecha_entrega Date,
-    diagnóstico Text,
+    diagnostico Text,
     estadoServicio estado_servicio Default 'Aprobado',
     kilometraje_ing Varchar(45),
     Constraint pk_servicios Primary Key (idServicios)
@@ -239,7 +239,7 @@ Insert Into Usuarios (nombreUsuario, password, email, rol, estadoUsuario) Values
 ('Admin', 'hash_admin', 'dueno@taller.com', 'Admin', 'Activo'),
 ('secre1', 'hash_secre', 'secre@taller.com', 'Secretario', 'Activo');
 
-Insert Into Inventario (nombre, descripcion, marca, categoría, stock_actual, precio_compra, precio_venta, idProveedor) Values
+Insert Into Inventario (nombre, descripcion, marca, categoria, stock_actual, precio_compra, precio_venta, idProveedor) Values
 ('Aceite 5W-30', 'Aceite sintético para motor', 'Mobil', 'Lubricantes', 20, 15.00, 25.00, 2),
 ('Filtro de aceite', 'Filtro para motor 4 cilindros', 'Bosch', 'Filtros', 15, 8.00, 15.00, 1),
 ('Pastillas de freno', 'Juego de pastillas delanteras', 'Brembo', 'Frenos', 10, 30.00, 50.00, 3);
@@ -248,7 +248,7 @@ Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripción,
 (1, 1, 1, '2026-09-01 10:00:00', 'Cambio de aceite y revisión general', 'Confirmada'),
 (2, 2, 2, '2026-09-02 14:30:00', 'Problema con el sistema eléctrico', 'Pendiente');
 
-Insert Into Servicios (idVehiculos, idCliente, idEmpleado, idCita, fecha_ingreso, fecha_entrega, diagnóstico, estadoServicio, kilometraje_ing) Values
+Insert Into Servicios (idVehiculos, idCliente, idEmpleado, idCita, fecha_ingreso, fecha_entrega, diagnostico, estadoServicio, kilometraje_ing) Values
 (1, 1, 1, 1, '2026-09-01', '2026-09-02', 'Cambio de aceite y filtro, todo en orden', 'Terminado', '15000'),
 (2, 2, 2, Null, '2026-09-03', Null, 'Falla en alternador, requiere revisión', 'En reparación', '22000');
 
