@@ -29,7 +29,7 @@ export const getVehiculoById = async (
     try {
 
         const result = await pool.query(
-            'SELECT * FROM Vehiculos WHERE "idVehiculo" = $1',
+            'SELECT * FROM Vehiculos WHERE idVehiculo = $1',
             [id]
         );
 
@@ -56,14 +56,14 @@ export const createVehiculo = async (
         marca,
         modelo,
         año,
-        kilometraje_actual
+        kilometraje_total
     } = vehiculo;
 
     try {
 
         const result = await pool.query(
             `INSERT INTO Vehiculos 
-            (idClientes, placa, marca, modelo, año, kilometraje_actual)
+            (idClientes, placa, marca, modelo, año, kilometraje_total)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING *`,
             [
@@ -72,7 +72,7 @@ export const createVehiculo = async (
                 marca,
                 modelo,
                 año,
-                kilometraje_actual
+                kilometraje_total
             ]
         );
 
@@ -100,7 +100,7 @@ export const updateVehiculo = async (
         'marca',
         'modelo',
         'año',
-        'kilometraje_actual'
+        'kilometraje_total'
     ];
 
     const campos = Object.keys(vehiculo)
@@ -121,7 +121,7 @@ export const updateVehiculo = async (
     const fields = campos
         .map(
             (campo, index) =>
-                `"${campo}" = $${index + 1}`
+                `${campo} = $${index + 1}`
         )
         .join(', ');
 
@@ -130,7 +130,7 @@ export const updateVehiculo = async (
         const result = await pool.query(
             `UPDATE Vehiculos
              SET ${fields}
-             WHERE "idVehiculo" = $${values.length + 1}
+             WHERE idVehiculo = $${values.length + 1}
              RETURNING *`,
             [
                 ...values,
@@ -158,7 +158,7 @@ export const deleteVehiculo = async (
     try {
 
         const result = await pool.query(
-            'DELETE FROM Vehiculos WHERE "idVehiculo" = $1 RETURNING *',
+            'DELETE FROM Vehiculos WHERE idVehiculo = $1 RETURNING *',
             [id]
         );
 
