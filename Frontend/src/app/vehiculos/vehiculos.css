@@ -1,0 +1,75 @@
+.plate {
+  font-family: monospace;
+  font-weight: 700;
+  color: #2563c7;
+  letter-spacing: .5px;
+}
+
+.km {
+  color: #687990;
+  font-size: 11px;
+}
+
+.loading {
+  min-height: 250px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  color: #718096;
+
+  font-size: 12px;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+
+  border: 3px solid #e4ebf5;
+
+  border-top-color: #2563c7;
+
+  border-radius: 50%;
+
+  animation:
+    spin .8s linear infinite;
+}
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+.error {
+  padding: 35px;
+
+  text-align: center;
+
+  color: #c03939;
+
+  font-size: 12px;
+}
+
+.error button {
+  margin-left: 10px;
+
+  border: none;
+
+  padding: 7px 12px;
+
+  border-radius: 6px;
+
+  background: #2563c7;
+
+  color: white;
+
+  cursor: pointer;
+}
