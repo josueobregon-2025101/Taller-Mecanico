@@ -22,14 +22,16 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.use('/api/proveedores', proveedoresRouter);
-<<<<<<< HEAD
 app.use('/api/clientes', clienteRouter);
 app.use('/api/vehiculos', vehiculoRouter);
-=======
 app.use('/api/inventario', inventarioRouter);
 app.use('/api/servicios', servicioRouter);
 app.use('/api/detalle-servicios', detalleServicioRouter);
->>>>>>> dc2a6057eacd28cb51b567ffecaaab064c7b5def
+app.use('/api/inventario', inventarioRouter);
+app.use('/api/servicios', servicioRouter);
+app.use('/api/detalle-servicios', detalleServicioRouter);
+app.use('/api/clientes', clienteRouter);
+app.use('/api/vehiculos', vehiculoRouter);
 
 // Ruta de prueba
 app.get('/health', (req, res) => {
