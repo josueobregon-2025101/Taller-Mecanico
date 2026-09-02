@@ -19,6 +19,7 @@ export class ProveedoresController{
             } else {
                 res.status(404).json({ error: 'Proveedor no encontrado' });
             }
+     
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener proveedor por ID' });
         }
