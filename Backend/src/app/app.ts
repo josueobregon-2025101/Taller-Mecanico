@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import clienteRouter from '.././routes/clientesRoutes';
+import vehiculoRouter from '.././routes/vehiculosRoutes';
 import proveedoresRouter from '.././routes/proveedoresRoutes';
 import inventarioRouter from '.././routes/inventarioRoutes';
 import servicioRouter from '.././routes/servicioRoutes';
@@ -20,9 +22,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.use('/api/proveedores', proveedoresRouter);
+<<<<<<< HEAD
 app.use('/api/inventario', inventarioRouter);
 app.use('/api/servicios', servicioRouter);
 app.use('/api/detalle-servicios', detalleServicioRouter);
+=======
+app.use('/api/clientes', clienteRouter);
+app.use('/api/vehiculos', vehiculoRouter);
+>>>>>>> cb417eced7e79db916a5e908a729b318b51606a6
 
 // Ruta de prueba
 app.get('/health', (req, res) => {
