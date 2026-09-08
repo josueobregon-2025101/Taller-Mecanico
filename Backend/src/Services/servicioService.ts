@@ -33,7 +33,7 @@ export const createServicio = async(
         // Inserta un nuevo servicio en la base de datos
         const respuesta = await pool.query(
             `INSERT INTO Servicios
-            (idVehiculos,idCliente,idEmpleado,idCita,fecha_ingreso,fecha_entrega,diagnóstico,estadoServicio,kilometraje_ing)
+            (idVehiculos,idCliente,idEmpleado,idCita,fecha_ingreso,fecha_entrega,diagnostico,estadoServicio,kilometraje_ing)
             VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)
             RETURNING *`,
             [servicio.idVehiculos,servicio.idCliente,servicio.idEmpleado,servicio.idCita,servicio.fecha_ingreso,servicio.fecha_entrega,
@@ -68,7 +68,7 @@ export const updateServicio = async(
 
         // Relaciona los atributos de la interfaz con las columnas de la base de datos
         const columnas:{[key:string]:string} = {idVehiculos: "idVehiculos",idCliente: "idCliente",idEmpleado: "idEmpleado",
-            idCita: "idCita",fecha_ingreso: "fecha_ingreso",fecha_entrega: "fecha_entrega",diagnostico: "diagnóstico",
+            idCita: "idCita",fecha_ingreso: "fecha_ingreso",fecha_entrega: "fecha_entrega",diagnostico: "diagnostico",
             estadoServicio: "estadoServicio",kilometraje_ing: "kilometraje_ing"
         };
 
