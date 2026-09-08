@@ -14,20 +14,13 @@ export const getAllInventario = async():Promise<Inventario[]>=>{
 export const getInventarioById = async(id:number):Promise<Inventario | null>=>{
     try {
         // Busca un producto del inventario utilizando su identificador
-        const respuesta = await pool.query(
-            'SELECT * FROM Inventario WHERE idInventario = $1',
-            [id]
-        );
-
+        const respuesta = await pool.query('SELECT * FROM Inventario WHERE idInventario = $1',[id] );
         // Verifica si el producto existe
-        if(respuesta.rows.length > 0){
-            return respuesta.rows[0] as Inventario | null;
+        if(respuesta.rows.length > 0){  return respuesta.rows[0] as Inventario | null;
         }
 
         return null;
-    } catch (error) {
-        throw new Error('Error al obtener inventario por ID');
-    }
+    }catch(error){ throw new Error('Error al obtener inventario por ID');  }
 }
 
 export const createInventario = async(
@@ -37,18 +30,14 @@ export const createInventario = async(
         // Inserta un nuevo producto en la tabla Inventario
         const respuesta = await pool.query(
             `INSERT INTO Inventario
-            (nombre,descripcion,marca,categoría,stock_actual,precio_compra,precio_venta,idProveedor)
+            (nombre,descripcion,marca,categoria,stock_actual,precio_compra,precio_venta,idProveedor)
             VALUES($1,$2,$3,$4,$5,$6,$7,$8)
             RETURNING *`,
-            [inventario.nombre,inventario.descripcion,inventario.marca,inventario.categoria,inventario.stock_actual,
-            inventario.precio_compra,inventario.precio_venta,inventario.idProveedor
-            ]
-        );
-
+            [ inventario.nombre,inventario.descripcion,inventario.marca,inventario.categoria,inventario.stock_actual,
+            inventario.precio_compra,inventario.precio_venta,inventario.idProveedor ]);
         // Retorna el producto creado
         return respuesta.rows[0] as Inventario;
-    } catch (error) {
-        throw new Error('Error al crear inventario: ' + error);
+    } catch (error) { throw new Error('Error al crear inventario'+error); 
     }
 }
 
@@ -57,86 +46,40 @@ export const updateInventario = async(
     inventario:Partial<Omit<Inventario,"idInventario">>
 ):Promise<Inventario | null>=>{
     try {
-        // Verifica que el producto exista antes de actualizarlo
+         // Verifica que el producto exista antes de actualizarlo
         const existente = await getInventarioById(id);
-
-        if(!existente){
-            return null;
-        }
+        if(!existente){return null;} 
         // Obtiene los nombres de los campos que serán actualizados
         const keys = Object.keys(inventario);
+        if(keys.length === 0){return null;}
+        const setClause = keys .map((key,index)=>`${key} = $${index + 1}`) .join(', ');
+        // Obtiene los valores correspondientes a cada campo seleccionado
+        const values:(string | number)[] =
+            keys.map(  key => inventario[key as keyof typeof inventario]! );
 
-        if(keys.length === 0){
-            return null;
-        }
-
-        // Relaciona los atributos de la interfaz con las columnas de la base de datos
-        const columnas:{[key:string]:string} = {
-            nombre: "nombre",descripcion: "descripcion",marca: "marca", categoria: "categoría",stock_actual: "stock_actual",
-            precio_compra: "precio_compra",precio_venta: "precio_venta",idProveedor: "idProveedor"
-        };
-
-        // Verifica que los campos enviados sean válidos
-        const camposValidos = keys.every(key => columnas[key]);
-
-        if(!camposValidos){
-            return null;
-        }
-
-        // Construye los campos que serán utilizados en la consulta UPDATE
-        const setClause = keys
-            .map((key,index)=>`${columnas[key]} = $${index + 1}`)
-            .join(', ');
-
-        // Obtiene los valores correspondientes a cada campo
-        const values:(string | number)[] = keys.map(
-            key => inventario[key as keyof typeof inventario]!
-        );
-
-        // Agrega el id al final para utilizarlo en la condición WHERE
         values.push(id);
-
         // Ejecuta la actualización y retorna el registro modificado
-        const result = await pool.query(
-            `UPDATE Inventario
-            SET ${setClause}
-            WHERE idInventario = $${values.length}
-            RETURNING *`,
-            values
+        const result = await pool.query( `UPDATE Inventario SET ${setClause} WHERE idInventario = $${values.length} RETURNING *`,values
         );
 
         return result.rows[0] || null;
 
     } catch (error) {
-        throw new Error(
-            'Error al intentar actualizar el recurso error:' + error
-        );
+        throw new Error('Error al intentar actualizar el recurso error:'+error);
     }
 }
 
-export const deleteInventario = async(id:number):Promise<boolean>=>{
+export const deleteInventario = async(id:number):Promise<boolean> =>{
     try {
         // Verifica que el producto exista antes de eliminarlo
         const existente = await getInventarioById(id);
-
-        if(!existente){
-            return false;
-        }
-
+        if(!existente){ return false;}
         // Elimina el producto de la base de datos
-        const inventarioDelete = await pool.query(
-            `DELETE FROM Inventario
-            WHERE idInventario = $1
-            RETURNING *`,
-            [id]
-        );
-
+        const inventarioDelete = await pool.query(`DELETE FROM Inventario WHERE idInventario = $1 RETURNING *`, [id] );
         // Retorna true si la eliminación fue exitosa
         return inventarioDelete.rowCount ? true : false;
 
     } catch (error) {
-        throw new Error(
-            'Error al eliminar el recurso error:' + error
-        );
+        throw new Error('Error al eliminar el recurso error:'+ error);
     }
 }
