@@ -30,19 +30,20 @@ export const createServicio = async(
     servicio:Omit<Servicio,'idServicios'>
 ):Promise<Servicio>=>{
     try {
-        // Inserta un nuevo servicio en la base de datos    
+        // Inserta un nuevo servicio en la base de datos
         const respuesta = await pool.query(
             `INSERT INTO Servicios
-            (idVehiculos,idCliente,idEmpleado,idCita,fecha_ingreso,fecha_entrega,diagnostico,estadoServicio,kilometraje_ing)
-            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING 
+            (idVehiculos,idCliente,idEmpleado,idCita,fecha_ingreso,fecha_entrega,diagnóstico,estadoServicio,kilometraje_ing)
+            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)
             RETURNING *`,
             [servicio.idVehiculos,servicio.idCliente,servicio.idEmpleado,servicio.idCita,servicio.fecha_ingreso,servicio.fecha_entrega,
-            servicio.diagnostico,servicio.estadoServicio,servicio.kilometraje_ing]
+            servicio.diagnostico,servicio.estadoServicio,servicio.kilometraje_ing ]
         );
+
         // Retorna el servicio creado
         return respuesta.rows[0] as Servicio;
     } catch (error) {
-        throw new Error('Error al crear servicio');
+        throw new Error('Error al crear servicio: ' + error);
     }
 }
 
@@ -51,36 +52,61 @@ export const updateServicio = async(
     servicio:Partial<Omit<Servicio,"idServicios">>
 ):Promise<Servicio | null>=>{
     try {
-       // Verifica que el servicio exista antes de actualizarlo
+        // Verifica que el servicio exista antes de actualizarlo
         const existente = await getServicioById(id);
 
         if(!existente){
-            return null; }
+            return null;
+        }
+
         // Obtiene los nombres de los campos enviados para actualizar
         const keys = Object.keys(servicio);
+
         if(keys.length === 0){
-            return null;  }
+            return null;
+        }
+
+        // Relaciona los atributos de la interfaz con las columnas de la base de datos
+        const columnas:{[key:string]:string} = {idVehiculos: "idVehiculos",idCliente: "idCliente",idEmpleado: "idEmpleado",
+            idCita: "idCita",fecha_ingreso: "fecha_ingreso",fecha_entrega: "fecha_entrega",diagnostico: "diagnóstico",
+            estadoServicio: "estadoServicio",kilometraje_ing: "kilometraje_ing"
+        };
+
+        // Verifica que los campos enviados sean válidos
+        const camposValidos = keys.every(key => columnas[key]);
+
+        if(!camposValidos){
+            return null;
+        }
+
         // Construye dinámicamente los campos para la consulta UPDATE
         const setClause = keys
-        .map((key,index)=>`${key} = $${index + 1}`)
-        .join(', ');
+            .map((key,index)=>`${columnas[key]} = $${index + 1}`)
+            .join(', ');
+
         // Obtiene los valores correspondientes a cada campo
-        const values:(string | number)[] =
-            keys.map(
-                key => servicio[key as keyof typeof servicio]!
-            );
+        const values:(string | number | null)[] = keys.map(
+            key => servicio[key as keyof typeof servicio] ?? null
+        );
+
         // Agrega el id al final del arreglo para usarlo en el WHERE
         values.push(id);
+
         // Ejecuta la actualización y retorna el registro modificado
         const result = await pool.query(
-            `UPDATE Servicios SET ${setClause} WHERE idServicios = $${values.length} RETURNING *`,
+            `UPDATE Servicios
+            SET ${setClause}
+            WHERE idServicios = $${values.length}
+            RETURNING *`,
             values
         );
 
         return result.rows[0] || null;
 
     } catch (error) {
-        throw new Error('Error al intentar actualizar el recurso error:'+error);
+        throw new Error(
+            'Error al intentar actualizar el recurso error:' + error
+        );
     }
 }
 
