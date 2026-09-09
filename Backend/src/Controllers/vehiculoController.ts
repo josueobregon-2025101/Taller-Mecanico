@@ -61,7 +61,7 @@ export class VehiculoController {
             placa,
             marca,
             modelo,
-            año,
+            ano,
             kilometraje_total
         } = req.body;
 
@@ -71,8 +71,8 @@ export class VehiculoController {
             !placa ||
             !marca ||
             !modelo ||
-            año === undefined ||
-            año === null ||
+            ano === undefined ||
+            ano === null ||
             kilometraje_total === undefined ||
             kilometraje_total === null
         ) {
@@ -88,7 +88,7 @@ export class VehiculoController {
             placa,
             marca,
             modelo,
-            año,
+            ano,
             kilometraje_total
         });
 
