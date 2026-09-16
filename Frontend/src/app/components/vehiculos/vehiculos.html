@@ -1,0 +1,424 @@
+<div class="layout">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+
+      <div class="logo-icon">
+        🚗
+      </div>
+
+      <div class="logo-text">
+
+        <strong>OCTANO</strong>
+
+        <span>
+          Gestión de taller
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <nav class="menu">
+
+      <div class="menu-section">
+        Resumen
+      </div>
+
+      <a>
+        <span>▦</span>
+        Panel general
+      </a>
+
+
+      <div class="menu-section">
+        Operaciones
+      </div>
+
+      <a>
+        <span>▣</span>
+        Citas
+        <small>4</small>
+      </a>
+
+      <a>
+        <span>🔧</span>
+        Servicios
+        <small>3</small>
+      </a>
+
+      <a>
+        <span>☷</span>
+        Detalle de servicios
+        <small>4</small>
+      </a>
+
+
+      <div class="menu-section">
+        Clientes y flota
+      </div>
+
+      <a routerLink="/clientes">
+
+        <span>♙</span>
+
+        Clientes
+
+        <small>
+          5
+        </small>
+
+      </a>
+
+      <a class="active">
+
+        <span>🚘</span>
+
+        Vehículos
+
+        <small>
+          {{ vehiculos.length }}
+        </small>
+
+      </a>
+
+
+      <div class="menu-section">
+        Inventario
+      </div>
+
+      <a>
+        <span>◇</span>
+        Inventario
+        <small>5</small>
+      </a>
+
+      <a>
+        <span>▣</span>
+        Proveedores
+        <small>4</small>
+      </a>
+
+      <a>
+        <span>↔</span>
+        Movimientos de inventario
+        <small>4</small>
+      </a>
+
+
+      <div class="menu-section">
+        Personal y accesos
+      </div>
+
+      <a>
+        <span>♙</span>
+        Empleados
+        <small>4</small>
+      </a>
+
+      <a>
+        <span>♢</span>
+        Usuarios
+        <small>4</small>
+      </a>
+
+
+      <div class="menu-section">
+        Finanzas
+      </div>
+
+      <a>
+        <span>▤</span>
+        Control de ventas
+        <small>3</small>
+      </a>
+
+    </nav>
+
+
+    <div class="user">
+
+      <div class="avatar">
+        EM
+      </div>
+
+      <div>
+
+        <strong>
+          Elena Marroquín
+        </strong>
+
+        <span>
+          Administradora
+        </span>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <main class="main">
+
+
+    <!-- BARRA AZUL -->
+
+    <header class="topbar">
+
+      <div class="title">
+
+        <h1>
+          Vehículos
+        </h1>
+
+        <span>
+          {{ vehiculos.length }}
+          registros
+        </span>
+
+      </div>
+
+
+      <div class="actions-top">
+
+        <div class="search">
+
+          <span>
+            ⌕
+          </span>
+
+          <input
+            type="text"
+            placeholder="Buscar en esta tabla..."
+            (input)="buscar($event)"
+          >
+
+        </div>
+
+
+        <button
+          class="new-button"
+          (click)="nuevoVehiculo()"
+        >
+
+          ＋ Nuevo vehículo
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <section class="content">
+
+      <div class="table-card">
+
+
+        <div class="table-header">
+
+          <div>
+
+            <h2>
+              Listado de vehículos
+            </h2>
+
+            <p>
+              Administra los vehículos registrados
+              en el taller
+            </p>
+
+          </div>
+
+
+          <div class="total">
+
+            {{ vehiculosFiltrados.length }}
+            vehículos
+
+          </div>
+
+        </div>
+
+
+        <!-- CARGANDO -->
+
+        <div
+          class="loading"
+          *ngIf="cargando"
+        >
+
+          <div class="spinner"></div>
+
+          <span>
+            Cargando vehículos...
+          </span>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+          class="error"
+          *ngIf="error"
+        >
+
+          {{ error }}
+
+          <button
+            (click)="cargarVehiculos()"
+          >
+            Reintentar
+          </button>
+
+        </div>
+
+
+        <!-- TABLA -->
+
+        <div
+          class="table-container"
+          *ngIf="!cargando && !error"
+        >
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Kilometraje</th>
+                <th>Acciones</th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              <tr
+                *ngFor="
+                  let vehiculo of vehiculosFiltrados
+                "
+              >
+
+                <td class="id">
+
+                  #{{ vehiculo.idVehiculo }}
+
+                </td>
+
+
+                <td>
+
+                  Cliente #{{ vehiculo.idClientes }}
+
+                </td>
+
+
+                <td class="plate">
+
+                  {{ vehiculo.placa }}
+
+                </td>
+
+
+                <td class="name">
+
+                  {{ vehiculo.marca }}
+
+                </td>
+
+
+                <td>
+
+                  {{ vehiculo.modelo }}
+
+                </td>
+
+
+                <td>
+
+                  {{ vehiculo.ano }}
+
+                </td>
+
+
+                <td class="km">
+
+                  {{ vehiculo.kilometraje_total }}
+
+                </td>
+
+
+                <td>
+
+                  <div class="row-actions">
+
+                    <button
+                      class="edit"
+                      (click)="editarVehiculo(vehiculo)"
+                    >
+
+                      ✎ Editar
+
+                    </button>
+
+
+                    <button
+                      class="delete"
+                      (click)="eliminarVehiculo(vehiculo)"
+                    >
+
+                      × Eliminar
+
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+
+              <tr
+                *ngIf="
+                  vehiculosFiltrados.length === 0
+                "
+              >
+
+                <td
+                  colspan="8"
+                  class="empty"
+                >
+
+                  No hay vehículos registrados.
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

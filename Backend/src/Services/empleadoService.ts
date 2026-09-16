@@ -12,7 +12,7 @@ export const getAllEmpleados = async (): Promise<Empleado[]> => {
 
 export const getEmpleadoById = async (id: number): Promise<Empleado | null> => {
     try {
-        const result = await pool.query('SELECT * FROM Empleados WHERE "idEmpleado" = $1', [id]);
+        const result = await pool.query('SELECT * FROM Empleados WHERE idEmpleado = $1', [id]);
         return result.rows[0] || null;
     } catch (error) {
         throw new Error('Error al obtener empleado: ' + error);
@@ -39,7 +39,7 @@ export const updateEmpleado = async (id: number, empleado: Partial<Empleado>): P
     if (fields.length === 0) throw new Error('No hay campos para actualizar');
     try {
         const result = await pool.query(
-            `UPDATE Empleados SET ${fields} WHERE "idEmpleado" = $${values.length + 1} RETURNING *`,
+            `UPDATE Empleados SET ${fields} WHERE idEmpleado = $${values.length + 1} RETURNING *`,
             [...values, id]
         );
         return result.rows[0] || null;
@@ -50,7 +50,7 @@ export const updateEmpleado = async (id: number, empleado: Partial<Empleado>): P
 
 export const deleteEmpleado = async (id: number): Promise<boolean> => {
     try {
-        const result = await pool.query('DELETE FROM Empleados WHERE "idEmpleado" = $1 RETURNING *', [id]);
+        const result = await pool.query('DELETE FROM Empleados WHERE idEmpleado = $1 RETURNING *', [id]);
         return result.rowCount ? true : false;
     } catch (error) {
         throw new Error('Error al eliminar empleado: ' + error);
