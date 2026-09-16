@@ -12,6 +12,7 @@ import detalleServicioRouter from '../routes/detalleServicioRoutes';
 import clienteRouter from '../routes/clientesRoutes';
 import vehiculoRouter from '../routes/vehiculosRoutes';
 import ControlVentaRouter from '../routes/controlVentaRoutes';
+import movInventarioRouter from '../routes/movInventarioRouter';
 
 dotenv.config();
 
@@ -45,8 +46,10 @@ app.use('/api/detalle-servicios', detalleServicioRouter);
 app.use('/api/clientes', clienteRouter);
 
 app.use('/api/vehiculos', vehiculoRouter);
+
 app.use('/api/control-venta',ControlVentaRouter);
 
+app.use('/api/mov-inventario',movInventarioRouter)
 
 app.get('/health', (req, res) => {
 
