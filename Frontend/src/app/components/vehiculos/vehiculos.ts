@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -28,6 +28,8 @@ export class Vehiculos implements OnInit {
 
   cargando = false;
 
+  private cdr = inject(ChangeDetectorRef);
+
   error = '';
 
   ngOnInit(): void {
@@ -55,6 +57,8 @@ export class Vehiculos implements OnInit {
 
           this.cargando = false;
 
+          this.cdr.detectChanges();
+
         },
 
         error: (error) => {
@@ -68,6 +72,8 @@ export class Vehiculos implements OnInit {
             'No se pudieron cargar los vehículos.';
 
           this.cargando = false;
+
+          this.cdr.detectChanges();
 
         }
 
