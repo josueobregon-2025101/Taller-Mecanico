@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import {
   Cliente,
   ClienteService
-} from '../services/clientes.service';
+} from '../../services/clientes.service';
 
 @Component({
   selector: 'app-clientes',
@@ -41,6 +41,8 @@ export class Clientes implements OnInit {
     this.clienteService.obtenerClientes().subscribe({
 
       next: (datos) => {
+        console.log('DATOS RECIBIDOS:', datos);
+        console.log('Cantidad:', datos.length);
 
         this.clientes = datos;
 

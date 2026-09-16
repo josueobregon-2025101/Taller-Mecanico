@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import {
   Vehiculo,
   VehiculoService
-} from '../services/vehiculo.service';
+} from '../../services/vehiculo.service';
 
 @Component({
   selector: 'app-vehiculos',

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
-import { Clientes } from './clientes/clientes';
-import { Vehiculos } from './vehiculos/vehiculos';
+import { Clientes } from './components/clientes/clientes';
+import { Vehiculos } from './components/vehiculos/vehiculos';
 
 export const routes: Routes = [
 
