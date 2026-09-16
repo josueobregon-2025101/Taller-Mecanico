@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject , ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -27,6 +27,8 @@ export class Clientes implements OnInit {
 
   cargando = false;
 
+  private cdr = inject(ChangeDetectorRef);
+
   error = '';
 
   ngOnInit(): void {
@@ -49,6 +51,8 @@ export class Clientes implements OnInit {
         this.clientesFiltrados = [...datos];
 
         this.cargando = false;
+        
+        this.cdr.detectChanges();
 
       },
 
@@ -60,6 +64,8 @@ export class Clientes implements OnInit {
           'No se pudieron cargar los clientes.';
 
         this.cargando = false;
+
+        this.cdr.detectChanges();
 
       }
 
@@ -78,7 +84,7 @@ export class Clientes implements OnInit {
     this.clientesFiltrados =
       this.clientes.filter(cliente =>
 
-        cliente.nombreCliente
+        cliente.nombrecliente
           .toLowerCase()
           .includes(texto)
 
@@ -123,7 +129,7 @@ export class Clientes implements OnInit {
 
     const confirmar =
       confirm(
-        `¿Deseas eliminar a ${cliente.nombreCliente} ${cliente.apellido}?`
+        `¿Deseas eliminar a ${cliente.nombrecliente} ${cliente.apellido}?`
       );
 
     if (!confirmar) {
@@ -131,7 +137,7 @@ export class Clientes implements OnInit {
     }
 
     this.clienteService
-      .eliminarCliente(cliente.idClientes)
+      .eliminarCliente(cliente.idclientes)
       .subscribe({
 
         next: () => {

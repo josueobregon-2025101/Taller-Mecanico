@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Cliente {
-  idClientes: number;
-  nombreCliente: string;
+  idclientes: number;
+  nombrecliente: string;
   apellido: string;
   documento: string;
   telefono: string;
@@ -33,7 +33,7 @@ export class ClienteService {
     return this.http.get<Cliente>(`${this.apiUrl}/${id}`);
   }
 
-  crearCliente(cliente: Omit<Cliente, 'idClientes'>): Observable<ClienteResponse> {
+  crearCliente(cliente: Omit<Cliente, 'idclientes'>): Observable<ClienteResponse> {
     return this.http.post<ClienteResponse>(
       this.apiUrl,
       cliente
