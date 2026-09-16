@@ -2,7 +2,7 @@ import { formaPago } from "./enums/formaPago";
 import {estadoVenta} from "./enums/estadoVenta";
 
 export interface ControlVenta{
-    idventa:number;
+    idVentas:number;
     idServicio:number;
     idCliente:number;
     fecha:string;

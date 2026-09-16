@@ -19,6 +19,7 @@ export class ProveedoresController{
             } else {
                 res.status(404).json({ error: 'Proveedor no encontrado' });
             }
+     
         } catch (error) {
             res.status(500).json({ error: 'Error al obtener proveedor por ID' });
         }
@@ -36,7 +37,7 @@ export class ProveedoresController{
                 data: nuevoProveedor
             });
         } catch (error) {
-            res.status(500).json({ error: 'Error al crear proveedor' });
+            res.status(500).json({ error: 'Error al crear proveedor en controller' + error });
         }
     }
     static async updateProveedor(req:Request, res:Response){

@@ -25,11 +25,11 @@ export const getProveedorById = async(id:number):Promise<Proveedor | null>=>{
 export const createProveedor = async(proveedor:Omit<Proveedor, 'idProveedor'>):Promise<Proveedor>=>{
     try {
         const respuesta = await pool.query
-        ('INSERT INTO Proveedores(nombreProveedor,RUC,telefonoProveedor)VALUES($1,$2,$3)'
+        ('INSERT INTO Proveedores(nombreProveedor,RUC,telefonoProveedor)VALUES($1,$2,$3) RETURNING *'
             ,[proveedor.nombreProveedor,proveedor.RUC,proveedor.telefonoProveedor]);
             return respuesta.rows[0] as Proveedor;
     } catch (error) {
-        throw new Error('Error al crear proveedor');
+        throw new Error('Error al crear proveedor ERROR: '+error);
     }
 }
 export const updateProveedor = async (id:number , proveedor:Partial<Omit<Proveedor,"idProveedor">>):Promise<Proveedor |null>=>{

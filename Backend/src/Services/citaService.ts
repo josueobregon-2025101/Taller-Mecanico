@@ -12,7 +12,7 @@ export const getAllCitas = async (): Promise<Cita[]> => {
 
 export const getCitaById = async (id: number): Promise<Cita | null> => {
     try {
-        const result = await pool.query('SELECT * FROM Citas WHERE "idCita" = $1', [id]);
+        const result = await pool.query('SELECT * FROM Citas WHERE idCita = $1', [id]);
         return result.rows[0] || null;
     } catch (error) {
         throw new Error('Error al obtener cita: ' + error);
@@ -39,7 +39,7 @@ export const updateCita = async (id: number, cita: Partial<Cita>): Promise<Cita 
     if (fields.length === 0) throw new Error('No hay campos para actualizar');
     try {
         const result = await pool.query(
-            `UPDATE Citas SET ${fields} WHERE "idCita" = $${values.length + 1} RETURNING *`,
+            `UPDATE Citas SET ${fields} WHERE idCita = $${values.length + 1} RETURNING *`,
             [...values, id]
         );
         return result.rows[0] || null;
@@ -50,7 +50,7 @@ export const updateCita = async (id: number, cita: Partial<Cita>): Promise<Cita 
 
 export const deleteCita = async (id: number): Promise<boolean> => {
     try {
-        const result = await pool.query('DELETE FROM Citas WHERE "idCita" = $1 RETURNING *', [id]);
+        const result = await pool.query('DELETE FROM Citas WHERE idCita = $1 RETURNING *', [id]);
         return result.rowCount ? true : false;
     } catch (error) {
         throw new Error('Error al eliminar cita: ' + error);
