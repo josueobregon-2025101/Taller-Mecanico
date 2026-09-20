@@ -55,7 +55,7 @@ export const createVehiculo = async (
         placa,
         marca,
         modelo,
-        año,
+        ano,
         kilometraje_total
     } = vehiculo;
 
@@ -63,7 +63,7 @@ export const createVehiculo = async (
 
         const result = await pool.query(
             `INSERT INTO Vehiculos 
-            (idClientes, placa, marca, modelo, año, kilometraje_total)
+            (idClientes, placa, marca, modelo, ano, kilometraje_total)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING *`,
             [
@@ -71,7 +71,7 @@ export const createVehiculo = async (
                 placa,
                 marca,
                 modelo,
-                año,
+                ano,
                 kilometraje_total
             ]
         );
@@ -99,7 +99,7 @@ export const updateVehiculo = async (
         'placa',
         'marca',
         'modelo',
-        'año',
+        'ano',
         'kilometraje_total'
     ];
 

@@ -12,7 +12,7 @@ export const getAllUsuarios = async (): Promise<Usuario[]> => {
 
 export const getUsuarioById = async (id: number): Promise<Usuario | null> => {
     try {
-        const result = await pool.query('SELECT * FROM Usuarios WHERE "idUsuario" = $1', [id]);
+        const result = await pool.query('SELECT * FROM Usuarios WHERE idUsuario = $1', [id]);
         return result.rows[0] || null;
     } catch (error) {
         throw new Error('Error al obtener usuario: ' + error);
@@ -39,7 +39,7 @@ export const updateUsuario = async (id: number, usuario: Partial<Usuario>): Prom
     if (fields.length === 0) throw new Error('No hay campos para actualizar');
     try {
         const result = await pool.query(
-            `UPDATE Usuarios SET ${fields} WHERE "idUsuario" = $${values.length + 1} RETURNING *`,
+            `UPDATE Usuarios SET ${fields} WHERE idUsuario = $${values.length + 1} RETURNING *`,
             [...values, id]
         );
         return result.rows[0] || null;
@@ -50,7 +50,7 @@ export const updateUsuario = async (id: number, usuario: Partial<Usuario>): Prom
 
 export const deleteUsuario = async (id: number): Promise<boolean> => {
     try {
-        const result = await pool.query('DELETE FROM Usuarios WHERE "idUsuario" = $1 RETURNING *', [id]);
+        const result = await pool.query('DELETE FROM Usuarios WHERE idUsuario = $1 RETURNING *', [id]);
         return result.rowCount ? true : false;
     } catch (error) {
         throw new Error('Error al eliminar usuario: ' + error);

@@ -136,6 +136,36 @@ Create Table Control_Ventas (
     Constraint pk_control_ventas Primary Key (idVentas)
 );
 
+CREATE OR REPLACE FUNCTION obtener_estadisticas()
+RETURNS TABLE (
+  total_clientes     BIGINT,
+  total_proveedores  BIGINT,
+  total_empleados    BIGINT,
+  total_vehiculos    BIGINT,
+  total_usuarios     BIGINT,
+  total_inventario   BIGINT,
+  total_citas        BIGINT,
+  total_servicios    BIGINT,
+  total_detalle      BIGINT,
+  total_movimientos  BIGINT,
+  total_control      BIGINT
+)
+LANGUAGE sql
+STABLE
+AS $$
+	SELECT
+	(SELECT COUNT(*) FROM Clientes) AS total_clientes,
+	(SELECT COUNT(*) FROM Proveedores) AS total_proveedores,
+	(SELECT COUNT(*) FROM Empleados)AS total_empleados,
+	(SELECT COUNT(*) FROM  Vehiculos)AS total_vehiculos,
+	(SELECT COUNT(*) FROM Usuarios)AS total_usuarios,
+	(SELECT COUNT(*) FROM Inventario)AS total_inventario,
+	(SELECT COUNT(*) FROM Citas) AS total_citas,
+	(SELECT COUNT(*) FROM Servicios) AS total_servicios,
+	(SELECT COUNT(*) FROM Detalle_Servicios)AS total_detalle,
+	(SELECT COUNT(*) FROM Movimientos_Inventario)AS total_movimientos,
+	(SELECT COUNT(*) FROM Control_Ventas)AS total_control
+$$ ;
 
 Alter Table Vehiculos
 Add Constraint fk_idClientes Foreign Key (idClientes) References Clientes(idClientes)

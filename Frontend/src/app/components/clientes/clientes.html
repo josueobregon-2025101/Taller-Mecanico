@@ -1,0 +1,107 @@
+<!-- clientes.component.html -->
+<main class="main">
+
+  <!-- BARRA SUPERIOR AZUL -->
+  <header class="topbar">
+
+    <div class="title">
+      <h1>Clientes</h1>
+      <span>{{ clientes.length }} registros</span>
+    </div>
+
+    <div class="actions-top">
+
+      <div class="search">
+        <span>⌕</span>
+        <input
+          type="text"
+          placeholder="Buscar en esta tabla..."
+          (input)="buscar($event)"
+        >
+      </div>
+
+      <button class="new-button" (click)="nuevoCliente()">
+        <span>＋</span>
+        Nuevo cliente
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- CONTENIDO -->
+  <section class="content">
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <div>
+          <h2>Listado de clientes</h2>
+          <p>Administra la información de los clientes</p>
+        </div>
+
+        <div class="total">
+          {{ clientesFiltrados.length }} clientes
+        </div>
+      </div>
+
+      <!-- CARGANDO -->
+      <div class="loading" *ngIf="cargando">
+        <div class="spinner"></div>
+        <span>Cargando clientes...</span>
+      </div>
+
+      <!-- ERROR -->
+      <div class="error" *ngIf="error">
+        {{ error }}
+        <button (click)="cargarClientes()">Reintentar</button>
+      </div>
+
+      <!-- TABLA -->
+      <div class="table-container" *ngIf="!cargando && !error">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Documento</th>
+              <th>Teléfono</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let cliente of clientesFiltrados">
+              <td class="id">#{{ cliente.idclientes }}</td>
+              <td class="name">{{ cliente.nombrecliente }}</td>
+              <td>{{ cliente.apellido }}</td>
+              <td class="document">{{ cliente.documento }}</td>
+              <td class="phone">{{ cliente.telefono }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="edit" (click)="editarCliente(cliente)">
+                    ✎ Editar
+                  </button>
+                  <button class="delete" (click)="eliminarCliente(cliente)">
+                    × Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="clientesFiltrados.length === 0">
+              <td colspan="6" class="empty">
+                No hay clientes registrados.
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
