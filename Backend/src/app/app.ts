@@ -13,6 +13,7 @@ import clienteRouter from '../routes/clientesRoutes';
 import vehiculoRouter from '../routes/vehiculosRoutes';
 import ControlVentaRouter from '../routes/controlVentaRoutes';
 import movInventarioRouter from '../routes/movInventarioRouter';
+import estadisticasRouter from '../routes/estadisticasRoutes';
 
 dotenv.config();
 
@@ -49,7 +50,9 @@ app.use('/api/vehiculos', vehiculoRouter);
 
 app.use('/api/control-venta',ControlVentaRouter);
 
-app.use('/api/mov-inventario',movInventarioRouter)
+app.use('/api/mov-inventario',movInventarioRouter);
+
+app.use('/api/estadisticas',estadisticasRouter);
 
 app.get('/health', (req, res) => {
 
