@@ -3,29 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Estadisticas {
-
-  citas: number;
-
-  servicios: number;
-
-  detallesServicios: number;
-
-  clientes: number;
-
-  vehiculos: number;
-
-  inventario: number;
-
-  proveedores: number;
-
-  movimientosInventario: number;
-
-  empleados: number;
-
-  usuarios: number;
-
-  ventas: number;
-
+  total_clientes: number;
+  total_proveedores: number;
+  total_empleados: number;
+  total_vehiculos: number;
+  total_usuarios: number;
+  total_inventario: number;
+  total_citas: number;
+  total_servicios: number;
+  total_detalle: number;
+  total_movimientos: number;
+  total_control: number;
 }
 
 @Injectable({
@@ -36,14 +24,14 @@ export class DashboardService {
   private http = inject(HttpClient);
 
   private apiUrl =
-    'http://localhost:3000/api/dashboard';
+    'http://localhost:3000/api/estadisticas';
 
 
   obtenerEstadisticas():
     Observable<Estadisticas> {
 
     return this.http.get<Estadisticas>(
-      `${this.apiUrl}/estadisticas`
+      `${this.apiUrl}/`
     );
 
   }
