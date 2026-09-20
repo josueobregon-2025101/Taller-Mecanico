@@ -1,205 +1,107 @@
-<div class="logo">
+<!-- sidebar.component.html -->
+<aside class="sidebar">
 
-  <div class="logo-icon">
-    🚗
+  <div class="logo">
+    <div class="logo-icon">🚗</div>
+    <div class="logo-text">
+      <strong>Motronik</strong>
+      <span>Gestión de taller</span>
+    </div>
   </div>
 
-  <div class="logo-text">
-    <strong>Motronik</strong>
-    <span>Gestión de taller</span>
+  <nav class="menu">
+
+    <div class="menu-section">Resumen</div>
+
+    <a routerLink="/panel" routerLinkActive="active">
+      <span>▦</span>
+      Panel general
+    </a>
+
+    <div class="menu-section">Operaciones</div>
+
+    <a routerLink="/citas" routerLinkActive="active">
+      <span>▣</span>
+      Citas
+      <small>{{ estadisticas.total_citas }}</small>
+    </a>
+
+    <a routerLink="/servicios" routerLinkActive="active">
+      <span>🔧</span>
+      Servicios
+      <small>{{ estadisticas.total_servicios }}</small>
+    </a>
+
+    <a routerLink="/detalle-servicios" routerLinkActive="active">
+      <span>☷</span>
+      Detalle de servicios
+      <small>{{ estadisticas.total_detalle }}</small>
+    </a>
+
+    <div class="menu-section">Clientes y flota</div>
+
+    <a routerLink="/clientes" routerLinkActive="active">
+      <span>♙</span>
+      Clientes
+      <small>{{ estadisticas.total_clientes }}</small>
+    </a>
+
+    <a routerLink="/vehiculos" routerLinkActive="active">
+      <span>🚘</span>
+      Vehículos
+      <small>{{ estadisticas.total_vehiculos }}</small>
+    </a>
+
+    <div class="menu-section">Inventario</div>
+
+    <a routerLink="/inventario" routerLinkActive="active">
+      <span>◇</span>
+      Inventario
+      <small>{{ estadisticas.total_inventario }}</small>
+    </a>
+
+    <a routerLink="/proveedores" routerLinkActive="active">
+      <span>▣</span>
+      Proveedores
+      <small>{{ estadisticas.total_proveedores }}</small>
+    </a>
+
+    <a routerLink="/movimientos-inventario" routerLinkActive="active">
+      <span>↔</span>
+      Movimientos de inventario
+      <small>{{ estadisticas.total_movimientos }}</small>
+    </a>
+
+    <div class="menu-section">Personal y accesos</div>
+
+    <a routerLink="/empleados" routerLinkActive="active">
+      <span>♙</span>
+      Empleados
+      <small>{{ estadisticas.total_empleados }}</small>
+    </a>
+
+    <a routerLink="/usuarios" routerLinkActive="active">
+      <span>♢</span>
+      Usuarios
+      <small>{{ estadisticas.total_usuarios }}</small>
+    </a>
+
+    <div class="menu-section">Finanzas</div>
+
+    <a routerLink="/control-ventas" routerLinkActive="active">
+      <span>▤</span>
+      Control de ventas
+      <small>{{ estadisticas.total_control }}</small>
+    </a>
+
+  </nav>
+
+  <div class="user">
+    <div class="avatar">EM</div>
+    <div>
+      <strong>Elena Marroquín</strong>
+      <span>Administradora</span>
+    </div>
   </div>
 
-</div>
-
-
-<nav class="menu">
-
-  <div class="menu-section">
-    Resumen
-  </div>
-
-  <a
-    routerLink="/panel"
-    routerLinkActive="active"
-  >
-    <span>▦</span>
-    Panel general
-  </a>
-
-
-  <div class="menu-section">
-    Operaciones
-  </div>
-
-  <a
-    routerLink="/citas"
-    routerLinkActive="active"
-  >
-    <span>▣</span>
-    Citas
-
-    <small>
-      {{ estadisticas.citas }}
-    </small>
-  </a>
-
-  <a
-    routerLink="/servicios"
-    routerLinkActive="active"
-  >
-    <span>🔧</span>
-    Servicios
-
-    <small>
-      {{ estadisticas.servicios }}
-    </small>
-  </a>
-
-  <a
-    routerLink="/detalle-servicios"
-    routerLinkActive="active"
-  >
-    <span>☷</span>
-    Detalle de servicios
-
-    <small>
-      {{ estadisticas.detallesServicios }}
-    </small>
-  </a>
-
-
-  <div class="menu-section">
-    Clientes y flota
-  </div>
-
-  <a
-    routerLink="/clientes"
-    routerLinkActive="active"
-  >
-    <span>♙</span>
-    Clientes
-
-    <small>
-      {{ estadisticas.clientes }}
-    </small>
-  </a>
-
-  <a
-    routerLink="/vehiculos"
-    routerLinkActive="active"
-  >
-    <span>🚘</span>
-    Vehículos
-
-    <small>
-      {{ estadisticas.vehiculos }}
-    </small>
-  </a>
-
-
-  <div class="menu-section">
-    Inventario
-  </div>
-
-  <a
-    routerLink="/inventario"
-    routerLinkActive="active"
-  >
-    <span>◇</span>
-    Inventario
-
-    <small>
-      {{ estadisticas.inventario }}
-    </small>
-  </a>
-
-  <a
-    routerLink="/proveedores"
-    routerLinkActive="active"
-  >
-    <span>▣</span>
-    Proveedores
-
-    <small>
-      {{ estadisticas.proveedores }}
-    </small>
-  </a>
-
-  <a
-    routerLink="/movimientos-inventario"
-    routerLinkActive="active"
-  >
-    <span>↔</span>
-    Movimientos de inventario
-
-    <small>
-      {{ estadisticas.movimientosInventario }}
-    </small>
-  </a>
-
-
-  <div class="menu-section">
-    Personal y accesos
-  </div>
-
-  <a
-    routerLink="/empleados"
-    routerLinkActive="active"
-  >
-    <span>♙</span>
-    Empleados
-
-    <small>
-      {{ estadisticas.empleados }}
-    </small>
-  </a>
-
-  <a
-    routerLink="/usuarios"
-    routerLinkActive="active"
-  >
-    <span>♢</span>
-    Usuarios
-
-    <small>
-      {{ estadisticas.usuarios }}
-    </small>
-  </a>
-
-
-  <div class="menu-section">
-    Finanzas
-  </div>
-
-  <a
-    routerLink="/ventas"
-    routerLinkActive="active"
-  >
-    <span>▤</span>
-    Control de ventas
-
-    <small>
-      {{ estadisticas.ventas }}
-    </small>
-  </a>
-
-</nav>
-
-
-<div class="user">
-
-  <div class="avatar">
-    EM
-  </div>
-
-  <div>
-    <strong>
-      Elena Marroquín
-    </strong>
-
-    <span>
-      Administradora
-    </span>
-  </div>
-
-</div>
+</aside>
