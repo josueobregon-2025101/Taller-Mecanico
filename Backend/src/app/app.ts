@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+import authRouter from '../routes/authRoutes';
 import empleadoRouter from '../routes/empleadoRoutes';
 import citaRouter from '../routes/citaRoutes';
 import usuarioRouter from '../routes/usuarioRoutes';
@@ -29,6 +30,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+app.use('/api/auth', authRouter);
 
 app.use('/api/empleados', empleadoRouter);
 
