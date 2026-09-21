@@ -56,7 +56,7 @@ Create Table Vehiculos (
 Create Table Usuarios (
     idUsuario Serial,
     nombreUsuario Varchar(45) Unique Not Null,
-    password Varchar(45) Not Null,
+    password Varchar(255) Not Null,
     email Varchar(45) Unique,
     rol rol_usuario Not Null,
     estadoUsuario estado_usuario Default 'Activo',
