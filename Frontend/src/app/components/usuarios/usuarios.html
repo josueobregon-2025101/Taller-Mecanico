@@ -1,1 +1,101 @@
-<p>usuarios works!</p>
+<main class="main">
+
+  <header class="topbar">
+
+    <div class="title">
+      <h1>Usuarios</h1>
+      <span>{{ usuarios.length }} registros</span>
+    </div>
+
+    <div class="actions-top">
+
+      <div class="search">
+        <span>⌕</span>
+        <input
+          type="text"
+          placeholder="Buscar en esta tabla..."
+          (input)="buscar($event)"
+        >
+      </div>
+
+      <button class="new-button" (click)="nuevoUsuario()">
+        <span>＋</span>
+        Nuevo usuario
+      </button>
+
+    </div>
+
+  </header>
+
+  <section class="content">
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <div>
+          <h2>Listado de usuarios</h2>
+          <p>Administra el acceso al sistema</p>
+        </div>
+
+        <div class="total">
+          {{ usuariosFiltrados.length }} usuarios
+        </div>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        <div class="spinner"></div>
+        <span>Cargando usuarios...</span>
+      </div>
+
+      <div class="error" *ngIf="error">
+        {{ error }}
+        <button (click)="cargarUsuarios()">Reintentar</button>
+      </div>
+
+      <div class="table-container" *ngIf="!cargando && !error">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let usuario of usuariosFiltrados">
+              <td class="id">#{{ usuario.idusuario }}</td>
+              <td class="name">{{ usuario.nombreusuario }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>{{ usuario.rol }}</td>
+              <td>{{ usuario.estadousuario }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="edit" (click)="editarUsuario(usuario)">
+                    ✎ Editar
+                  </button>
+                  <button class="delete" (click)="eliminarUsuario(usuario)">
+                    × Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="usuariosFiltrados.length === 0">
+              <td colspan="6" class="empty">
+                No hay usuarios registrados.
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
