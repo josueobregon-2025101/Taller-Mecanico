@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+import authRouter from '../routes/authRoutes';
 import empleadoRouter from '../routes/empleadoRoutes';
 import citaRouter from '../routes/citaRoutes';
 import usuarioRouter from '../routes/usuarioRoutes';
@@ -13,6 +14,7 @@ import clienteRouter from '../routes/clientesRoutes';
 import vehiculoRouter from '../routes/vehiculosRoutes';
 import ControlVentaRouter from '../routes/controlVentaRoutes';
 import movInventarioRouter from '../routes/movInventarioRouter';
+import estadisticasRouter from '../routes/estadisticasRoutes';
 
 dotenv.config();
 
@@ -28,6 +30,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+app.use('/api/auth', authRouter);
 
 app.use('/api/empleados', empleadoRouter);
 
@@ -49,7 +52,9 @@ app.use('/api/vehiculos', vehiculoRouter);
 
 app.use('/api/control-venta',ControlVentaRouter);
 
-app.use('/api/mov-inventario',movInventarioRouter)
+app.use('/api/mov-inventario',movInventarioRouter);
+
+app.use('/api/estadisticas',estadisticasRouter);
 
 app.get('/health', (req, res) => {
 

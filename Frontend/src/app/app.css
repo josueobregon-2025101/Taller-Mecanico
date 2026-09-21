@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.layout {
+  width: 100%;
+  min-height: 100vh;
+  background: #081a38;
+}
+
+.sidebar-container {
+  display: block;
+}
+
+.page-content {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.auth-layout {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.auth-content {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+}

@@ -38,27 +38,27 @@ export class Sidebar implements OnInit {
 
   estadisticas: Estadisticas = {
 
-    citas: 0,
+    total_citas: 0,
 
-    servicios: 0,
+    total_clientes: 0,
 
-    detallesServicios: 0,
+    total_control: 0,
 
-    clientes: 0,
+    total_detalle: 0,
 
-    vehiculos: 0,
+    total_empleados: 0,
 
-    inventario: 0,
+    total_inventario: 0,
 
-    proveedores: 0,
+    total_movimientos: 0,
 
-    movimientosInventario: 0,
+    total_proveedores: 0,
 
-    empleados: 0,
+    total_servicios: 0,
 
-    usuarios: 0,
+    total_usuarios: 0,
 
-    ventas: 0
+    total_vehiculos: 0
 
   };
 
