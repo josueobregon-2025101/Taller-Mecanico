@@ -1,31 +1,22 @@
-<p>citas works!</p>
 <main class="main">
 
   <header class="topbar">
-
     <div class="title">
       <h1>Citas</h1>
       <span>{{ citas.length }} registros</span>
     </div>
 
-    <div class="actions-top">
-
-      <div class="search">
-        <span>⌕</span>
-        <input
-          type="text"
-          placeholder="Buscar en esta tabla..."
-          (input)="buscar($event)"
-        >
-      </div>
-
+    <div class="top-actions">
+      <input
+        type="text"
+        class="search"
+        placeholder="Buscar en esta tabla..."
+        (input)="buscar($event)"
+      >
       <button class="new-button" (click)="nuevaCita()">
-        <span>＋</span>
-        Nueva cita
+        ＋ Nueva cita
       </button>
-
     </div>
-
   </header>
 
   <section class="content">
@@ -37,18 +28,14 @@
           <h2>Listado de citas</h2>
           <p>Administra la agenda del taller</p>
         </div>
-
-        <div class="total">
-          {{ citasFiltradas.length }} citas
-        </div>
+        <span>{{ citasFiltradas.length }} citas</span>
       </div>
 
       <div class="loading" *ngIf="cargando">
-        <div class="spinner"></div>
-        <span>Cargando citas...</span>
+        Cargando citas...
       </div>
 
-      <div class="error" *ngIf="error">
+      <div class="error-message" *ngIf="error">
         {{ error }}
         <button (click)="cargarCitas()">Reintentar</button>
       </div>
@@ -70,21 +57,19 @@
 
           <tbody>
             <tr *ngFor="let cita of citasFiltradas">
-              <td class="id">#{{ cita.idcita }}</td>
+              <td>#{{ cita.idcita }}</td>
               <td>Vehículo #{{ cita.idvehiculo }}</td>
               <td>Cliente #{{ cita.idclientes }}</td>
-              <td>
-                {{ cita.idempleado ? 'Empleado #' + cita.idempleado : '—' }}
-              </td>
+              <td>{{ cita.idempleado ? 'Empleado #' + cita.idempleado : '—' }}</td>
               <td>{{ cita.fecha_hora | date:'short' }}</td>
               <td>{{ cita.descripcion }}</td>
               <td>{{ cita.estadocita }}</td>
               <td>
                 <div class="row-actions">
-                  <button class="edit" (click)="editarCita(cita)">
+                  <button class="edit-button" (click)="editarCita(cita)">
                     ✎ Editar
                   </button>
-                  <button class="delete" (click)="eliminarCita(cita)">
+                  <button class="delete-button" (click)="eliminarCita(cita)">
                     × Eliminar
                   </button>
                 </div>
@@ -97,7 +82,6 @@
               </td>
             </tr>
           </tbody>
-
         </table>
       </div>
 
