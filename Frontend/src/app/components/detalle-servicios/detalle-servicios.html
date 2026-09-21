@@ -1,0 +1,301 @@
+<main class="main">
+
+  <header class="topbar">
+    <div class="title">
+      <h1>Detalle de servicios</h1>
+      <span>{{ detalles.length }} detalles registrados</span>
+    </div>
+
+    <div class="top-actions">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar detalle..."
+        (input)="buscar($event)"
+      >
+
+      <button
+        type="button"
+        class="new-button"
+        (click)="nuevoDetalle()"
+      >
+        + Nuevo detalle
+      </button>
+    </div>
+  </header>
+
+  <section class="content">
+
+    @if (mensaje) {
+      <div class="success-message">
+        {{ mensaje }}
+      </div>
+    }
+
+    @if (error) {
+      <div class="error-message">
+        {{ error }}
+      </div>
+    }
+
+    @if (formularioVisible) {
+      <section class="form-card">
+
+        <h2>
+          {{
+            detalleEditandoId === null
+              ? 'Nuevo detalle de servicio'
+              : 'Editar detalle de servicio'
+          }}
+        </h2>
+
+        <form (ngSubmit)="guardarDetalle()">
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="idServicio">
+                ID del servicio
+              </label>
+
+              <input
+                id="idServicio"
+                name="idServicio"
+                type="number"
+                min="1"
+                [(ngModel)]="formulario.idServicio"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="cantidadHoras">
+                Cantidad de horas
+              </label>
+
+              <input
+                id="cantidadHoras"
+                name="cantidadHoras"
+                type="number"
+                min="0"
+                step="0.5"
+                [(ngModel)]="formulario.cantidadHoras"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="idInventario">
+                ID de inventario
+                <span class="optional">Opcional</span>
+              </label>
+
+              <input
+                id="idInventario"
+                name="idInventario"
+                type="number"
+                min="1"
+                placeholder="Puede quedar vacío"
+                [(ngModel)]="formulario.idInventario"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="cantidadRepuesto">
+                Cantidad de repuestos
+                <span class="optional">Opcional</span>
+              </label>
+
+              <input
+                id="cantidadRepuesto"
+                name="cantidad_repuesto"
+                type="number"
+                min="1"
+                placeholder="Puede quedar vacío"
+                [(ngModel)]="formulario.cantidad_repuesto"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="precioUnitario">
+                Precio unitario
+              </label>
+
+              <input
+                id="precioUnitario"
+                name="precio_unitario"
+                type="number"
+                min="0.01"
+                step="0.01"
+                [(ngModel)]="formulario.precio_unitario"
+                required
+              >
+            </div>
+
+            <div class="form-group description-field">
+              <label for="descripcionDetalle">
+                Descripción del detalle
+              </label>
+
+              <textarea
+                id="descripcionDetalle"
+                name="descripcionDetalle"
+                rows="4"
+                placeholder="Describe el trabajo o repuesto utilizado"
+                [(ngModel)]="formulario.descripcionDetalle"
+                required
+              ></textarea>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="cancel-button"
+              (click)="cancelarFormulario()"
+              [disabled]="guardando"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="save-button"
+              [disabled]="guardando"
+            >
+              @if (guardando) {
+                Guardando...
+              } @else if (detalleEditandoId === null) {
+                Crear detalle
+              } @else {
+                Guardar cambios
+              }
+            </button>
+          </div>
+
+        </form>
+      </section>
+    }
+
+    <section class="table-card">
+
+      <div class="table-header">
+        <h2>Listado de detalles</h2>
+
+        <span>
+          {{ detallesFiltrados.length }}
+          {{
+            detallesFiltrados.length === 1
+              ? 'registro'
+              : 'registros'
+          }}
+        </span>
+      </div>
+
+      @if (cargando) {
+        <div class="loading">
+          Cargando detalles de servicio...
+        </div>
+      } @else {
+        <div class="table-container">
+
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Servicio</th>
+                <th>Descripción</th>
+                <th>Horas</th>
+                <th>Inventario</th>
+                <th>Cantidad de repuestos</th>
+                <th>Precio unitario</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (
+                detalle of detallesFiltrados;
+                track detalle.idDetalle
+              ) {
+                <tr>
+                  <td class="id">
+                    #{{ detalle.idDetalle }}
+                  </td>
+
+                  <td>
+                    Servicio #{{ detalle.idServicio }}
+                  </td>
+
+                  <td class="description">
+                    {{ detalle.descripcionDetalle }}
+                  </td>
+
+                  <td>
+                    {{ detalle.cantidadHoras }} h
+                  </td>
+
+                  <td>
+                    @if (detalle.idInventario !== null) {
+                      Producto #{{ detalle.idInventario }}
+                    } @else {
+                      Sin producto
+                    }
+                  </td>
+
+                  <td>
+                    @if (detalle.cantidad_repuesto !== null) {
+                      {{ detalle.cantidad_repuesto }}
+                    } @else {
+                      No aplica
+                    }
+                  </td>
+
+                  <td class="price">
+                    Q {{ detalle.precio_unitario | number:'1.2-2' }}
+                  </td>
+
+                  <td>
+                    <div class="row-actions">
+                      <button
+                        type="button"
+                        class="edit-button"
+                        (click)="editarDetalle(detalle)"
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        type="button"
+                        class="delete-button"
+                        (click)="eliminarDetalle(detalle)"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td
+                    colspan="8"
+                    class="empty"
+                  >
+                    No se encontraron detalles de servicio.
+                  </td>
+                </tr>
+              }
+
+            </tbody>
+          </table>
+
+        </div>
+      }
+
+    </section>
+
+  </section>
+
+</main>
