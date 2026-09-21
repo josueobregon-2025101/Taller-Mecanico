@@ -31,7 +31,7 @@ interface ServicioBackend {
   idcita: number | null;
   fecha_ingreso: string;
   fecha_entrega: string | null;
-  diagnóstico: string;
+  diagnostico: string;
   estadoservicio: string;
   kilometraje_ing: string;
 }
@@ -129,7 +129,7 @@ export class ServicioService {
   ): Servicio {
     return {idServicios: servicio.idservicios, idVehiculos: servicio.idvehiculos,idCliente: servicio.idcliente,
     idEmpleado: servicio.idempleado,idCita: servicio.idcita,fecha_ingreso: servicio.fecha_ingreso,
-    fecha_entrega: servicio.fecha_entrega,diagnostico: servicio.diagnóstico, 
+    fecha_entrega: servicio.fecha_entrega,diagnostico: servicio.diagnostico, 
     estadoServicio: servicio.estadoservicio, kilometraje_ing: servicio.kilometraje_ing
     };
   }
