@@ -9,6 +9,10 @@ import { InventarioComponent } from './components/inventario/inventario';
 import { ServiciosComponent } from './components/servicios/servicios';
 import { DetalleServiciosComponent } from './components/detalle-servicios/detalle-servicios';
 
+import { Usuarios } from './components/usuarios/usuarios';
+import { Empleados } from './components/empleados/empleados';
+import { Citas } from './components/citas/citas';
+
 export const routes: Routes = [
 
   {
@@ -50,6 +54,21 @@ export const routes: Routes = [
   {
     path: 'detalle-servicios',
     component: DetalleServiciosComponent
+  },
+
+  {
+    path: 'usuarios',
+    component: Usuarios
+  },
+
+  {
+    path: 'empleados',
+    component: Empleados
+  },
+
+  {
+    path: 'citas',
+    component: Citas
   },
 
   {
