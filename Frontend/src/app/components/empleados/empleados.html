@@ -1,1 +1,105 @@
-<p>empleados works!</p>
+<main class="main">
+
+  <header class="topbar">
+
+    <div class="title">
+      <h1>Empleados</h1>
+      <span>{{ empleados.length }} registros</span>
+    </div>
+
+    <div class="actions-top">
+
+      <div class="search">
+        <span>⌕</span>
+        <input
+          type="text"
+          placeholder="Buscar en esta tabla..."
+          (input)="buscar($event)"
+        >
+      </div>
+
+      <button class="new-button" (click)="nuevoEmpleado()">
+        <span>＋</span>
+        Nuevo empleado
+      </button>
+
+    </div>
+
+  </header>
+
+  <section class="content">
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <div>
+          <h2>Listado de empleados</h2>
+          <p>Administra el personal del taller</p>
+        </div>
+
+        <div class="total">
+          {{ empleadosFiltrados.length }} empleados
+        </div>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        <div class="spinner"></div>
+        <span>Cargando empleados...</span>
+      </div>
+
+      <div class="error" *ngIf="error">
+        {{ error }}
+        <button (click)="cargarEmpleados()">Reintentar</button>
+      </div>
+
+      <div class="table-container" *ngIf="!cargando && !error">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Cédula</th>
+              <th>Teléfono</th>
+              <th>Puesto</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let empleado of empleadosFiltrados">
+              <td class="id">#{{ empleado.idempleado }}</td>
+              <td class="name">{{ empleado.nombreempleado }}</td>
+              <td>{{ empleado.apellidoempleado }}</td>
+              <td class="document">{{ empleado.cedula }}</td>
+              <td class="phone">{{ empleado.telefonoempleado }}</td>
+              <td>{{ empleado.puesto }}</td>
+              <td>{{ empleado.estadoempleado }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="edit" (click)="editarEmpleado(empleado)">
+                    ✎ Editar
+                  </button>
+                  <button class="delete" (click)="eliminarEmpleado(empleado)">
+                    × Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="empleadosFiltrados.length === 0">
+              <td colspan="8" class="empty">
+                No hay empleados registrados.
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
