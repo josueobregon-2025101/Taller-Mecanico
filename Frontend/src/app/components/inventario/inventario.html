@@ -1,0 +1,255 @@
+<main class="main">
+
+  <header class="topbar">
+
+    <div class="title">
+      <h1>Inventario</h1>
+      <span>{{ inventario.length }} productos registrados</span>
+    </div>
+
+    <div class="top-actions">
+
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar producto..."
+        (input)="buscar($event)"
+      >
+
+      <button
+        type="button"
+        class="new-button"
+        (click)="nuevoProducto()"
+      >
+        + Nuevo producto
+      </button>
+
+    </div>
+
+  </header>
+
+  <section class="content">
+
+    <div class="success-message" *ngIf="mensaje">
+      {{ mensaje }}
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="form-card" *ngIf="formularioVisible">
+
+      <h2>
+        {{ productoEditandoId === null ? 'Nuevo producto' : 'Editar producto' }}
+      </h2>
+
+      <form (ngSubmit)="guardarProducto()">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              [(ngModel)]="formulario.nombre"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <input
+              id="descripcion"
+              name="descripcion"
+              type="text"
+              [(ngModel)]="formulario.descripcion"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="marca">Marca</label>
+            <input
+              id="marca"
+              name="marca"
+              type="text"
+              [(ngModel)]="formulario.marca"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="categoria">Categoría</label>
+            <input
+              id="categoria"
+              name="categoria"
+              type="text"
+              [(ngModel)]="formulario.categoria"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="stock">Stock actual</label>
+            <input
+              id="stock"
+              name="stock_actual"
+              type="number"
+              min="0"
+              [(ngModel)]="formulario.stock_actual"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="precioCompra">Precio de compra</label>
+            <input
+              id="precioCompra"
+              name="precio_compra"
+              type="number"
+              min="0.01"
+              step="0.01"
+              [(ngModel)]="formulario.precio_compra"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="precioVenta">Precio de venta</label>
+            <input
+              id="precioVenta"
+              name="precio_venta"
+              type="number"
+              min="0.01"
+              step="0.01"
+              [(ngModel)]="formulario.precio_venta"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="proveedor">ID del proveedor</label>
+            <input
+              id="proveedor"
+              name="idProveedor"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idProveedor"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : productoEditandoId === null
+                  ? 'Crear producto'
+                  : 'Guardar cambios'
+            }}
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-card">
+
+      <div class="table-header">
+        <h2>Listado de productos</h2>
+        <span>{{ inventarioFiltrado.length }} registros</span>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        Cargando inventario...
+      </div>
+
+      <div
+        class="table-container"
+        *ngIf="!cargando"
+      >
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>ID</th> <th>Nombre</th><th>Descripción</th><th>Marca</th><th>Categoría</th>
+              <th>Stock</th><th>Compra</th><th>Venta</th><th>Proveedor</th><th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let producto of inventarioFiltrado">
+
+              <td>#{{ producto.idinventario }}</td> <td>{{ producto.nombre }}</td>
+              <td>{{ producto.descripcion }}</td> <td>{{ producto.marca }}</td>
+              <td>{{ producto.categoria }}</td> <td>{{ producto.stock_actual }}</td>
+              <td> Q {{ producto.precio_compra | number:'1.2-2' }}</td>
+              <td>  Q {{ producto.precio_venta | number:'1.2-2' }}</td>
+              <td> #{{ producto.idproveedor }}
+              </td>
+
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarProducto(producto)"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarProducto(producto)"
+                  >
+                    Eliminar
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+
+            <tr *ngIf="inventarioFiltrado.length === 0">
+              <td colspan="10" class="empty">
+                No se encontraron productos.
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
