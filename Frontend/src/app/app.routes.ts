@@ -4,6 +4,7 @@ import { Clientes } from './components/clientes/clientes';
 import { Vehiculos } from './components/vehiculos/vehiculos';
 import { InventarioComponent } from './components/inventario/inventario';
 import { ServiciosComponent } from './components/servicios/servicios';
+import { DetalleServiciosComponent } from './components/detalle-servicios/detalle-servicios';
 
 export const routes: Routes = [
 
@@ -31,6 +32,11 @@ export const routes: Routes = [
   {
     path: 'servicios',
     component: ServiciosComponent
+  },
+
+  {
+    path: 'detalle-servicios',
+    component: DetalleServiciosComponent
   },
 
   {
