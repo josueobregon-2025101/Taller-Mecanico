@@ -1,0 +1,424 @@
+<main class="main">
+
+  <!-- Encabezado -->
+  <header class="topbar">
+
+    <div class="title">
+      <h1>Servicios</h1>
+      <span>
+        {{ servicios.length }} servicios registrados
+      </span>
+    </div>
+
+    <div class="top-actions">
+
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar servicio..."
+        (input)="buscar($event)"
+      >
+
+      <button
+        type="button"
+        class="new-button"
+        (click)="nuevoServicio()"
+      >
+        + Nuevo servicio
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- Contenido -->
+  <section class="content">
+
+    <!-- Mensaje de éxito -->
+    <div
+      class="success-message"
+      *ngIf="mensaje"
+    >
+      {{ mensaje }}
+    </div>
+
+    <!-- Mensaje de error -->
+    <div
+      class="error-message"
+      *ngIf="error"
+    >
+      {{ error }}
+    </div>
+
+    <!-- Formulario -->
+    <section
+      class="form-card"
+      *ngIf="formularioVisible"
+    >
+
+      <h2>
+        {{
+          servicioEditandoId === null
+            ? 'Nuevo servicio'
+            : 'Editar servicio'
+        }}
+      </h2>
+
+      <form
+        (ngSubmit)="guardarServicio()"
+      >
+
+        <div class="form-grid">
+
+          <!-- Vehículo -->
+          <div class="form-group">
+            <label for="idVehiculos">
+              ID del vehículo
+            </label>
+
+            <input
+              id="idVehiculos"
+              name="idVehiculos"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idVehiculos"
+              required
+            >
+          </div>
+
+          <!-- Cliente -->
+          <div class="form-group">
+            <label for="idCliente">
+              ID del cliente
+            </label>
+
+            <input
+              id="idCliente"
+              name="idCliente"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idCliente"
+              required
+            >
+          </div>
+
+          <!-- Empleado -->
+          <div class="form-group">
+            <label for="idEmpleado">
+              ID del empleado
+            </label>
+
+            <input
+              id="idEmpleado"
+              name="idEmpleado"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idEmpleado"
+              required
+            >
+          </div>
+
+          <!-- Cita opcional -->
+          <div class="form-group">
+            <label for="idCita">
+              ID de la cita
+              <span class="optional">
+                Opcional
+              </span>
+            </label>
+
+            <input
+              id="idCita"
+              name="idCita"
+              type="number"
+              min="1"
+              placeholder="Puede quedar vacío"
+              [(ngModel)]="formulario.idCita"
+            >
+          </div>
+
+          <!-- Fecha de ingreso -->
+          <div class="form-group">
+            <label for="fechaIngreso">
+              Fecha de ingreso
+            </label>
+
+            <input
+              id="fechaIngreso"
+              name="fecha_ingreso"
+              type="date"
+              [(ngModel)]="formulario.fecha_ingreso"
+              required
+            >
+          </div>
+
+          <!-- Fecha de entrega opcional -->
+          <div class="form-group">
+            <label for="fechaEntrega">
+              Fecha de entrega
+              <span class="optional">
+                Opcional
+              </span>
+            </label>
+
+            <input
+              id="fechaEntrega"
+              name="fecha_entrega"
+              type="date"
+              [(ngModel)]="formulario.fecha_entrega"
+            >
+          </div>
+
+          <!-- Estado -->
+          <div class="form-group">
+            <label for="estadoServicio">
+              Estado
+            </label>
+
+            <select
+              id="estadoServicio"
+              name="estadoServicio"
+              [(ngModel)]="formulario.estadoServicio"
+              required
+            >
+              <option
+                *ngFor="let estado of estadosServicio"
+                [value]="estado"
+              >
+                {{ estado }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Kilometraje -->
+          <div class="form-group">
+            <label for="kilometraje">
+              Kilometraje de ingreso
+            </label>
+
+            <input
+              id="kilometraje"
+              name="kilometraje_ing"
+              type="text"
+              placeholder="Ejemplo: 45000"
+              [(ngModel)]="formulario.kilometraje_ing"
+              required
+            >
+          </div>
+
+          <!-- Diagnóstico -->
+          <div class="form-group full-width">
+            <label for="diagnostico">
+              Diagnóstico
+            </label>
+
+            <textarea
+              id="diagnostico"
+              name="diagnostico"
+              rows="4"
+              placeholder="Describe el diagnóstico del vehículo"
+              [(ngModel)]="formulario.diagnostico"
+              required
+            ></textarea>
+          </div>
+
+        </div>
+
+        <!-- Acciones del formulario -->
+        <div class="form-actions">
+
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+            [disabled]="guardando"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : servicioEditandoId === null
+                  ? 'Crear servicio'
+                  : 'Guardar cambios'
+            }}
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+    <!-- Tabla -->
+    <section class="table-card">
+
+      <div class="table-header">
+
+        <h2>
+          Listado de servicios
+        </h2>
+
+        <span>
+          {{ serviciosFiltrados.length }}
+          {{
+            serviciosFiltrados.length === 1
+              ? 'registro'
+              : 'registros'
+          }}
+        </span>
+
+      </div>
+
+      <!-- Cargando -->
+      <div
+        class="loading"
+        *ngIf="cargando"
+      >
+        Cargando servicios...
+      </div>
+
+      <!-- Contenedor de tabla -->
+      <div
+        class="table-container"
+        *ngIf="!cargando"
+      >
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Vehículo</th>
+              <th>Cliente</th>
+              <th>Empleado</th>
+              <th>Cita</th>
+              <th>Ingreso</th>
+              <th>Entrega</th>
+              <th>Diagnóstico</th>
+              <th>Estado</th>
+              <th>Kilometraje</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr
+              *ngFor="let servicio of serviciosFiltrados"
+            >
+
+              <td class="id">
+                #{{ servicio.idServicios }}
+              </td>
+
+              <td>
+                Vehículo #{{ servicio.idVehiculos }}
+              </td>
+
+              <td>
+                Cliente #{{ servicio.idCliente }}
+              </td>
+
+              <td>
+                Empleado #{{ servicio.idEmpleado }}
+              </td>
+
+              <td>
+                {{
+                  servicio.idCita !== null
+                    ? '#' + servicio.idCita
+                    : 'Sin cita'
+                }}
+              </td>
+
+              <td>
+                {{
+                  servicio.fecha_ingreso
+                    | date:'dd/MM/yyyy'
+                }}
+              </td>
+
+              <td>
+                {{
+                  servicio.fecha_entrega
+                    ? (servicio.fecha_entrega | date:'dd/MM/yyyy')
+                    : 'Pendiente'
+                }}
+              </td>
+
+              <td class="diagnostic">
+                {{ servicio.diagnostico }}
+              </td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.approved]="servicio.estadoServicio === 'Aprobado'"
+                  [class.repair]="servicio.estadoServicio === 'En reparación'"
+                  [class.finished]="servicio.estadoServicio === 'Terminado'"
+                  [class.delivered]="servicio.estadoServicio === 'Entregado'"
+                >
+                  {{ servicio.estadoServicio }}
+                </span>
+              </td>
+
+              <td>
+                {{ servicio.kilometraje_ing }} km
+              </td>
+
+              <td>
+
+                <div class="row-actions">
+
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarServicio(servicio)"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarServicio(servicio)"
+                  >
+                    Eliminar
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+            <!-- Sin resultados -->
+            <tr
+              *ngIf="serviciosFiltrados.length === 0"
+            >
+              <td
+                colspan="11"
+                class="empty"
+              >
+                No se encontraron servicios.
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </section>
+
+</main>
