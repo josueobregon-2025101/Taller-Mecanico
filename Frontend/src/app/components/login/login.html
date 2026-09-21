@@ -1,0 +1,197 @@
+<div class="login-page">
+
+  <div class="orbe orbe1"></div>
+  <div class="orbe orbe2"></div>
+  <div class="orbe orbe3"></div>
+  <div class="orbe orbe4"></div>
+
+  <div class="particulas">
+    <span style="--x: 4%; --tam: 3px; --dur: 14s; --retraso: 0s;"></span>
+    <span style="--x: 12%; --tam: 5px; --dur: 18s; --retraso: 2s;"></span>
+    <span style="--x: 20%; --tam: 2px; --dur: 11s; --retraso: 5s;"></span>
+    <span style="--x: 29%; --tam: 4px; --dur: 16s; --retraso: 1s;"></span>
+    <span style="--x: 37%; --tam: 3px; --dur: 13s; --retraso: 4s;"></span>
+    <span style="--x: 46%; --tam: 6px; --dur: 19s; --retraso: 0.5s;"></span>
+    <span style="--x: 54%; --tam: 2px; --dur: 12s; --retraso: 3s;"></span>
+    <span style="--x: 62%; --tam: 4px; --dur: 17s; --retraso: 6s;"></span>
+    <span style="--x: 70%; --tam: 3px; --dur: 15s; --retraso: 2.5s;"></span>
+    <span style="--x: 78%; --tam: 5px; --dur: 20s; --retraso: 7s;"></span>
+    <span style="--x: 86%; --tam: 2px; --dur: 11s; --retraso: 1.5s;"></span>
+    <span style="--x: 93%; --tam: 4px; --dur: 14s; --retraso: 4.5s;"></span>
+    <span style="--x: 8%; --tam: 3px; --dur: 18s; --retraso: 8s;"></span>
+    <span style="--x: 58%; --tam: 2px; --dur: 13s; --retraso: 9s;"></span>
+    <span style="--x: 82%; --tam: 3px; --dur: 16s; --retraso: 3.5s;"></span>
+  </div>
+
+  <div class="fondo-brillo"></div>
+
+  <main class="contenedor-login">
+
+    <div class="login-card">
+
+      <section class="login-info">
+
+        <div class="logo">
+          <img
+            src="/images/logoo.png"
+            alt="Logo del taller mecánico"
+          >
+        </div>
+
+        <h1>
+          Inprax 2.
+          <span>El Regreso.</span>
+        </h1>
+
+        <p>
+          Administra vehículos, clientes, servicios,
+          inventario y operaciones para tu taller
+          desde un solo lugar.
+        </p>
+
+        <ul class="features">
+          <li>
+            <span>🚗</span>
+            Vehículos
+          </li>
+
+          <li>
+            <span>🧾</span>
+            Órdenes de servicio
+          </li>
+
+          <li>
+            <span>📦</span>
+            Inventario
+          </li>
+
+          <li>
+            <span>👥</span>
+            Clientes
+          </li>
+        </ul>
+
+      </section>
+
+      <section class="login-form">
+
+        <div class="burbuja b1"></div>
+        <div class="burbuja b2"></div>
+        <div class="burbuja b3"></div>
+        <div class="burbuja b4"></div>
+        <div class="burbuja b5"></div>
+
+        <h2>
+          Bienvenido
+          <span>de vuelta.</span>
+        </h2>
+
+        <p>
+          Ingresa tus credenciales para acceder
+          al sistema del taller.
+        </p>
+
+        @if (error) {
+          <div class="mensaje-error">
+            {{ error }}
+          </div>
+        }
+
+        <form (ngSubmit)="iniciarSesion()">
+
+          <label for="usuario">
+            Usuario o correo electrónico
+          </label>
+
+          <input
+            type="text"
+            id="usuario"
+            name="usuario"
+            placeholder="Usuario o nombre@taller.com"
+            autocomplete="username"
+            [(ngModel)]="formulario.usuario"
+            [disabled]="cargando"
+            required
+          >
+
+          <label for="password">
+            Contraseña
+          </label>
+
+          <div class="campo-pass">
+
+            <input
+              [type]="mostrarPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              placeholder="Ingresa tu contraseña"
+              autocomplete="current-password"
+              [(ngModel)]="formulario.password"
+              [disabled]="cargando"
+              required
+            >
+
+            <button
+              type="button"
+              class="toggle-pass"
+              (click)="alternarPassword()"
+              [disabled]="cargando"
+              [attr.aria-label]="
+                mostrarPassword
+                  ? 'Ocultar contraseña'
+                  : 'Mostrar contraseña'
+              "
+            >
+              {{ mostrarPassword ? '🙈' : '👁' }}
+            </button>
+
+          </div>
+
+          <div class="form-extra">
+
+            <label class="checkbox">
+
+              <input
+                type="checkbox"
+                name="recordar"
+                [(ngModel)]="recordar"
+                [disabled]="cargando"
+              >
+
+              <span class="marca"></span>
+
+              Recordarme
+
+            </label>
+
+          </div>
+
+          <button
+            type="submit"
+            class="submit-button"
+            [disabled]="cargando"
+          >
+            @if (cargando) {
+              Iniciando sesión...
+            } @else {
+              Ingresar al sistema
+            }
+          </button>
+
+          <p class="registro">
+            ¿No tienes cuenta?
+
+            <a routerLink="/register">
+              Regístrate
+            </a>
+          </p>
+
+        </form>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>

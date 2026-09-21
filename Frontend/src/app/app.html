@@ -1,10 +1,18 @@
-<div class="layout">
+<div
+  class="layout"
+  [class.auth-layout]="esRutaAutenticacion"
+>
 
-  <aside class="sidebar">
-    <app-sidebar></app-sidebar>
-  </aside>
+  @if (!esRutaAutenticacion) {
+    <aside class="sidebar-container">
+      <app-sidebar></app-sidebar>
+    </aside>
+  }
 
-  <main class="main">
+  <main
+    class="page-content"
+    [class.auth-content]="esRutaAutenticacion"
+  >
     <router-outlet></router-outlet>
   </main>
 
