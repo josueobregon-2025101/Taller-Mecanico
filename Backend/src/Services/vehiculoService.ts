@@ -5,16 +5,30 @@ export const getAllVehiculos = async (): Promise<Vehiculo[]> => {
 
     try {
 
-        const result = await pool.query(
-            'SELECT * FROM Vehiculos'
-        );
+        const result = await pool.query(`
+            SELECT
+                "idvehiculo" AS "idVehiculo",
+                "idclientes" AS "idClientes",
+                placa,
+                marca,
+                modelo,
+                "año" AS ano,
+                kilometraje_total
+            FROM Vehiculos
+            ORDER BY "idvehiculo" ASC
+        `);
 
-        return result.rows;
+        return result.rows as Vehiculo[];
 
     } catch (error) {
 
+        console.error(
+            'Error al obtener vehículos:',
+            error
+        );
+
         throw new Error(
-            'Error al obtener vehículos: ' + error
+            'Error al obtener vehículos'
         );
 
     }
@@ -28,17 +42,30 @@ export const getVehiculoById = async (
 
     try {
 
-        const result = await pool.query(
-            'SELECT * FROM Vehiculos WHERE idVehiculo = $1',
-            [id]
-        );
+        const result = await pool.query(`
+            SELECT
+                "idvehiculo" AS "idVehiculo",
+                "idclientes" AS "idClientes",
+                placa,
+                marca,
+                modelo,
+                "año" AS ano,
+                kilometraje_total
+            FROM Vehiculos
+            WHERE "idvehiculo" = $1
+        `, [id]);
 
         return result.rows[0] || null;
 
     } catch (error) {
 
+        console.error(
+            'Error al obtener vehículo:',
+            error
+        );
+
         throw new Error(
-            'Error al obtener vehículo: ' + error
+            'Error al obtener vehículo'
         );
 
     }
@@ -50,38 +77,48 @@ export const createVehiculo = async (
     vehiculo: Omit<Vehiculo, 'idVehiculo'>
 ): Promise<Vehiculo> => {
 
-    const {
-        idClientes,
-        placa,
-        marca,
-        modelo,
-        ano,
-        kilometraje_total
-    } = vehiculo;
-
     try {
 
-        const result = await pool.query(
-            `INSERT INTO Vehiculos 
-            (idClientes, placa, marca, modelo, ano, kilometraje_total)
-             VALUES ($1, $2, $3, $4, $5, $6)
-             RETURNING *`,
-            [
+        const result = await pool.query(`
+            INSERT INTO Vehiculos
+            (
                 idClientes,
                 placa,
                 marca,
                 modelo,
-                ano,
+                "año",
                 kilometraje_total
-            ]
-        );
+            )
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING
+                "idvehiculo" AS "idVehiculo",
+                "idclientes" AS "idClientes",
+                placa,
+                marca,
+                modelo,
+                "año" AS ano,
+                kilometraje_total
+        `,
+        [
+            vehiculo.idClientes,
+            vehiculo.placa,
+            vehiculo.marca,
+            vehiculo.modelo,
+            vehiculo.ano,
+            vehiculo.kilometraje_total
+        ]);
 
-        return result.rows[0];
+        return result.rows[0] as Vehiculo;
 
     } catch (error) {
 
+        console.error(
+            'Error al crear vehículo:',
+            error
+        );
+
         throw new Error(
-            'Error al crear vehículo: ' + error
+            'Error al crear vehículo'
         );
 
     }
@@ -104,7 +141,9 @@ export const updateVehiculo = async (
     ];
 
     const campos = Object.keys(vehiculo)
-        .filter(key => camposPermitidos.includes(key));
+        .filter(campo =>
+            camposPermitidos.includes(campo)
+        );
 
     if (campos.length === 0) {
 
@@ -114,36 +153,59 @@ export const updateVehiculo = async (
 
     }
 
-    const values = campos.map(
-        campo => vehiculo[campo as keyof Vehiculo]
+    const valores = campos.map(
+        campo =>
+            vehiculo[
+                campo as keyof Vehiculo
+            ]
     );
 
-    const fields = campos
-        .map(
-            (campo, index) =>
-                `${campo} = $${index + 1}`
-        )
-        .join(', ');
+    const expresiones = campos.map(
+        (campo, index) => {
+
+            if (campo === 'ano') {
+                return `"año" = $${index + 1}`;
+            }
+
+            return `${campo} = $${index + 1}`;
+
+        }
+    );
+
+    const setClause =
+        expresiones.join(', ');
 
     try {
 
-        const result = await pool.query(
-            `UPDATE Vehiculos
-             SET ${fields}
-             WHERE idVehiculo = $${values.length + 1}
-             RETURNING *`,
-            [
-                ...values,
-                id
-            ]
-        );
+        const result = await pool.query(`
+            UPDATE Vehiculos
+            SET ${setClause}
+            WHERE "idvehiculo" = $${valores.length + 1}
+            RETURNING
+                "idvehiculo" AS "idVehiculo",
+                "idclientes" AS "idClientes",
+                placa,
+                marca,
+                modelo,
+                "año" AS ano,
+                kilometraje_total
+        `,
+        [
+            ...valores,
+            id
+        ]);
 
         return result.rows[0] || null;
 
     } catch (error) {
 
+        console.error(
+            'Error al actualizar vehículo:',
+            error
+        );
+
         throw new Error(
-            'Error al actualizar vehículo: ' + error
+            'Error al actualizar vehículo'
         );
 
     }
@@ -157,17 +219,24 @@ export const deleteVehiculo = async (
 
     try {
 
-        const result = await pool.query(
-            'DELETE FROM Vehiculos WHERE idVehiculo = $1 RETURNING *',
-            [id]
-        );
+        const result = await pool.query(`
+            DELETE FROM Vehiculos
+            WHERE "idvehiculo" = $1
+            RETURNING "idvehiculo"
+        `, [id]);
 
-        return result.rowCount ? true : false;
+        return result.rowCount !== null &&
+               result.rowCount > 0;
 
     } catch (error) {
 
+        console.error(
+            'Error al eliminar vehículo:',
+            error
+        );
+
         throw new Error(
-            'Error al eliminar vehículo: ' + error
+            'Error al eliminar vehículo'
         );
 
     }
