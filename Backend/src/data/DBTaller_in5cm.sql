@@ -16,7 +16,7 @@ Create Type estado_venta As Enum ('Pagado', 'Pendiente', 'Anulado');
 
 Create Table Clientes (
     idClientes Serial,
-    nombreCliente Varchar(45) Not Null,
+    nombrecliente Varchar(45) Not Null,
     apellido Varchar(45) Not Null,
     documento Varchar(45) Unique,
     telefono Int,
