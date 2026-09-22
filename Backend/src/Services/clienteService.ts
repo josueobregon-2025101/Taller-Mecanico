@@ -9,12 +9,12 @@ export const getAllClientes = async (): Promise<Cliente[]> => {
             'SELECT * FROM Clientes'
         );
 
-        return result.rows;
+        return result.rows as Cliente[];
 
     } catch (error) {
 
         throw new Error(
-            'Error al obtener clientes: ' + error
+            'Error al obtener clientes'
         );
 
     }
@@ -33,12 +33,18 @@ export const getClienteById = async (
             [id]
         );
 
-        return result.rows[0] || null;
+        if (result.rows.length > 0) {
+
+            return result.rows[0] as Cliente;
+
+        }
+
+        return null;
 
     } catch (error) {
 
         throw new Error(
-            'Error al obtener cliente: ' + error
+            'Error al obtener cliente por ID'
         );
 
     }
@@ -50,30 +56,33 @@ export const createCliente = async (
     cliente: Omit<Cliente, 'idClientes'>
 ): Promise<Cliente> => {
 
-    const {
-        nombreCliente,
-        apellido,
-        documento,
-        telefono
-    } = cliente;
-
     try {
 
         const result = await pool.query(
-            `INSERT INTO Clientes 
-                (nombreCliente, apellido, documento, telefono)
-             VALUES 
-                ($1, $2, $3, $4)
-             RETURNING *`,
-            [
+            `INSERT INTO Clientes
+            (
                 nombreCliente,
                 apellido,
                 documento,
                 telefono
+            )
+            VALUES
+            (
+                $1,
+                $2,
+                $3,
+                $4
+            )
+            RETURNING *`,
+            [
+                cliente.nombreCliente,
+                cliente.apellido,
+                cliente.documento,
+                cliente.telefono
             ]
         );
 
-        return result.rows[0];
+        return result.rows[0] as Cliente;
 
     } catch (error) {
 
@@ -88,52 +97,64 @@ export const createCliente = async (
 
 export const updateCliente = async (
     id: number,
-    cliente: Partial<Omit<Cliente, "idClientes">>
+    cliente: Partial<Omit<Cliente, 'idClientes'>>
 ): Promise<Cliente | null> => {
 
     try {
 
-        const existente = await getClienteById(id);
+        const existente =
+            await getClienteById(id);
 
         if (!existente) {
             return null;
         }
 
-        const keys = Object.keys(cliente);
+        const keys =
+            Object.keys(cliente);
 
         if (keys.length === 0) {
             return null;
         }
 
         const setClause = keys
-            .map((key, index) => `${key} = $${index + 1}`)
+            .map(
+                (key, index) =>
+                    `${key} = $${index + 1}`
+            )
             .join(', ');
 
-        const values: (string | number)[] = keys.map(
-            key => cliente[key as keyof typeof cliente]!
-        );
+        const values:
+            (string | number)[] =
+            keys.map(
+                key =>
+                    cliente[
+                        key as keyof typeof cliente
+                    ]!
+            );
 
         values.push(id);
 
-        const result = await pool.query(
-            `UPDATE Clientes
-             SET ${setClause}
-             WHERE idClientes = $${values.length}
-             RETURNING *`,
-            values
-        );
+        const result =
+            await pool.query(
+                `UPDATE Clientes
+                 SET ${setClause}
+                 WHERE idClientes = $${values.length}
+                 RETURNING *`,
+                values
+            );
 
         return result.rows[0] || null;
 
     } catch (error) {
 
         throw new Error(
-            'Error al intentar actualizar el cliente: ' + error
+            'Error al actualizar cliente: ' +
+            error
         );
 
     }
-};
 
+};
 
 
 export const deleteCliente = async (
@@ -142,17 +163,30 @@ export const deleteCliente = async (
 
     try {
 
-        const result = await pool.query(
-            'DELETE FROM Clientes WHERE idClientes = $1 RETURNING *',
-            [id]
-        );
+        const existente =
+            await getClienteById(id);
 
-        return result.rowCount ? true : false;
+        if (!existente) {
+            return false;
+        }
+
+        const result =
+            await pool.query(
+                `DELETE FROM Clientes
+                 WHERE idClientes = $1
+                 RETURNING *`,
+                [id]
+            );
+
+        return result.rowCount
+            ? true
+            : false;
 
     } catch (error) {
 
         throw new Error(
-            'Error al eliminar cliente: ' + error
+            'Error al eliminar cliente: ' +
+            error
         );
 
     }
