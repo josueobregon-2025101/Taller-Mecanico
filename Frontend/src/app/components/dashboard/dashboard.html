@@ -1,0 +1,572 @@
+<main class="dashboard">
+
+  <div class="decoracion">
+    <div class="burbuja burbuja-1"></div>
+    <div class="burbuja burbuja-2"></div>
+    <div class="burbuja burbuja-3"></div>
+    <div class="burbuja burbuja-4"></div>
+    <div class="brillo brillo-1"></div>
+    <div class="brillo brillo-2"></div>
+  </div>
+
+  <header class="dashboard-header">
+
+    <div class="bienvenida">
+
+      <div
+      class="dashboard-logo"
+     role="img"
+    aria-label="Logo del taller mecánico"
+      ></div>
+
+      <div class="bienvenida-texto">
+        <span class="etiqueta-superior">
+          Panel general
+        </span>
+
+        <h1>
+          Bienvenido a
+          <span>Mecatronik</span>
+        </h1>
+
+        <p>
+          Consulta el resumen y la actividad reciente
+          del taller desde un solo lugar.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="header-acciones">
+
+      <div class="actualizacion">
+
+        <span>Última actualización</span>
+
+        <strong>
+          @if (ultimaActualizacion) {
+            {{
+              ultimaActualizacion
+                | date:'dd/MM/yyyy, HH:mm'
+            }}
+          } @else {
+            Pendiente
+          }
+        </strong>
+
+      </div>
+
+      <button
+        type="button"
+        class="actualizar-button"
+        (click)="actualizarDashboard()"
+        [disabled]="
+          cargandoEstadisticas ||
+          cargandoActividades
+        "
+      >
+        @if (
+          cargandoEstadisticas ||
+          cargandoActividades
+        ) {
+          Actualizando...
+        } @else {
+          ↻ Actualizar
+        }
+      </button>
+
+    </div>
+
+  </header>
+
+  <section class="dashboard-content">
+
+    @if (errorEstadisticas) {
+      <div class="mensaje-error">
+        {{ errorEstadisticas }}
+
+        <button
+          type="button"
+          (click)="cargarEstadisticas()"
+        >
+          Reintentar
+        </button>
+      </div>
+    }
+
+    <section class="estadisticas-section">
+
+      <div class="section-header">
+        <div>
+          <span class="section-label">
+            Resumen general
+          </span>
+
+          <h2>
+            Estadísticas del taller
+          </h2>
+
+          <p>
+            Información actual de los principales
+            módulos del sistema.
+          </p>
+        </div>
+
+        <div class="total-general">
+          <span>Registros principales</span>
+
+          <strong>
+            {{ totalRegistrosPrincipales() }}
+          </strong>
+        </div>
+      </div>
+
+      @if (cargandoEstadisticas) {
+
+        <div class="cargando-panel">
+          <div class="spinner"></div>
+          <span>Cargando estadísticas...</span>
+        </div>
+
+      } @else {
+
+        <div class="estadisticas-grid">
+
+          <a
+            class="estadistica-card clientes-card"
+            routerLink="/clientes"
+          >
+            <div class="card-icon">👥</div>
+
+            <div class="card-content">
+              <span>Clientes</span>
+              <strong>
+                {{ estadisticas.total_clientes }}
+              </strong>
+              <small>Personas registradas</small>
+            </div>
+
+            <div class="card-arrow">›</div>
+          </a>
+
+          <a
+            class="estadistica-card vehiculos-card"
+            routerLink="/vehiculos"
+          >
+            <div class="card-icon">🚘</div>
+
+            <div class="card-content">
+              <span>Vehículos</span>
+              <strong>
+                {{ estadisticas.total_vehiculos }}
+              </strong>
+              <small>Vehículos registrados</small>
+            </div>
+
+            <div class="card-arrow">›</div>
+          </a>
+
+          <a
+            class="estadistica-card servicios-card"
+            routerLink="/servicios"
+          >
+            <div class="card-icon">🔧</div>
+
+            <div class="card-content">
+              <span>Servicios</span>
+              <strong>
+                {{ estadisticas.total_servicios }}
+              </strong>
+              <small>Servicios realizados</small>
+            </div>
+
+            <div class="card-arrow">›</div>
+          </a>
+
+          <a
+            class="estadistica-card inventario-card"
+            routerLink="/inventario"
+          >
+            <div class="card-icon">📦</div>
+
+            <div class="card-content">
+              <span>Inventario</span>
+              <strong>
+                {{ estadisticas.total_inventario }}
+              </strong>
+              <small>Productos registrados</small>
+            </div>
+
+            <div class="card-arrow">›</div>
+          </a>
+
+          <a
+            class="estadistica-card citas-card"
+            routerLink="/citas"
+          >
+            <div class="card-icon">📅</div>
+
+            <div class="card-content">
+              <span>Citas</span>
+              <strong>
+                {{ estadisticas.total_citas }}
+              </strong>
+              <small>Citas registradas</small>
+            </div>
+
+            <div class="card-arrow">›</div>
+          </a>
+
+          <a
+            class="estadistica-card proveedores-card"
+            routerLink="/proveedores"
+          >
+            <div class="card-icon">🚚</div>
+
+            <div class="card-content">
+              <span>Proveedores</span>
+              <strong>
+                {{ estadisticas.total_proveedores }}
+              </strong>
+              <small>Proveedores disponibles</small>
+            </div>
+
+            <div class="card-arrow">›</div>
+          </a>
+
+        </div>
+
+      }
+
+    </section>
+
+    <section class="dashboard-grid">
+
+      <article class="actividad-panel">
+
+        <div class="panel-header">
+
+          <div>
+            <span class="section-label">
+              Seguimiento
+            </span>
+
+            <h2>
+              Actividad reciente
+            </h2>
+
+            <p>
+              Últimas operaciones realizadas
+              dentro del taller.
+            </p>
+          </div>
+
+          <span class="contador-actividad">
+            {{ actividades.length }} actividades
+          </span>
+
+        </div>
+
+        @if (errorActividades) {
+
+          <div class="mensaje-error panel-error">
+            {{ errorActividades }}
+
+            <button
+              type="button"
+              (click)="cargarActividadReciente()"
+            >
+              Reintentar
+            </button>
+          </div>
+
+        } @else if (cargandoActividades) {
+
+          <div class="cargando-panel actividad-cargando">
+            <div class="spinner"></div>
+            <span>Cargando actividad reciente...</span>
+          </div>
+
+        } @else {
+
+          <div class="actividad-lista">
+
+            @for (
+              actividad of actividades;
+              track actividad.tipo + actividad.id + actividad.fecha
+            ) {
+              <article
+                class="actividad-item"
+                [class]="obtenerClaseActividad(
+                  actividad.tipo
+                )"
+              >
+
+                <div class="actividad-icono">
+                  {{
+                    obtenerIconoActividad(
+                      actividad.tipo
+                    )
+                  }}
+                </div>
+
+                <div class="actividad-contenido">
+
+                  <div class="actividad-titulo">
+
+                    <div>
+                      <span class="actividad-tipo">
+                        {{ actividad.tipo }}
+                      </span>
+
+                      <h3>
+                        {{ actividad.titulo }}
+                      </h3>
+                    </div>
+
+                    @if (actividad.estado) {
+                      <span
+                        class="estado"
+                        [class]="obtenerClaseEstado(
+                          actividad.estado
+                        )"
+                      >
+                        {{ actividad.estado }}
+                      </span>
+                    }
+
+                  </div>
+
+                  <p>
+                    {{ actividad.descripcion }}
+                  </p>
+
+                  <time>
+                    {{
+                      actividad.fecha
+                        | date:'dd/MM/yyyy, HH:mm'
+                    }}
+                  </time>
+
+                </div>
+
+              </article>
+            } @empty {
+
+              <div class="lista-vacia">
+                <div class="vacio-icono">◇</div>
+
+                <h3>
+                  No hay actividad reciente
+                </h3>
+
+                <p>
+                  Las nuevas citas, servicios y
+                  movimientos aparecerán aquí.
+                </p>
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </article>
+
+      <aside class="resumen-lateral">
+
+        <section class="resumen-card">
+
+          <div class="panel-header resumen-header">
+
+            <div>
+              <span class="section-label">
+                Información
+              </span>
+
+              <h2>
+                Resumen del sistema
+              </h2>
+            </div>
+
+            <div class="resumen-icono">
+              ◈
+            </div>
+
+          </div>
+
+          <div class="resumen-lista">
+
+            <div class="resumen-fila">
+              <div class="resumen-dato">
+                <span class="punto punto-cyan"></span>
+
+                <div>
+                  <strong>
+                    {{ estadisticas.total_empleados }}
+                  </strong>
+
+                  <span>Empleados</span>
+                </div>
+              </div>
+
+              <small>Personal registrado</small>
+            </div>
+
+            <div class="resumen-fila">
+              <div class="resumen-dato">
+                <span class="punto punto-azul"></span>
+
+                <div>
+                  <strong>
+                    {{ estadisticas.total_usuarios }}
+                  </strong>
+
+                  <span>Usuarios</span>
+                </div>
+              </div>
+
+              <small>Accesos al sistema</small>
+            </div>
+
+            <div class="resumen-fila">
+              <div class="resumen-dato">
+                <span class="punto punto-verde"></span>
+
+                <div>
+                  <strong>
+                    {{ estadisticas.total_detalle }}
+                  </strong>
+
+                  <span>Detalles</span>
+                </div>
+              </div>
+
+              <small>Detalles de servicios</small>
+            </div>
+
+            <div class="resumen-fila">
+              <div class="resumen-dato">
+                <span class="punto punto-naranja"></span>
+
+                <div>
+                  <strong>
+                    {{ estadisticas.total_movimientos }}
+                  </strong>
+
+                  <span>Movimientos</span>
+                </div>
+              </div>
+
+              <small>Movimientos de inventario</small>
+            </div>
+
+            <div class="resumen-fila">
+              <div class="resumen-dato">
+                <span class="punto punto-morado"></span>
+
+                <div>
+                  <strong>
+                    {{ estadisticas.total_control }}
+                  </strong>
+
+                  <span>Ventas</span>
+                </div>
+              </div>
+
+              <small>Registros de ventas</small>
+            </div>
+
+          </div>
+
+        </section>
+
+        <section class="accesos-card">
+
+          <div class="panel-header">
+            <div>
+              <span class="section-label">
+                Navegación
+              </span>
+
+              <h2>
+                Accesos rápidos
+              </h2>
+
+              <p>
+                Ingresa directamente a los módulos
+                utilizados con mayor frecuencia.
+              </p>
+            </div>
+          </div>
+
+          <div class="accesos-grid">
+
+            <a
+              routerLink="/servicios"
+              class="acceso acceso-servicio"
+            >
+              <span class="acceso-icono">🔧</span>
+
+              <div>
+                <strong>Servicios</strong>
+                <small>Gestionar trabajos</small>
+              </div>
+
+              <span class="acceso-flecha">›</span>
+            </a>
+
+            <a
+              routerLink="/inventario"
+              class="acceso acceso-inventario"
+            >
+              <span class="acceso-icono">📦</span>
+
+              <div>
+                <strong>Inventario</strong>
+                <small>Administrar productos</small>
+              </div>
+
+              <span class="acceso-flecha">›</span>
+            </a>
+
+            <a
+              routerLink="/clientes"
+              class="acceso acceso-cliente"
+            >
+              <span class="acceso-icono">👥</span>
+
+              <div>
+                <strong>Clientes</strong>
+                <small>Consultar clientes</small>
+              </div>
+
+              <span class="acceso-flecha">›</span>
+            </a>
+
+            <a
+              routerLink="/vehiculos"
+              class="acceso acceso-vehiculo"
+            >
+              <span class="acceso-icono">🚘</span>
+
+              <div>
+                <strong>Vehículos</strong>
+                <small>Consultar vehículos</small>
+              </div>
+
+              <span class="acceso-flecha">›</span>
+            </a>
+
+          </div>
+
+        </section>
+
+      </aside>
+
+    </section>
+
+  </section>
+
+</main>
