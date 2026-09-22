@@ -14,11 +14,31 @@ export interface Cita {
   estadocita: EstadoCita;
 }
 
-export interface CitaResponse {
+export interface CitaFormulario {
+  idVehiculo: number;
+  idClientes: number;
+  idEmpleado: number | null;
+  fecha_hora: string;
+  descripcion: string;
+  estadoCita: EstadoCita;
+}
+
+export interface CrearCitaResponse {
   status: string;
   message: string;
-  data?: Cita;
-  result?: Cita;
+  data: Cita;
+}
+
+export interface ActualizarCitaResponse {
+  status: string;
+  message: string;
+  result: Cita | null;
+}
+
+export interface EliminarCitaResponse {
+  status: string;
+  message: string;
+  result: boolean;
 }
 
 @Injectable({
@@ -38,8 +58,10 @@ export class CitaService {
     return this.http.get<Cita>(`${this.apiUrl}/${id}`);
   }
 
-  crearCita(cita: Omit<Cita, 'idcita'>): Observable<CitaResponse> {
-    return this.http.post<CitaResponse>(
+  crearCita(
+    cita: CitaFormulario
+  ): Observable<CrearCitaResponse> {
+    return this.http.post<CrearCitaResponse>(
       this.apiUrl,
       cita
     );
@@ -47,15 +69,19 @@ export class CitaService {
 
   actualizarCita(
     id: number,
-    cita: Partial<Cita>
-  ): Observable<CitaResponse> {
-    return this.http.put<CitaResponse>(
+    cita: CitaFormulario
+  ): Observable<ActualizarCitaResponse> {
+    return this.http.put<ActualizarCitaResponse>(
       `${this.apiUrl}/${id}`,
       cita
     );
   }
 
-  eliminarCita(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarCita(
+    id: number
+  ): Observable<EliminarCitaResponse> {
+    return this.http.delete<EliminarCitaResponse>(
+      `${this.apiUrl}/${id}`
+    );
   }
 }

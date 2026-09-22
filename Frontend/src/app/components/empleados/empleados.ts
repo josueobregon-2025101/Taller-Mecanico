@@ -1,95 +1,224 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-export type PuestoEmpleado =
-  | 'Mecánico'
-  | 'Electromecánico'
-  | 'Auxiliar'
-  | 'Administrativo';
+import {
+  Empleado,
+  EmpleadoService,
+  EmpleadoFormulario
+} from '../../services/empleados.service';
 
-export type EstadoEmpleado = 'Activo' | 'Inactivo';
-
-// Lo que devuelve el backend (minúsculas)
-export interface Empleado {
-  idempleado: number;
-  nombreempleado: string;
-  apellidoempleado: string;
-  cedula: string;
-  telefonoempleado: string;
-  puesto: PuestoEmpleado;
-  estadoempleado: EstadoEmpleado;
-}
-
-// Lo que se envía al backend (camelCase)
-export interface EmpleadoFormulario {
-  nombreEmpleado: string;
-  apellidoEmpleado: string;
-  cedula: string;
-  telefonoEmpleado: string;
-  puesto: PuestoEmpleado;
-  estadoEmpleado: EstadoEmpleado;
-}
-
-export interface CrearEmpleadoResponse {
-  status: string;
-  message: string;
-  data: Empleado;
-}
-
-export interface ActualizarEmpleadoResponse {
-  status: string;
-  message: string;
-  result: Empleado | null;
-}
-
-export interface EliminarEmpleadoResponse {
-  status: string;
-  message: string;
-  result: boolean;
-}
-
-@Injectable({
-  providedIn: 'root'
+@Component({
+  selector: 'app-empleados',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './empleados.html',
+  styleUrl: './empleados.css'
 })
-export class EmpleadoService {
+export class Empleados implements OnInit {
 
-  private apiUrl = 'http://localhost:3000/api/empleados';
+  private empleadoService = inject(EmpleadoService);
+  private cdr = inject(ChangeDetectorRef);
 
-  constructor(private http: HttpClient) {}
+  empleados: Empleado[] = [];
+  empleadosFiltrados: Empleado[] = [];
 
-  obtenerEmpleados(): Observable<Empleado[]> {
-    return this.http.get<Empleado[]>(this.apiUrl);
+  cargando = false;
+  guardando = false;
+  formularioVisible = false;
+
+  error = '';
+  mensaje = '';
+
+  empleadoEditandoId: number | null = null;
+
+  formulario: EmpleadoFormulario = this.crearFormularioVacio();
+
+  ngOnInit(): void {
+    this.cargarEmpleados();
   }
 
-  obtenerEmpleado(id: number): Observable<Empleado> {
-    return this.http.get<Empleado>(`${this.apiUrl}/${id}`);
+  cargarEmpleados(): void {
+    this.cargando = true;
+    this.error = '';
+
+    this.empleadoService.obtenerEmpleados().subscribe({
+      next: (respuesta) => {
+        this.empleados = respuesta;
+        this.empleadosFiltrados = respuesta;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al cargar empleados:', error);
+        this.error = 'No fue posible cargar los empleados.';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  crearEmpleado(
-    empleado: EmpleadoFormulario
-  ): Observable<CrearEmpleadoResponse> {
-    return this.http.post<CrearEmpleadoResponse>(
-      this.apiUrl,
-      empleado
+  buscar(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const texto = input.value.trim().toLowerCase();
+
+    if (!texto) {
+      this.empleadosFiltrados = this.empleados;
+      return;
+    }
+
+    this.empleadosFiltrados = this.empleados.filter((empleado) =>
+      empleado.nombreempleado.toLowerCase().includes(texto) ||
+      empleado.apellidoempleado.toLowerCase().includes(texto) ||
+      empleado.cedula.toLowerCase().includes(texto) ||
+      empleado.puesto.toLowerCase().includes(texto)
     );
   }
 
-  actualizarEmpleado(
-    id: number,
-    empleado: EmpleadoFormulario
-  ): Observable<ActualizarEmpleadoResponse> {
-    return this.http.put<ActualizarEmpleadoResponse>(
-      `${this.apiUrl}/${id}`,
-      empleado
+  nuevoEmpleado(): void {
+    this.empleadoEditandoId = null;
+    this.formulario = this.crearFormularioVacio();
+    this.formularioVisible = true;
+    this.guardando = false;
+    this.error = '';
+    this.mensaje = '';
+  }
+
+  editarEmpleado(empleado: Empleado): void {
+    this.empleadoEditandoId = empleado.idempleado;
+
+    this.formulario = {
+      nombreEmpleado: empleado.nombreempleado,
+      apellidoEmpleado: empleado.apellidoempleado,
+      cedula: empleado.cedula,
+      telefonoEmpleado: empleado.telefonoempleado,
+      puesto: empleado.puesto,
+      estadoEmpleado: empleado.estadoempleado
+    };
+
+    this.formularioVisible = true;
+    this.guardando = false;
+    this.error = '';
+    this.mensaje = '';
+  }
+
+  guardarEmpleado(): void {
+    if (!this.formularioValido()) {
+      this.error = 'Por favor completa todos los campos requeridos.';
+      return;
+    }
+
+    this.guardando = true;
+    this.error = '';
+    this.mensaje = '';
+
+    if (this.empleadoEditandoId === null) {
+      this.crearEmpleado();
+    } else {
+      this.actualizarEmpleado();
+    }
+  }
+
+  crearEmpleado(): void {
+    this.empleadoService.crearEmpleado(this.formulario).subscribe({
+      next: () => {
+        this.guardando = false;
+        this.mensaje = 'Empleado creado exitosamente.';
+        this.formularioVisible = false;
+        this.empleadoEditandoId = null;
+        this.formulario = this.crearFormularioVacio();
+        this.cargarEmpleados();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al crear empleado:', error);
+        this.error = 'No fue posible crear el empleado.';
+        this.guardando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  actualizarEmpleado(): void {
+    if (this.empleadoEditandoId === null) return;
+
+    this.empleadoService
+      .actualizarEmpleado(this.empleadoEditandoId, this.formulario)
+      .subscribe({
+        next: () => {
+          this.guardando = false;
+          this.mensaje = 'Empleado actualizado exitosamente.';
+          this.formularioVisible = false;
+          this.empleadoEditandoId = null;
+          this.formulario = this.crearFormularioVacio();
+          this.cargarEmpleados();
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error al actualizar empleado:', error);
+          this.error = 'No fue posible actualizar el empleado.';
+          this.guardando = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  eliminarEmpleado(empleado: Empleado): void {
+    const confirmar = window.confirm(
+      `¿Deseas eliminar a "${empleado.nombreempleado} ${empleado.apellidoempleado}"?`
+    );
+
+    if (!confirmar) return;
+
+    this.error = '';
+    this.mensaje = '';
+
+    this.empleadoService.eliminarEmpleado(empleado.idempleado).subscribe({
+      next: () => {
+        this.mensaje = 'Empleado eliminado exitosamente.';
+        this.cargarEmpleados();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al eliminar empleado:', error);
+        this.error = 'No fue posible eliminar el empleado.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cancelarFormulario(): void {
+    this.formularioVisible = false;
+    this.empleadoEditandoId = null;
+    this.guardando = false;
+    this.formulario = this.crearFormularioVacio();
+    this.error = '';
+  }
+
+  formularioValido(): boolean {
+    return (
+      this.formulario.nombreEmpleado.trim() !== '' &&
+      this.formulario.apellidoEmpleado.trim() !== '' &&
+      this.formulario.cedula.trim() !== '' &&
+      this.formulario.telefonoEmpleado.trim() !== '' &&
+      this.formulario.puesto !== null &&
+      this.formulario.estadoEmpleado !== null
     );
   }
 
-  eliminarEmpleado(
-    id: number
-  ): Observable<EliminarEmpleadoResponse> {
-    return this.http.delete<EliminarEmpleadoResponse>(
-      `${this.apiUrl}/${id}`
-    );
+  crearFormularioVacio(): EmpleadoFormulario {
+    return {
+      nombreEmpleado: '',
+      apellidoEmpleado: '',
+      cedula: '',
+      telefonoEmpleado: '',
+      puesto: 'Mecánico',
+      estadoEmpleado: 'Activo'
+    };
   }
 }

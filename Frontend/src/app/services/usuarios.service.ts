@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export type RolUsuario = 'Dueño' | 'Secretario';
 export type EstadoUsuario = 'Activo' | 'Inactivo';
 
+// Lo que devuelve el backend (minúsculas)
 export interface Usuario {
   idusuario: number;
   nombreusuario: string;
@@ -14,11 +15,31 @@ export interface Usuario {
   estadousuario: EstadoUsuario;
 }
 
-export interface UsuarioResponse {
+// Lo que se envía al backend (camelCase)
+export interface UsuarioFormulario {
+  nombreUsuario: string;
+  password: string;
+  email: string;
+  rol: RolUsuario;
+  estadoUsuario: EstadoUsuario;
+}
+
+export interface CrearUsuarioResponse {
   status: string;
   message: string;
-  data?: Usuario;
-  result?: Usuario;
+  data: Usuario;
+}
+
+export interface ActualizarUsuarioResponse {
+  status: string;
+  message: string;
+  result: Usuario | null;
+}
+
+export interface EliminarUsuarioResponse {
+  status: string;
+  message: string;
+  result: boolean;
 }
 
 @Injectable({
@@ -38,8 +59,10 @@ export class UsuarioService {
     return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
   }
 
-  crearUsuario(usuario: Omit<Usuario, 'idusuario'>): Observable<UsuarioResponse> {
-    return this.http.post<UsuarioResponse>(
+  crearUsuario(
+    usuario: UsuarioFormulario
+  ): Observable<CrearUsuarioResponse> {
+    return this.http.post<CrearUsuarioResponse>(
       this.apiUrl,
       usuario
     );
@@ -47,15 +70,19 @@ export class UsuarioService {
 
   actualizarUsuario(
     id: number,
-    usuario: Partial<Usuario>
-  ): Observable<UsuarioResponse> {
-    return this.http.put<UsuarioResponse>(
+    usuario: UsuarioFormulario
+  ): Observable<ActualizarUsuarioResponse> {
+    return this.http.put<ActualizarUsuarioResponse>(
       `${this.apiUrl}/${id}`,
       usuario
     );
   }
 
-  eliminarUsuario(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarUsuario(
+    id: number
+  ): Observable<EliminarUsuarioResponse> {
+    return this.http.delete<EliminarUsuarioResponse>(
+      `${this.apiUrl}/${id}`
+    );
   }
 }

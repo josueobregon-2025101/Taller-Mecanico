@@ -10,6 +10,7 @@ export type PuestoEmpleado =
 
 export type EstadoEmpleado = 'Activo' | 'Inactivo';
 
+// Lo que devuelve el backend (minúsculas)
 export interface Empleado {
   idempleado: number;
   nombreempleado: string;
@@ -20,11 +21,32 @@ export interface Empleado {
   estadoempleado: EstadoEmpleado;
 }
 
-export interface EmpleadoResponse {
+// Lo que se envía al backend (camelCase)
+export interface EmpleadoFormulario {
+  nombreEmpleado: string;
+  apellidoEmpleado: string;
+  cedula: string;
+  telefonoEmpleado: string;
+  puesto: PuestoEmpleado;
+  estadoEmpleado: EstadoEmpleado;
+}
+
+export interface CrearEmpleadoResponse {
   status: string;
   message: string;
-  data?: Empleado;
-  result?: Empleado;
+  data: Empleado;
+}
+
+export interface ActualizarEmpleadoResponse {
+  status: string;
+  message: string;
+  result: Empleado | null;
+}
+
+export interface EliminarEmpleadoResponse {
+  status: string;
+  message: string;
+  result: boolean;
 }
 
 @Injectable({
@@ -44,8 +66,10 @@ export class EmpleadoService {
     return this.http.get<Empleado>(`${this.apiUrl}/${id}`);
   }
 
-  crearEmpleado(empleado: Omit<Empleado, 'idempleado'>): Observable<EmpleadoResponse> {
-    return this.http.post<EmpleadoResponse>(
+  crearEmpleado(
+    empleado: EmpleadoFormulario
+  ): Observable<CrearEmpleadoResponse> {
+    return this.http.post<CrearEmpleadoResponse>(
       this.apiUrl,
       empleado
     );
@@ -53,15 +77,19 @@ export class EmpleadoService {
 
   actualizarEmpleado(
     id: number,
-    empleado: Partial<Empleado>
-  ): Observable<EmpleadoResponse> {
-    return this.http.put<EmpleadoResponse>(
+    empleado: EmpleadoFormulario
+  ): Observable<ActualizarEmpleadoResponse> {
+    return this.http.put<ActualizarEmpleadoResponse>(
       `${this.apiUrl}/${id}`,
       empleado
     );
   }
 
-  eliminarEmpleado(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarEmpleado(
+    id: number
+  ): Observable<EliminarEmpleadoResponse> {
+    return this.http.delete<EliminarEmpleadoResponse>(
+      `${this.apiUrl}/${id}`
+    );
   }
 }
