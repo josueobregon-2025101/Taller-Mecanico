@@ -6,6 +6,6 @@ export interface Cita {
     idClientes: number;
     idEmpleado: number | null;
     fecha_hora: Date;
-    descripción: string;
+    descripcion: string;
     estadoCita: estadoCita;
 }
