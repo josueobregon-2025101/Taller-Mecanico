@@ -1,194 +1,148 @@
 import pool from '../connection/conexion';
 import { Cliente } from '../Models/Cliente';
 
+// OBTENER TODOS LOS CLIENTES
 export const getAllClientes = async (): Promise<Cliente[]> => {
-
     try {
-
-        const result = await pool.query(
-            'SELECT * FROM Clientes'
-        );
+        const result = await pool.query(`
+            SELECT
+                "idclientes" AS "idClientes",
+                nombrecliente,
+                apellido,
+                documento,
+                telefono
+            FROM Clientes
+            ORDER BY "idclientes" ASC
+        `);
 
         return result.rows as Cliente[];
 
     } catch (error) {
-
-        throw new Error(
-            'Error al obtener clientes'
-        );
-
+        console.error('Error al obtener clientes:', error);
+        throw new Error('Error al obtener clientes');
     }
-
 };
 
-
+// OBTENER CLIENTE POR ID
 export const getClienteById = async (
     id: number
 ): Promise<Cliente | null> => {
 
     try {
+        const result = await pool.query(`
+            SELECT
+                "idclientes" AS "idClientes",
+                nombrecliente,
+                apellido,
+                documento,
+                telefono
+            FROM Clientes
+            WHERE "idclientes" = $1
+        `, [id]);
 
-        const result = await pool.query(
-            'SELECT * FROM Clientes WHERE idClientes = $1',
-            [id]
-        );
-
-        if (result.rows.length > 0) {
-
-            return result.rows[0] as Cliente;
-
-        }
-
-        return null;
+        return result.rows[0] || null;
 
     } catch (error) {
-
-        throw new Error(
-            'Error al obtener cliente por ID'
-        );
-
+        console.error('Error al obtener cliente por ID:', error);
+        throw new Error('Error al obtener cliente por ID');
     }
-
 };
 
-
+// CREAR CLIENTE
 export const createCliente = async (
     cliente: Omit<Cliente, 'idClientes'>
 ): Promise<Cliente> => {
 
     try {
-
-        const result = await pool.query(
-            `INSERT INTO Clientes
-            (
-                nombreCliente,
+        const result = await pool.query(`
+            INSERT INTO Clientes (
+                nombrecliente,
                 apellido,
                 documento,
                 telefono
             )
-            VALUES
-            (
-                $1,
-                $2,
-                $3,
-                $4
-            )
-            RETURNING *`,
-            [
-                cliente.nombreCliente,
-                cliente.apellido,
-                cliente.documento,
-                cliente.telefono
-            ]
-        );
+            VALUES ($1, $2, $3, $4)
+            RETURNING
+                "idclientes" AS "idClientes",
+                nombrecliente,
+                apellido,
+                documento,
+                telefono
+        `, [
+            cliente.nombrecliente,
+            cliente.apellido,
+            cliente.documento,
+            cliente.telefono
+        ]);
 
         return result.rows[0] as Cliente;
 
     } catch (error) {
-
-        throw new Error(
-            'Error al crear cliente: ' + error
-        );
-
+        console.error('Error al crear cliente:', error);
+        throw new Error('Error al crear cliente');
     }
-
 };
 
-
+// ACTUALIZAR CLIENTE
 export const updateCliente = async (
     id: number,
-    cliente: Partial<Omit<Cliente, 'idClientes'>>
+    cliente: Omit<Cliente, 'idClientes'>
 ): Promise<Cliente | null> => {
 
     try {
+        const result = await pool.query(`
+            UPDATE Clientes
+            SET
+                nombrecliente = $1,
+                apellido = $2,
+                documento = $3,
+                telefono = $4
+            WHERE "idclientes" = $5
+            RETURNING
+                "idclientes" AS "idClientes",
+                nombrecliente,
+                apellido,
+                documento,
+                telefono
+        `, [
+            cliente.nombrecliente,
+            cliente.apellido,
+            cliente.documento,
+            cliente.telefono,
+            id
+        ]);
 
-        const existente =
-            await getClienteById(id);
-
-        if (!existente) {
+        if (result.rows.length === 0) {
             return null;
         }
 
-        const keys =
-            Object.keys(cliente);
-
-        if (keys.length === 0) {
-            return null;
-        }
-
-        const setClause = keys
-            .map(
-                (key, index) =>
-                    `${key} = $${index + 1}`
-            )
-            .join(', ');
-
-        const values:
-            (string | number)[] =
-            keys.map(
-                key =>
-                    cliente[
-                        key as keyof typeof cliente
-                    ]!
-            );
-
-        values.push(id);
-
-        const result =
-            await pool.query(
-                `UPDATE Clientes
-                 SET ${setClause}
-                 WHERE idClientes = $${values.length}
-                 RETURNING *`,
-                values
-            );
-
-        return result.rows[0] || null;
+        return result.rows[0] as Cliente;
 
     } catch (error) {
-
-        throw new Error(
-            'Error al actualizar cliente: ' +
-            error
-        );
-
+        console.error('Error al actualizar cliente:', error);
+        throw new Error('Error al actualizar cliente');
     }
-
 };
 
-
+// ELIMINAR CLIENTE
 export const deleteCliente = async (
     id: number
 ): Promise<boolean> => {
 
     try {
+        const result = await pool.query(`
+            DELETE FROM Clientes
+            WHERE "idclientes" = $1
+            RETURNING "idclientes"
+        `, [id]);
 
-        const existente =
-            await getClienteById(id);
-
-        if (!existente) {
-            return false;
-        }
-
-        const result =
-            await pool.query(
-                `DELETE FROM Clientes
-                 WHERE idClientes = $1
-                 RETURNING *`,
-                [id]
-            );
-
-        return result.rowCount
-            ? true
-            : false;
-
-    } catch (error) {
-
-        throw new Error(
-            'Error al eliminar cliente: ' +
-            error
+        return (
+            result.rowCount !== null &&
+            result.rowCount > 0
         );
 
+    } catch (error) {
+        console.error('Error al eliminar cliente:', error);
+        throw new Error('Error al eliminar cliente');
     }
-
 };
