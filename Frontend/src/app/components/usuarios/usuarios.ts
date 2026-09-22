@@ -1,87 +1,86 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {
-  Usuario,
-  UsuarioService
-} from '../../services/usuarios.service';
+export type RolUsuario = 'Dueño' | 'Secretario';
+export type EstadoUsuario = 'Activo' | 'Inactivo';
 
-@Component({
-  selector: 'app-usuarios',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './usuarios.html',
-  styleUrl: './usuarios.css'
+export interface Usuario {
+  idusuario: number;
+  nombreusuario: string;
+  password: string;
+  email: string;
+  rol: RolUsuario;
+  estadousuario: EstadoUsuario;
+}
+
+export interface UsuarioFormulario {
+  nombreUsuario: string;
+  password: string;
+  email: string;
+  rol: RolUsuario;
+  estadoUsuario: EstadoUsuario;
+}
+
+export interface CrearUsuarioResponse {
+  status: string;
+  message: string;
+  data: Usuario;
+}
+
+export interface ActualizarUsuarioResponse {
+  status: string;
+  message: string;
+  result: Usuario | null;
+}
+
+export interface EliminarUsuarioResponse {
+  status: string;
+  message: string;
+  result: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
 })
-export class Usuarios implements OnInit {
+export class UsuarioService {
 
-  private usuarioService = inject(UsuarioService);
-  private cdr = inject(ChangeDetectorRef);
+  private apiUrl = 'http://localhost:3000/api/usuarios';
 
-  usuarios: Usuario[] = [];
-  usuariosFiltrados: Usuario[] = [];
+  constructor(private http: HttpClient) {}
 
-  cargando = false;
-  error = '';
-
-  ngOnInit(): void {
-    this.cargarUsuarios();
+  obtenerUsuarios(): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(this.apiUrl);
   }
 
-  cargarUsuarios(): void {
-    this.cargando = true;
-    this.error = '';
-
-    this.usuarioService.obtenerUsuarios().subscribe({
-      next: (datos) => {
-        this.usuarios = datos;
-        this.usuariosFiltrados = [...datos];
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.error = 'No se pudieron cargar los usuarios.';
-        this.cargando = false;
-        this.cdr.detectChanges();
-      }
-    });
+  obtenerUsuario(id: number): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
   }
 
-  buscar(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const texto = input.value.toLowerCase().trim();
-
-    this.usuariosFiltrados = this.usuarios.filter(usuario =>
-      usuario.nombreusuario.toLowerCase().includes(texto)
-      || usuario.email.toLowerCase().includes(texto)
-      || usuario.rol.toLowerCase().includes(texto)
-      || usuario.estadousuario.toLowerCase().includes(texto)
+  crearUsuario(
+    usuario: UsuarioFormulario
+  ): Observable<CrearUsuarioResponse> {
+    return this.http.post<CrearUsuarioResponse>(
+      this.apiUrl,
+      usuario
     );
   }
 
-  nuevoUsuario(): void {
-    console.log('Abrir formulario nuevo usuario');
-  }
-
-  editarUsuario(usuario: Usuario): void {
-    console.log('Editar usuario:', usuario);
-  }
-
-  eliminarUsuario(usuario: Usuario): void {
-    const confirmar = confirm(
-      `¿Deseas eliminar al usuario ${usuario.nombreusuario}?`
+  actualizarUsuario(
+    id: number,
+    usuario: UsuarioFormulario
+  ): Observable<ActualizarUsuarioResponse> {
+    return this.http.put<ActualizarUsuarioResponse>(
+      `${this.apiUrl}/${id}`,
+      usuario
     );
+  }
 
-    if (!confirmar) return;
-
-    this.usuarioService.eliminarUsuario(usuario.idusuario).subscribe({
-      next: () => this.cargarUsuarios(),
-      error: (error) => {
-        console.error('Error al eliminar:', error);
-        alert('No se pudo eliminar el usuario.');
-      }
-    });
+  eliminarUsuario(
+    id: number
+  ): Observable<EliminarUsuarioResponse> {
+    return this.http.delete<EliminarUsuarioResponse>(
+      `${this.apiUrl}/${id}`
+    );
   }
 }
