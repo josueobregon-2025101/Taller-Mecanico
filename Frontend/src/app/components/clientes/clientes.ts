@@ -1,14 +1,10 @@
 import { CommonModule } from '@angular/common';
-
 import {
   ChangeDetectorRef,
   Component,
   OnInit
 } from '@angular/core';
-
 import { FormsModule } from '@angular/forms';
-
-import { RouterLink } from '@angular/router';
 
 import {
   Cliente,
@@ -27,8 +23,7 @@ interface ClienteFormulario {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    RouterLink
+    FormsModule
   ],
   templateUrl: './clientes.html',
   styleUrls: ['./clientes.css']
@@ -38,13 +33,13 @@ export class Clientes implements OnInit {
   clientes: Cliente[] = [];
   clientesFiltrados: Cliente[] = [];
 
-  cargando: boolean = false;
-  guardando: boolean = false;
-  formularioVisible: boolean = false;
+  cargando = false;
+  guardando = false;
+  formularioVisible = false;
 
-  error: string = '';
-  mensaje: string = '';
-  textoBusqueda: string = '';
+  error = '';
+  mensaje = '';
+  textoBusqueda = '';
 
   clienteEditandoId: number | null = null;
 
@@ -60,98 +55,83 @@ export class Clientes implements OnInit {
     this.cargarClientes();
   }
 
+  // CARGAR CLIENTES
   cargarClientes(): void {
-
     this.cargando = true;
     this.error = '';
 
-    this.clienteService
-      .obtenerClientes()
-      .subscribe({
-        next: (datos) => {
+    this.clienteService.obtenerClientes().subscribe({
+      next: (datos) => {
+        console.log('CLIENTES RECIBIDOS:', datos);
 
-          console.log(
-            'DATOS RECIBIDOS:',
-            datos
-          );
+        this.clientes = datos;
+        this.aplicarBusqueda();
 
-          this.clientes = datos;
-          this.clientesFiltrados = datos;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
 
-          this.cargando = false;
+      error: (error) => {
+        console.error('ERROR AL CARGAR CLIENTES:', error);
 
-          this.cdr.detectChanges();
-        },
+        this.error =
+          error?.error?.message ||
+          error?.error?.error ||
+          'No se pudieron cargar los clientes.';
 
-        error: (error) => {
-
-          console.error(
-            'Error al cargar clientes:',
-            error
-          );
-
-          this.error =
-            'No se pudieron cargar los clientes.';
-
-          this.cargando = false;
-
-          this.cdr.detectChanges();
-        }
-      });
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  buscar(event: Event): void {
-
-    const input =
-      event.target as HTMLInputElement;
-
+  // BUSCAR
+  buscar(valor: string): void {
     this.textoBusqueda =
-      input.value
-        .trim()
-        .toLowerCase();
+      valor.trim().toLowerCase();
 
-    if (!this.textoBusqueda) {
+    this.aplicarBusqueda();
+  }
 
-      this.clientesFiltrados =
-        this.clientes;
+  private aplicarBusqueda(): void {
 
+    const texto =
+      this.textoBusqueda.trim().toLowerCase();
+
+    if (!texto) {
+      this.clientesFiltrados = [
+        ...this.clientes
+      ];
       return;
     }
 
     this.clientesFiltrados =
-      this.clientes.filter(
-        (cliente) => {
+      this.clientes.filter((cliente) =>
+        String(cliente.idClientes)
+          .includes(texto) ||
 
-          return (
+        String(cliente.nombrecliente ?? '')
+          .toLowerCase()
+          .includes(texto) ||
 
-            cliente.nombrecliente
-              .toLowerCase()
-              .includes(this.textoBusqueda)
+        String(cliente.apellido ?? '')
+          .toLowerCase()
+          .includes(texto) ||
 
-            ||
+        String(cliente.documento ?? '')
+          .toLowerCase()
+          .includes(texto) ||
 
-            cliente.apellido
-              .toLowerCase()
-              .includes(this.textoBusqueda)
-
-            ||
-
-            cliente.documento
-              .toLowerCase()
-              .includes(this.textoBusqueda)
-
-            ||
-
-            cliente.telefono
-              .toLowerCase()
-              .includes(this.textoBusqueda)
-
-          );
-        }
+        String(cliente.telefono ?? '')
+          .toLowerCase()
+          .includes(texto)
       );
   }
 
+  // NUEVO CLIENTE
   nuevoCliente(): void {
+
+    console.log('NUEVO CLIENTE');
 
     this.clienteEditandoId = null;
 
@@ -160,42 +140,72 @@ export class Clientes implements OnInit {
 
     this.formularioVisible = true;
     this.guardando = false;
+
     this.error = '';
     this.mensaje = '';
   }
 
-  editarCliente(
-    cliente: Cliente
-  ): void {
+  // EDITAR CLIENTE
+  editarCliente(cliente: Cliente): void {
+
+    console.log('========== EDITAR CLIENTE ==========');
+    console.log('CLIENTE:', cliente);
+    console.log('ID:', cliente.idClientes);
 
     this.clienteEditandoId =
-      cliente.idclientes;
+      Number(cliente.idClientes);
 
     this.formulario = {
-
       nombrecliente:
-        cliente.nombrecliente,
+        String(cliente.nombrecliente ?? ''),
 
       apellido:
-        cliente.apellido,
+        String(cliente.apellido ?? ''),
 
       documento:
-        cliente.documento,
+        String(cliente.documento ?? ''),
 
       telefono:
-        cliente.telefono
-
+        String(cliente.telefono ?? '')
     };
 
     this.formularioVisible = true;
     this.guardando = false;
+
     this.error = '';
     this.mensaje = '';
+
+    console.log(
+      'ID GUARDADO:',
+      this.clienteEditandoId
+    );
+
+    console.log(
+      'FORMULARIO:',
+      this.formulario
+    );
   }
 
+  // GUARDAR
   guardarCliente(): void {
 
+    console.log('========== GUARDAR ==========');
+
+    console.log(
+      'ID EDITANDO:',
+      this.clienteEditandoId
+    );
+
+    console.log(
+      'FORMULARIO:',
+      this.formulario
+    );
+
     if (!this.formularioValido()) {
+
+      console.log(
+        'FORMULARIO INVÁLIDO'
+      );
 
       this.error =
         'Por favor completa todos los campos requeridos.';
@@ -207,25 +217,57 @@ export class Clientes implements OnInit {
     this.error = '';
     this.mensaje = '';
 
-    if (
-      this.clienteEditandoId === null
-    ) {
+    if (this.clienteEditandoId === null) {
+
+      console.log(
+        'MODO: CREAR'
+      );
 
       this.crearCliente();
 
     } else {
 
+      console.log(
+        'MODO: ACTUALIZAR'
+      );
+
       this.actualizarCliente();
     }
   }
 
+  // CREAR
   crearCliente(): void {
 
+    const datos: ClienteFormulario = {
+
+      nombrecliente:
+        this.formulario.nombrecliente.trim(),
+
+      apellido:
+        this.formulario.apellido.trim(),
+
+      documento:
+        this.formulario.documento.trim(),
+
+      telefono:
+        this.formulario.telefono.trim()
+    };
+
+    console.log(
+      'CREANDO CLIENTE:',
+      datos
+    );
+
     this.clienteService
-      .crearCliente(this.formulario)
+      .crearCliente(datos)
       .subscribe({
 
-        next: () => {
+        next: (respuesta) => {
+
+          console.log(
+            'CLIENTE CREADO:',
+            respuesta
+          );
 
           this.guardando = false;
 
@@ -233,7 +275,6 @@ export class Clientes implements OnInit {
             'Cliente creado exitosamente.';
 
           this.formularioVisible = false;
-
           this.clienteEditandoId = null;
 
           this.formulario =
@@ -247,11 +288,13 @@ export class Clientes implements OnInit {
         error: (error) => {
 
           console.error(
-            'Error al crear cliente:',
+            'ERROR AL CREAR CLIENTE:',
             error
           );
 
           this.error =
+            error?.error?.message ||
+            error?.error?.error ||
             'No se pudo crear el cliente.';
 
           this.guardando = false;
@@ -261,30 +304,79 @@ export class Clientes implements OnInit {
       });
   }
 
+  // ACTUALIZAR
   actualizarCliente(): void {
 
-    if (
-      this.clienteEditandoId === null
-    ) {
+    if (this.clienteEditandoId === null) {
+
+      console.error(
+        'NO EXISTE ID PARA ACTUALIZAR'
+      );
+
+      this.error =
+        'No se encontró el ID del cliente.';
+
+      this.guardando = false;
+
       return;
     }
 
+    const id =
+      Number(this.clienteEditandoId);
+
+    const datos: ClienteFormulario = {
+
+      nombrecliente:
+        this.formulario.nombrecliente.trim(),
+
+      apellido:
+        this.formulario.apellido.trim(),
+
+      documento:
+        this.formulario.documento.trim(),
+
+      telefono:
+        this.formulario.telefono.trim()
+    };
+
+    console.log(
+      '========== ACTUALIZANDO CLIENTE =========='
+    );
+
+    console.log(
+      'ID:',
+      id
+    );
+
+    console.log(
+      'DATOS:',
+      datos
+    );
+
+    console.log(
+      'URL:',
+      `http://localhost:3000/api/clientes/${id}`
+    );
+
     this.clienteService
-      .actualizarCliente(
-        this.clienteEditandoId,
-        this.formulario
-      )
+      .actualizarCliente(id, datos)
       .subscribe({
 
-        next: () => {
+        next: (respuesta) => {
+
+          console.log(
+            'CLIENTE ACTUALIZADO:',
+            respuesta
+          );
 
           this.guardando = false;
 
           this.mensaje =
             'Cliente actualizado exitosamente.';
 
-          this.formularioVisible = false;
+          this.error = '';
 
+          this.formularioVisible = false;
           this.clienteEditandoId = null;
 
           this.formulario =
@@ -298,12 +390,28 @@ export class Clientes implements OnInit {
         error: (error) => {
 
           console.error(
-            'Error al actualizar cliente:',
+            '========== ERROR AL ACTUALIZAR =========='
+          );
+
+          console.error(
+            'STATUS:',
+            error.status
+          );
+
+          console.error(
+            'ERROR:',
             error
           );
 
+          console.error(
+            'RESPUESTA:',
+            error.error
+          );
+
           this.error =
-            'No se pudo actualizar el cliente.';
+            error?.error?.message ||
+            error?.error?.error ||
+            `No se pudo actualizar el cliente. Código: ${error.status}`;
 
           this.guardando = false;
 
@@ -312,9 +420,21 @@ export class Clientes implements OnInit {
       });
   }
 
-  eliminarCliente(
-    cliente: Cliente
-  ): void {
+  // ELIMINAR
+  eliminarCliente(cliente: Cliente): void {
+
+    const id =
+      Number(cliente.idClientes);
+
+    console.log(
+      'CLIENTE A ELIMINAR:',
+      cliente
+    );
+
+    console.log(
+      'ID A ELIMINAR:',
+      id
+    );
 
     const confirmar =
       window.confirm(
@@ -329,12 +449,15 @@ export class Clientes implements OnInit {
     this.mensaje = '';
 
     this.clienteService
-      .eliminarCliente(
-        cliente.idclientes
-      )
+      .eliminarCliente(id)
       .subscribe({
 
-        next: () => {
+        next: (respuesta) => {
+
+          console.log(
+            'CLIENTE ELIMINADO:',
+            respuesta
+          );
 
           this.mensaje =
             'Cliente eliminado exitosamente.';
@@ -347,11 +470,18 @@ export class Clientes implements OnInit {
         error: (error) => {
 
           console.error(
-            'Error al eliminar cliente:',
+            'ERROR AL ELIMINAR:',
             error
           );
 
+          console.error(
+            'RESPUESTA:',
+            error.error
+          );
+
           this.error =
+            error?.error?.message ||
+            error?.error?.error ||
             'No se pudo eliminar el cliente.';
 
           this.cdr.detectChanges();
@@ -359,6 +489,7 @@ export class Clientes implements OnInit {
       });
   }
 
+  // CANCELAR
   cancelarFormulario(): void {
 
     this.formularioVisible = false;
@@ -373,31 +504,22 @@ export class Clientes implements OnInit {
     this.error = '';
   }
 
+  // VALIDAR
   formularioValido(): boolean {
 
     return (
 
-      this.formulario.nombrecliente
-        .trim() !== ''
+      this.formulario.nombrecliente.trim() !== '' &&
 
-      &&
+      this.formulario.apellido.trim() !== '' &&
 
-      this.formulario.apellido
-        .trim() !== ''
+      this.formulario.documento.trim() !== '' &&
 
-      &&
-
-      this.formulario.documento
-        .trim() !== ''
-
-      &&
-
-      this.formulario.telefono
-        .trim() !== ''
-
+      this.formulario.telefono.trim() !== ''
     );
   }
 
+  // FORMULARIO VACÍO
   crearFormularioVacio(): ClienteFormulario {
 
     return {
@@ -406,7 +528,6 @@ export class Clientes implements OnInit {
       apellido: '',
       documento: '',
       telefono: ''
-
     };
   }
 }
