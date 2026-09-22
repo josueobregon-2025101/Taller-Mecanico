@@ -1,6 +1,6 @@
 export interface Cliente {
     idClientes: number;
-    nombreCliente: string;
+    nombrecliente: string;
     apellido: string;
     documento: string;
     telefono: string;
