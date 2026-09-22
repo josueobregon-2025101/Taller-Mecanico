@@ -160,7 +160,7 @@
               <th>Cliente</th>
               <th>Empleado</th>
               <th>Fecha</th>
-              <th>Descripción</th>
+              <th>Descripción</th> 
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -174,7 +174,16 @@
               <td>{{ cita.idempleado ? 'Empleado #' + cita.idempleado : '—' }}</td>
               <td>{{ cita.fecha_hora | date:'short' }}</td>
               <td>{{ cita.descripcion }}</td>
-              <td>{{ cita.estadocita }}</td>
+              <td>
+                <span
+                   class="status"
+                   [class.pending]="cita.estadocita === 'Pendiente'"
+                   [class.confirmed]="cita.estadocita === 'Confirmada'"
+                   [class.completed]="cita.estadocita === 'Completada'"
+                                                                          >
+                                {{ cita.estadocita }}
+                </span>
+              </td>
               <td>
                 <div class="row-actions">
                   <button

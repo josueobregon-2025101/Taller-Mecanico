@@ -953,3 +953,47 @@ td.diagnostic {
   background: #0b2547;
   color: #f4f7fb;
 }
+
+.status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 10px;
+
+  border-radius: 7px;
+  border: 1px solid transparent;
+
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.3px;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Pendiente — amarillo */
+.status.pending {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.10);
+  border-color: rgba(251, 191, 36, 0.28);
+}
+
+/* Confirmada — azul */
+.status.confirmed {
+  color: #55bfff;
+  background: rgba(8, 124, 245, 0.10);
+  border-color: rgba(8, 124, 245, 0.28);
+}
+
+/* Completada — verde */
+.status.completed {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.10);
+  border-color: rgba(74, 222, 128, 0.28);
+}
