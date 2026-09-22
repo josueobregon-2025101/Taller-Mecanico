@@ -274,7 +274,7 @@ Insert Into Inventario (nombre, descripcion, marca, categoria, stock_actual, pre
 ('Filtro de aceite', 'Filtro para motor 4 cilindros', 'Bosch', 'Filtros', 15, 8.00, 15.00, 1),
 ('Pastillas de freno', 'Juego de pastillas delanteras', 'Brembo', 'Frenos', 10, 30.00, 50.00, 3);
 
-Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita) Values
+Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita) Values
 (1, 1, 1, '2026-09-01 10:00:00', 'Cambio de aceite y revisión general', 'Confirmada'),
 (2, 2, 2, '2026-09-02 14:30:00', 'Problema con el sistema eléctrico', 'Pendiente');
 

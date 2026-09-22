@@ -20,12 +20,12 @@ export const getCitaById = async (id: number): Promise<Cita | null> => {
 };
 
 export const createCita = async (cita: Omit<Cita, 'idCita'>): Promise<Cita> => {
-    const { idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita } = cita;
+    const { idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita } = cita;
     try {
         const result = await pool.query(
-            `INSERT INTO Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita)
+            `INSERT INTO Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita)
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            [idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita]
+            [idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita]
         );
         return result.rows[0];
     } catch (error) {
@@ -34,7 +34,7 @@ export const createCita = async (cita: Omit<Cita, 'idCita'>): Promise<Cita> => {
 };
 
 export const updateCita = async (id: number, cita: Partial<Cita>): Promise<Cita | null> => {
-    const fields = Object.keys(cita).map((key, index) => `"${key}" = $${index + 1}`).join(', ');
+    const fields = Object.keys(cita).map((key, index) => `${key} = $${index + 1}`).join(', ');
     const values = Object.values(cita);
     if (fields.length === 0) throw new Error('No hay campos para actualizar');
     try {

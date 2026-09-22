@@ -1,0 +1,212 @@
+<main class="main">
+
+  <header class="topbar">
+    <div class="title">
+      <h1>Empleados</h1>
+      <span>{{ empleados.length }} registros</span>
+    </div>
+
+    <div class="top-actions">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar empleado..."
+        (input)="buscar($event)"
+      >
+      <button type="button" class="new-button" (click)="nuevoEmpleado()">
+        + Nuevo empleado
+      </button>
+    </div>
+  </header>
+
+  <section class="content">
+
+    <div class="success-message" *ngIf="mensaje">
+      {{ mensaje }}
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="form-card" *ngIf="formularioVisible">
+
+      <h2>
+        {{ empleadoEditandoId === null ? 'Nuevo empleado' : 'Editar empleado' }}
+      </h2>
+
+      <form (ngSubmit)="guardarEmpleado()">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nombreEmpleado">Nombre</label>
+            <input
+              id="nombreEmpleado"
+              name="nombreEmpleado"
+              type="text"
+              [(ngModel)]="formulario.nombreEmpleado"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="apellidoEmpleado">Apellido</label>
+            <input
+              id="apellidoEmpleado"
+              name="apellidoEmpleado"
+              type="text"
+              [(ngModel)]="formulario.apellidoEmpleado"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="cedula">Cédula</label>
+            <input
+              id="cedula"
+              name="cedula"
+              type="text"
+              [(ngModel)]="formulario.cedula"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="telefonoEmpleado">Teléfono</label>
+            <input
+              id="telefonoEmpleado"
+              name="telefonoEmpleado"
+              type="text"
+              [(ngModel)]="formulario.telefonoEmpleado"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="puesto">Puesto</label>
+            <select
+              id="puesto"
+              name="puesto"
+              [(ngModel)]="formulario.puesto"
+              required
+            >
+              <option value="Mecánico">Mecánico</option>
+              <option value="Electromecánico">Electromecánico</option>
+              <option value="Auxiliar">Auxiliar</option>
+              <option value="Administrativo">Administrativo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="estadoEmpleado">Estado</label>
+            <select
+              id="estadoEmpleado"
+              name="estadoEmpleado"
+              [(ngModel)]="formulario.estadoEmpleado"
+              required
+            >
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : empleadoEditandoId === null
+                  ? 'Crear empleado'
+                  : 'Guardar cambios'
+            }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <h2>Listado de empleados</h2>
+        <span>{{ empleadosFiltrados.length }} registros</span>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        Cargando empleados...
+      </div>
+
+      <div class="table-container" *ngIf="!cargando">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Cédula</th>
+              <th>Teléfono</th>
+              <th>Puesto</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let empleado of empleadosFiltrados">
+              <td>#{{ empleado.idempleado }}</td>
+              <td>{{ empleado.nombreempleado }}</td>
+              <td>{{ empleado.apellidoempleado }}</td>
+              <td>{{ empleado.cedula }}</td>
+              <td>{{ empleado.telefonoempleado }}</td>
+              <td>{{ empleado.puesto }}</td>
+              <td>{{ empleado.estadoempleado }}</td>
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarEmpleado(empleado)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarEmpleado(empleado)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="empleadosFiltrados.length === 0">
+              <td colspan="8" class="empty">
+                No se encontraron empleados.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
