@@ -34,7 +34,7 @@ export const createCita = async (cita: Omit<Cita, 'idCita'>): Promise<Cita> => {
 };
 
 export const updateCita = async (id: number, cita: Partial<Cita>): Promise<Cita | null> => {
-    const fields = Object.keys(cita).map((key, index) => `"${key}" = $${index + 1}`).join(', ');
+    const fields = Object.keys(cita).map((key, index) => `${key} = $${index + 1}`).join(', ');
     const values = Object.values(cita);
     if (fields.length === 0) throw new Error('No hay campos para actualizar');
     try {

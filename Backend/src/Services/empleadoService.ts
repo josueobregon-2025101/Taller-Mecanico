@@ -34,7 +34,7 @@ export const createEmpleado = async (empleado: Omit<Empleado, 'idEmpleado'>): Pr
 };
 
 export const updateEmpleado = async (id: number, empleado: Partial<Empleado>): Promise<Empleado | null> => {
-    const fields = Object.keys(empleado).map((key, index) => `"${key}" = $${index + 1}`).join(', ');
+    const fields = Object.keys(empleado).map((key, index) => `${key} = $${index + 1}`).join(', ');
     const values = Object.values(empleado);
     if (fields.length === 0) throw new Error('No hay campos para actualizar');
     try {
