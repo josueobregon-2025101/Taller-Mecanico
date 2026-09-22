@@ -16,7 +16,7 @@ Create Type estado_venta As Enum ('Pagado', 'Pendiente', 'Anulado');
 
 Create Table Clientes (
     idClientes Serial,
-    nombrecliente Varchar(45) Not Null,
+    nombreCliente Varchar(45) Not Null,
     apellido Varchar(45) Not Null,
     documento Varchar(45) Unique,
     telefono Int,
@@ -82,7 +82,7 @@ Create Table Citas (
     idClientes Int Not Null,
     idEmpleado Int Null,
     fecha_hora Timestamp Not Null,
-    descripción Text,
+    descripcion Text,
     estadoCita estado_cita Default 'Pendiente',
     Constraint pk_citas Primary Key (idCita)
 );
@@ -134,26 +134,6 @@ Create Table Control_Ventas (
     forma_pago forma_pago Not Null,
     estadoVenta estado_venta Default 'Pendiente',
     Constraint pk_control_ventas Primary Key (idVentas)
-);
-
-CREATE TABLE Actividad_Sistema (
-    idActividad SERIAL,
-    tipo VARCHAR(50) NOT NULL,
-    accion VARCHAR(30) NOT NULL,
-    idRegistro INTEGER,
-    titulo VARCHAR(120) NOT NULL,
-    descripcion VARCHAR(255) NOT NULL,
-    estado VARCHAR(50),
-    idUsuario INTEGER,
-    fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT pk_actividad_sistema
-        PRIMARY KEY (idActividad),
-
-    CONSTRAINT fk_actividad_usuario
-        FOREIGN KEY (idUsuario)
-        REFERENCES Usuarios(idUsuario)
-        ON DELETE SET NULL
 );
 
 CREATE OR REPLACE FUNCTION obtener_estadisticas()
@@ -264,6 +244,154 @@ Create Index idx_vehiculos_idClientes On Vehiculos(idClientes);
 
 Create Index idx_servicios_idEmpleado On Servicios(idEmpleado);
 
+-- |PROCEDIMIENTOS DE DATOS|
+
+Create Or Replace Function PoblarClientes()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Clientes (nombreCliente, apellido, documento, telefono) Values
+    ('Juan', 'Pérez', '1234', 5551234),
+    ('María', 'Gómez', '5678', 5555678),
+    ('Carlos', 'López', '9012', 5559012);
+End;
+$$;
+
+Create Or Replace Function PoblarProveedores()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Proveedores (nombreProveedor, RUC, teléfonoProveedor) Values
+    ('Repuestos El Rápido', '20123456789', '123'),
+    ('Lubricantes Central', '20987654321', '456'),
+    ('Frenos y Más', '20456789012', '789');
+End;
+$$;
+
+Create Or Replace Function PoblarEmpleados()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Empleados (nombreEmpleado, apellidoEmpleado, cedula, telefonoEmpleado, puesto, estadoEmpleado) Values
+    ('Roberto', 'Martínez', '11111111', '5551111', 'Mecánico', 'Activo'),
+    ('Laura', 'Fernández', '22222222', '5552222', 'Electromecánico', 'Activo'),
+    ('Pedro', 'Ramírez', '33333333', '5553333', 'Auxiliar', 'Activo');
+End;
+$$;
+
+Create Or Replace Function PoblarVehiculos()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Vehiculos (idClientes, placa, marca, modelo, año, kilometraje_total) Values
+    (1, 'ABC-123', 'Toyota', 'Corolla', 2020, '15000'),
+    (2, 'DEF-456', 'Honda', 'Civic', 2019, '22000'),
+    (1, 'GHI-789', 'Ford', 'Fiesta', 2018, '30000');
+End;
+$$;
+
+Create Or Replace Function PoblarUsuarios()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Usuarios (nombreUsuario, password, email, rol, estadoUsuario) Values
+    ('Admin', 'hash_admin', 'dueno@taller.com', 'Admin', 'Activo'),
+    ('secre1', 'hash_secre', 'secre@taller.com', 'Secretario', 'Activo');
+End;
+$$;
+
+Create Or Replace Function PoblarInventario()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Inventario (nombre, descripcion, marca, categoria, stock_actual, precio_compra, precio_venta, idProveedor) Values
+    ('Aceite 5W-30', 'Aceite sintético para motor', 'Mobil', 'Lubricantes', 20, 15.00, 25.00, 2),
+    ('Filtro de aceite', 'Filtro para motor 4 cilindros', 'Bosch', 'Filtros', 15, 8.00, 15.00, 1),
+    ('Pastillas de freno', 'Juego de pastillas delanteras', 'Brembo', 'Frenos', 10, 30.00, 50.00, 3);
+End;
+$$;
+
+Create Or Replace Function PoblarCitas()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita) Values
+    (1, 1, 1, '2026-09-01 10:00:00', 'Cambio de aceite y revisión general', 'Confirmada'),
+    (2, 2, 2, '2026-09-02 14:30:00', 'Problema con el sistema eléctrico', 'Pendiente');
+End;
+$$;
+
+Create Or Replace Function PoblarServicios()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Servicios (idVehiculos, idCliente, idEmpleado, idCita, fecha_ingreso, fecha_entrega, diagnostico, estadoServicio, kilometraje_ing) Values
+    (1, 1, 1, 1, '2026-09-01', '2026-09-02', 'Cambio de aceite y filtro, todo en orden', 'Terminado', '15000'),
+    (2, 2, 2, Null, '2026-09-03', Null, 'Falla en alternador, requiere revisión', 'En reparación', '22000');
+End;
+$$;
+
+Create Or Replace Function PoblarDetalleServicios()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Detalle_Servicios (idServicio, descripcionDetalle, cantidadHoras, idInventario, cantidad_repuesto, precio_unitario) Values
+    (1, 'Cambio de aceite', 1, 1, 1, 2500),
+    (1, 'Cambio de filtro', 0.5, 2, 1, 1500),
+    (2, 'Revisión del sistema eléctrico', 2, Null, Null, 3000);
+End;
+$$;
+
+Create Or Replace Function PoblarMovimientosInventario()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Movimientos_Inventario (idInventario, movimientos, cantidad, motivo, idServicio) Values
+    (1, 'Entrada', 10, 'Compra a proveedor', Null),
+    (1, 'Salida', 1, 'Uso en servicio #1', 1),
+    (2, 'Salida', 1, 'Uso en servicio #1', 1);
+End;
+$$;
+
+Create Or Replace Function PoblarControlVentas()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Control_Ventas (idServicio, idCliente, fecha, subtotal, impuesto, total, forma_pago, estadoVenta) Values
+    (1, 1, '2026-09-02', 4000.00, 760.00, 4760.00, 'Efectivo', 'Pagado'),
+    (2, 2, '2026-09-03', 3000.00, 570.00, 3570.00, 'Tarjeta', 'Pendiente');
+End;
+$$;
+
+Create Or Replace Function PoblarDatosIniciales()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Perform PoblarClientes();
+    Perform PoblarProveedores();
+    Perform PoblarEmpleados();
+    Perform PoblarVehiculos();
+    Perform PoblarUsuarios();
+    Perform PoblarInventario();
+    Perform PoblarCitas();
+    Perform PoblarServicios();
+    Perform PoblarDetalleServicios();
+    Perform PoblarMovimientosInventario();
+    Perform PoblarControlVentas();
+End;
+$$;
 
 Insert Into Clientes (nombreCliente, apellido, documento, telefono) Values
 ('Juan', 'Pérez', '1234', 5551234),
@@ -315,249 +443,4 @@ Insert Into Movimientos_Inventario (idInventario, movimientos, cantidad, motivo,
 Insert Into Control_Ventas (idServicio, idCliente, fecha, subtotal, impuesto, total, forma_pago, estadoVenta) Values
 (1, 1, '2026-09-02', 4000.00, 760.00, 4760.00, 'Efectivo', 'Pagado'),
 (2, 2, '2026-09-03', 3000.00, 570.00, 3570.00, 'Tarjeta', 'Pendiente');
-
-
--- =========================================================
--- HISTORIAL AUTOMATICO DE ACTIVIDAD
--- Los triggers se crean despues de los datos iniciales para
--- evitar que las cargas de ejemplo llenen el historial.
--- =========================================================
-
-CREATE INDEX idx_actividad_sistema_fecha
-ON Actividad_Sistema(fecha DESC, idActividad DESC);
-
-CREATE OR REPLACE FUNCTION registrar_actividad_automatica()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    datos JSONB;
-    identificador INTEGER;
-    nombre_registro TEXT;
-    estado_registro TEXT;
-    tipo_actividad TEXT;
-    accion_actividad TEXT;
-    titulo_actividad TEXT;
-    descripcion_actividad TEXT;
-BEGIN
-    tipo_actividad := TG_ARGV[0];
-
-    IF TG_OP = 'DELETE' THEN
-        datos := to_jsonb(OLD);
-    ELSE
-        datos := to_jsonb(NEW);
-    END IF;
-
-    identificador :=
-        NULLIF(datos ->> TG_ARGV[1], '')::INTEGER;
-
-    IF TG_NARGS > 2 AND TG_ARGV[2] <> '' THEN
-        nombre_registro :=
-            NULLIF(datos ->> TG_ARGV[2], '');
-    ELSE
-        nombre_registro := NULL;
-    END IF;
-
-    IF TG_NARGS > 3 AND TG_ARGV[3] <> '' THEN
-        estado_registro :=
-            NULLIF(datos ->> TG_ARGV[3], '');
-    ELSE
-        estado_registro := NULL;
-    END IF;
-
-    IF TG_OP = 'INSERT' THEN
-        accion_actividad := 'Creación';
-        titulo_actividad :=
-            tipo_actividad || ' #' || identificador;
-
-        IF nombre_registro IS NOT NULL THEN
-            descripcion_actividad :=
-                'Se registró ' || LOWER(tipo_actividad) ||
-                ': ' || nombre_registro;
-        ELSE
-            descripcion_actividad :=
-                'Se creó el registro #' || identificador ||
-                ' en ' || tipo_actividad;
-        END IF;
-
-    ELSIF TG_OP = 'UPDATE' THEN
-        accion_actividad := 'Actualización';
-        titulo_actividad :=
-            tipo_actividad || ' #' || identificador;
-
-        IF nombre_registro IS NOT NULL THEN
-            descripcion_actividad :=
-                'Se actualizó ' || LOWER(tipo_actividad) ||
-                ': ' || nombre_registro;
-        ELSE
-            descripcion_actividad :=
-                'Se actualizó el registro #' || identificador ||
-                ' de ' || tipo_actividad;
-        END IF;
-
-    ELSIF TG_OP = 'DELETE' THEN
-        accion_actividad := 'Eliminación';
-        titulo_actividad :=
-            tipo_actividad || ' #' || identificador;
-
-        IF nombre_registro IS NOT NULL THEN
-            descripcion_actividad :=
-                'Se eliminó ' || LOWER(tipo_actividad) ||
-                ': ' || nombre_registro;
-        ELSE
-            descripcion_actividad :=
-                'Se eliminó el registro #' || identificador ||
-                ' de ' || tipo_actividad;
-        END IF;
-    END IF;
-
-    INSERT INTO Actividad_Sistema
-    (
-        tipo,
-        accion,
-        idRegistro,
-        titulo,
-        descripcion,
-        estado,
-        idUsuario
-    )
-    VALUES
-    (
-        tipo_actividad,
-        accion_actividad,
-        identificador,
-        titulo_actividad,
-        descripcion_actividad,
-        estado_registro,
-        NULL
-    );
-
-    IF TG_OP = 'DELETE' THEN
-        RETURN OLD;
-    END IF;
-
-    RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS trg_actividad_inventario ON Inventario;
-CREATE TRIGGER trg_actividad_inventario
-AFTER INSERT OR UPDATE OR DELETE ON Inventario
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Inventario',
-    'idinventario',
-    'nombre',
-    ''
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_servicios ON Servicios;
-CREATE TRIGGER trg_actividad_servicios
-AFTER INSERT OR UPDATE OR DELETE ON Servicios
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Servicio',
-    'idservicios',
-    'diagnostico',
-    'estadoservicio'
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_detalle_servicios ON Detalle_Servicios;
-CREATE TRIGGER trg_actividad_detalle_servicios
-AFTER INSERT OR UPDATE OR DELETE ON Detalle_Servicios
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Detalle de servicio',
-    'iddetalle',
-    'descripciondetalle',
-    ''
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_clientes ON Clientes;
-CREATE TRIGGER trg_actividad_clientes
-AFTER INSERT OR UPDATE OR DELETE ON Clientes
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Cliente',
-    'idclientes',
-    'nombrecliente',
-    ''
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_vehiculos ON Vehiculos;
-CREATE TRIGGER trg_actividad_vehiculos
-AFTER INSERT OR UPDATE OR DELETE ON Vehiculos
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Vehículo',
-    'idvehiculo',
-    'placa',
-    ''
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_citas ON Citas;
-CREATE TRIGGER trg_actividad_citas
-AFTER INSERT OR UPDATE OR DELETE ON Citas
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Cita',
-    'idcita',
-    'descripción',
-    'estadocita'
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_proveedores ON Proveedores;
-CREATE TRIGGER trg_actividad_proveedores
-AFTER INSERT OR UPDATE OR DELETE ON Proveedores
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Proveedor',
-    'idproveedor',
-    'nombreproveedor',
-    ''
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_empleados ON Empleados;
-CREATE TRIGGER trg_actividad_empleados
-AFTER INSERT OR UPDATE OR DELETE ON Empleados
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Empleado',
-    'idempleado',
-    'nombreempleado',
-    'estadoempleado'
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_usuarios ON Usuarios;
-CREATE TRIGGER trg_actividad_usuarios
-AFTER INSERT OR UPDATE OR DELETE ON Usuarios
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Usuario',
-    'idusuario',
-    'nombreusuario',
-    'estadousuario'
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_movimientos ON Movimientos_Inventario;
-CREATE TRIGGER trg_actividad_movimientos
-AFTER INSERT OR UPDATE OR DELETE ON Movimientos_Inventario
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Movimiento de inventario',
-    'idmovimientos',
-    'motivo',
-    'movimientos'
-);
-
-DROP TRIGGER IF EXISTS trg_actividad_ventas ON Control_Ventas;
-CREATE TRIGGER trg_actividad_ventas
-AFTER INSERT OR UPDATE OR DELETE ON Control_Ventas
-FOR EACH ROW
-EXECUTE FUNCTION registrar_actividad_automatica(
-    'Venta',
-    'idventas',
-    '',
-    'estadoventa'
-);
 
