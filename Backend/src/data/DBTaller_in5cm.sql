@@ -82,7 +82,7 @@ Create Table Citas (
     idClientes Int Not Null,
     idEmpleado Int Null,
     fecha_hora Timestamp Not Null,
-    descripción Text,
+    descripcion Text,
     estadoCita estado_cita Default 'Pendiente',
     Constraint pk_citas Primary Key (idCita)
 );
@@ -295,3 +295,5 @@ Insert Into Movimientos_Inventario (idInventario, movimientos, cantidad, motivo,
 Insert Into Control_Ventas (idServicio, idCliente, fecha, subtotal, impuesto, total, forma_pago, estadoVenta) Values
 (1, 1, '2026-09-02', 4000.00, 760.00, 4760.00, 'Efectivo', 'Pagado'),
 (2, 2, '2026-09-03', 3000.00, 570.00, 3570.00, 'Tarjeta', 'Pendiente');
+
+SELECT column_name FROM information_schema.columns WHERE table_name = 'citas';
