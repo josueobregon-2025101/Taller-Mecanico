@@ -81,7 +81,7 @@ export class LoginComponent {
           this.cargando = false;
 
           this.router.navigate([
-            '/clientes'
+            '/panel'
           ]);
 
           this.cdr.detectChanges();
