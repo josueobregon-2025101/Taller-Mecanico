@@ -1,87 +1,95 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {
-  Empleado,
-  EmpleadoService
-} from '../../services/empleados.service';
+export type PuestoEmpleado =
+  | 'Mecánico'
+  | 'Electromecánico'
+  | 'Auxiliar'
+  | 'Administrativo';
 
-@Component({
-  selector: 'app-empleados',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './empleados.html',
-  styleUrl: './empleados.css'
+export type EstadoEmpleado = 'Activo' | 'Inactivo';
+
+// Lo que devuelve el backend (minúsculas)
+export interface Empleado {
+  idempleado: number;
+  nombreempleado: string;
+  apellidoempleado: string;
+  cedula: string;
+  telefonoempleado: string;
+  puesto: PuestoEmpleado;
+  estadoempleado: EstadoEmpleado;
+}
+
+// Lo que se envía al backend (camelCase)
+export interface EmpleadoFormulario {
+  nombreEmpleado: string;
+  apellidoEmpleado: string;
+  cedula: string;
+  telefonoEmpleado: string;
+  puesto: PuestoEmpleado;
+  estadoEmpleado: EstadoEmpleado;
+}
+
+export interface CrearEmpleadoResponse {
+  status: string;
+  message: string;
+  data: Empleado;
+}
+
+export interface ActualizarEmpleadoResponse {
+  status: string;
+  message: string;
+  result: Empleado | null;
+}
+
+export interface EliminarEmpleadoResponse {
+  status: string;
+  message: string;
+  result: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
 })
-export class Empleados implements OnInit {
+export class EmpleadoService {
 
-  private empleadoService = inject(EmpleadoService);
-  private cdr = inject(ChangeDetectorRef);
+  private apiUrl = 'http://localhost:3000/api/empleados';
 
-  empleados: Empleado[] = [];
-  empleadosFiltrados: Empleado[] = [];
+  constructor(private http: HttpClient) {}
 
-  cargando = false;
-  error = '';
-
-  ngOnInit(): void {
-    this.cargarEmpleados();
+  obtenerEmpleados(): Observable<Empleado[]> {
+    return this.http.get<Empleado[]>(this.apiUrl);
   }
 
-  cargarEmpleados(): void {
-    this.cargando = true;
-    this.error = '';
-
-    this.empleadoService.obtenerEmpleados().subscribe({
-      next: (datos) => {
-        this.empleados = datos;
-        this.empleadosFiltrados = [...datos];
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.error = 'No se pudieron cargar los empleados.';
-        this.cargando = false;
-        this.cdr.detectChanges();
-      }
-    });
+  obtenerEmpleado(id: number): Observable<Empleado> {
+    return this.http.get<Empleado>(`${this.apiUrl}/${id}`);
   }
 
-  buscar(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const texto = input.value.toLowerCase().trim();
-
-    this.empleadosFiltrados = this.empleados.filter(empleado =>
-      empleado.nombreempleado.toLowerCase().includes(texto)
-      || empleado.apellidoempleado.toLowerCase().includes(texto)
-      || empleado.cedula.toLowerCase().includes(texto)
-      || empleado.puesto.toLowerCase().includes(texto)
+  crearEmpleado(
+    empleado: EmpleadoFormulario
+  ): Observable<CrearEmpleadoResponse> {
+    return this.http.post<CrearEmpleadoResponse>(
+      this.apiUrl,
+      empleado
     );
   }
 
-  nuevoEmpleado(): void {
-    console.log('Abrir formulario nuevo empleado');
-  }
-
-  editarEmpleado(empleado: Empleado): void {
-    console.log('Editar empleado:', empleado);
-  }
-
-  eliminarEmpleado(empleado: Empleado): void {
-    const confirmar = confirm(
-      `¿Deseas eliminar a ${empleado.nombreempleado} ${empleado.apellidoempleado}?`
+  actualizarEmpleado(
+    id: number,
+    empleado: EmpleadoFormulario
+  ): Observable<ActualizarEmpleadoResponse> {
+    return this.http.put<ActualizarEmpleadoResponse>(
+      `${this.apiUrl}/${id}`,
+      empleado
     );
+  }
 
-    if (!confirmar) return;
-
-    this.empleadoService.eliminarEmpleado(empleado.idempleado).subscribe({
-      next: () => this.cargarEmpleados(),
-      error: (error) => {
-        console.error('Error al eliminar:', error);
-        alert('No se pudo eliminar el empleado.');
-      }
-    });
+  eliminarEmpleado(
+    id: number
+  ): Observable<EliminarEmpleadoResponse> {
+    return this.http.delete<EliminarEmpleadoResponse>(
+      `${this.apiUrl}/${id}`
+    );
   }
 }
