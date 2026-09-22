@@ -1,106 +1,237 @@
-<!-- clientes.component.html -->
 <main class="main">
-
-  <!-- BARRA SUPERIOR AZUL -->
   <header class="topbar">
 
-    <div class="title">
-      <h1>Clientes</h1>
-      <span>{{ clientes.length }} registros</span>
-    </div>
+<div class="title">
+  <h1>Clientes</h1>
+  <span>{{ clientes.length }} clientes registrados</span>
+</div>
 
-    <div class="actions-top">
+<div class="top-actions">
 
-      <div class="search">
-        <span>⌕</span>
+  <input
+    class="search"
+    type="text"
+    placeholder="Buscar cliente..."
+    (input)="buscar($event)"
+  >
+
+  <button
+    type="button"
+    class="new-button"
+    (click)="nuevoCliente()"
+  >
+    + Nuevo cliente
+  </button>
+
+</div>
+
+  </header>
+
+  <section class="content">
+
+<div class="success-message" *ngIf="mensaje">
+  {{ mensaje }}
+</div>
+
+<div class="error-message" *ngIf="error">
+  {{ error }}
+</div>
+
+<!-- FORMULARIO -->
+
+<div class="form-card" *ngIf="formularioVisible">
+
+  <h2>
+    {{ clienteEditandoId === null ? 'Nuevo cliente' : 'Editar cliente' }}
+  </h2>
+
+  <form (ngSubmit)="guardarCliente()">
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label for="nombrecliente">Nombre</label>
+
         <input
+          id="nombrecliente"
+          name="nombrecliente"
           type="text"
-          placeholder="Buscar en esta tabla..."
-          (input)="buscar($event)"
+          [(ngModel)]="formulario.nombrecliente"
+          required
         >
       </div>
 
-      <button class="new-button" (click)="nuevoCliente()">
-        <span>＋</span>
-        Nuevo cliente
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+
+        <input
+          id="apellido"
+          name="apellido"
+          type="text"
+          [(ngModel)]="formulario.apellido"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="documento">Documento</label>
+
+        <input
+          id="documento"
+          name="documento"
+          type="text"
+          [(ngModel)]="formulario.documento"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+
+        <input
+          id="telefono"
+          name="telefono"
+          type="text"
+          [(ngModel)]="formulario.telefono"
+          required
+        >
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancelarFormulario()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        class="save-button"
+        [disabled]="guardando"
+      >
+        {{
+          guardando
+            ? 'Guardando...'
+            : clienteEditandoId === null
+              ? 'Crear cliente'
+              : 'Guardar cambios'
+        }}
       </button>
 
     </div>
 
-  </header>
+  </form>
 
-  <!-- CONTENIDO -->
-  <section class="content">
+</div>
 
-    <div class="table-card">
+<!-- TABLA -->
 
-      <div class="table-header">
-        <div>
-          <h2>Listado de clientes</h2>
-          <p>Administra la información de los clientes</p>
-        </div>
+<div class="table-card">
 
-        <div class="total">
-          {{ clientesFiltrados.length }} clientes
-        </div>
-      </div>
+  <div class="table-header">
 
-      <!-- CARGANDO -->
-      <div class="loading" *ngIf="cargando">
-        <div class="spinner"></div>
-        <span>Cargando clientes...</span>
-      </div>
+    <h2>Listado de clientes</h2>
 
-      <!-- ERROR -->
-      <div class="error" *ngIf="error">
-        {{ error }}
-        <button (click)="cargarClientes()">Reintentar</button>
-      </div>
+    <span>
+      {{ clientesFiltrados.length }} registros
+    </span>
 
-      <!-- TABLA -->
-      <div class="table-container" *ngIf="!cargando && !error">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Documento</th>
-              <th>Teléfono</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
+  </div>
 
-          <tbody>
-            <tr *ngFor="let cliente of clientesFiltrados">
-              <td class="id">#{{ cliente.idclientes }}</td>
-              <td class="name">{{ cliente.nombrecliente }}</td>
-              <td>{{ cliente.apellido }}</td>
-              <td class="document">{{ cliente.documento }}</td>
-              <td class="phone">{{ cliente.telefono }}</td>
-              <td>
-                <div class="row-actions">
-                  <button class="edit" (click)="editarCliente(cliente)">
-                    ✎ Editar
-                  </button>
-                  <button class="delete" (click)="eliminarCliente(cliente)">
-                    × Eliminar
-                  </button>
-                </div>
-              </td>
-            </tr>
+  <div class="loading" *ngIf="cargando">
+    Cargando clientes...
+  </div>
 
-            <tr *ngIf="clientesFiltrados.length === 0">
-              <td colspan="6" class="empty">
-                No hay clientes registrados.
-              </td>
-            </tr>
-          </tbody>
+  <div
+    class="table-container"
+    *ngIf="!cargando"
+  >
 
-        </table>
-      </div>
+    <table>
 
-    </div>
+      <thead>
+
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Documento</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let cliente of clientesFiltrados">
+
+          <td>
+            #{{ cliente.idclientes }}
+          </td>
+
+          <td>
+            {{ cliente.nombrecliente }}
+          </td>
+
+          <td>
+            {{ cliente.apellido }}
+          </td>
+
+          <td>
+            {{ cliente.documento }}
+          </td>
+
+          <td>
+            {{ cliente.telefono }}
+          </td>
+
+          <td>
+
+            <div class="row-actions">
+
+              <button
+                type="button"
+                class="edit-button"
+                (click)="editarCliente(cliente)"
+              >
+                Editar
+              </button>
+
+              <button
+                type="button"
+                class="delete-button"
+                (click)="eliminarCliente(cliente)"
+              >
+                Eliminar
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+        <tr *ngIf="clientesFiltrados.length === 0">
+
+          <td colspan="6" class="empty">
+            No se encontraron clientes.
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
 
   </section>
 

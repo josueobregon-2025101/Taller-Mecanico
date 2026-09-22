@@ -1,9 +1,17 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
+import { FormsModule } from '@angular/forms';
 
 import {
   Vehiculo,
+  VehiculoFormulario,
   VehiculoService
 } from '../../services/vehiculo.service';
 
@@ -12,7 +20,7 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink
+    FormsModule
   ],
   templateUrl: './vehiculos.html',
   styleUrl: './vehiculos.css'
@@ -22,21 +30,70 @@ export class Vehiculos implements OnInit {
   private vehiculoService =
     inject(VehiculoService);
 
+  private cdr =
+    inject(ChangeDetectorRef);
+
+
+  // =========================
+  // LISTADO
+  // =========================
+
   vehiculos: Vehiculo[] = [];
 
   vehiculosFiltrados: Vehiculo[] = [];
 
-  cargando = false;
 
-  private cdr = inject(ChangeDetectorRef);
+  // =========================
+  // ESTADOS
+  // =========================
 
-  error = '';
+  cargando: boolean = false;
+
+  guardando: boolean = false;
+
+  formularioVisible: boolean = false;
+
+
+  // =========================
+  // MENSAJES
+  // =========================
+
+  error: string = '';
+
+  mensaje: string = '';
+
+  textoBusqueda: string = '';
+
+
+  // =========================
+  // EDICIÓN
+  // =========================
+
+  vehiculoEditandoId: number | null = null;
+
+
+  // =========================
+  // FORMULARIO
+  // =========================
+
+  formulario: VehiculoFormulario =
+    this.crearFormularioVacio();
+
+
+  // =========================
+  // INICIO
+  // =========================
 
   ngOnInit(): void {
 
     this.cargarVehiculos();
 
   }
+
+
+  // =========================
+  // CARGAR VEHÍCULOS
+  // =========================
 
   cargarVehiculos(): void {
 
@@ -64,7 +121,7 @@ export class Vehiculos implements OnInit {
         error: (error) => {
 
           console.error(
-            'Error:',
+            'Error al cargar los vehículos:',
             error
           );
 
@@ -81,82 +138,332 @@ export class Vehiculos implements OnInit {
 
   }
 
+
+  // =========================
+  // BUSCAR
+  // =========================
+
   buscar(event: Event): void {
 
     const input =
       event.target as HTMLInputElement;
 
-    const texto =
+    this.textoBusqueda =
       input.value
-        .toLowerCase()
-        .trim();
+        .trim()
+        .toLowerCase();
+
+
+    // Si no hay texto,
+    // mostrar todos los vehículos
+
+    if (!this.textoBusqueda) {
+
+      this.vehiculosFiltrados =
+        this.vehiculos;
+
+      return;
+
+    }
+
 
     this.vehiculosFiltrados =
-      this.vehiculos.filter(vehiculo =>
+      this.vehiculos.filter(
+        (vehiculo) => {
 
-        vehiculo.placa
-          .toLowerCase()
-          .includes(texto)
+          return (
 
-        ||
+            vehiculo.placa
+              .toLowerCase()
+              .includes(
+                this.textoBusqueda
+              )
 
-        vehiculo.marca
-          .toLowerCase()
-          .includes(texto)
+            ||
 
-        ||
+            vehiculo.marca
+              .toLowerCase()
+              .includes(
+                this.textoBusqueda
+              )
 
-        vehiculo.modelo
-          .toLowerCase()
-          .includes(texto)
+            ||
 
-        ||
+            vehiculo.modelo
+              .toLowerCase()
+              .includes(
+                this.textoBusqueda
+              )
 
-        vehiculo.ano
-          .toString()
-          .includes(texto)
+            ||
 
-        ||
+            vehiculo.ano
+              .toString()
+              .includes(
+                this.textoBusqueda
+              )
 
-        vehiculo.idClientes
-          .toString()
-          .includes(texto)
+            ||
 
+            vehiculo.idClientes
+              .toString()
+              .includes(
+                this.textoBusqueda
+              )
+
+          );
+
+        }
       );
 
   }
 
+
+  // =========================
+  // NUEVO VEHÍCULO
+  // =========================
+
   nuevoVehiculo(): void {
 
-    console.log(
-      'Abrir formulario nuevo vehículo'
-    );
+    this.vehiculoEditandoId = null;
+
+    this.formulario =
+      this.crearFormularioVacio();
+
+    this.formularioVisible = true;
+
+    this.guardando = false;
+
+    this.error = '';
+
+    this.mensaje = '';
 
   }
+
+
+  // =========================
+  // EDITAR VEHÍCULO
+  // =========================
 
   editarVehiculo(
     vehiculo: Vehiculo
   ): void {
 
-    console.log(
-      'Editar vehículo:',
-      vehiculo
-    );
+    this.vehiculoEditandoId =
+      vehiculo.idVehiculo;
+
+
+    this.formulario = {
+
+      idClientes:
+        Number(vehiculo.idClientes),
+
+      placa:
+        vehiculo.placa,
+
+      marca:
+        vehiculo.marca,
+
+      modelo:
+        vehiculo.modelo,
+
+      ano:
+        Number(vehiculo.ano),
+
+      kilometraje_total:
+        Number(vehiculo.kilometraje_total)
+
+    };
+
+
+    this.formularioVisible = true;
+
+    this.guardando = false;
+
+    this.error = '';
+
+    this.mensaje = '';
 
   }
+
+
+  // =========================
+  // GUARDAR
+  // =========================
+
+  guardarVehiculo(): void {
+
+    if (!this.formularioValido()) {
+
+      this.error =
+        'Por favor completa todos los campos requeridos.';
+
+      return;
+
+    }
+
+
+    this.guardando = true;
+
+    this.error = '';
+
+    this.mensaje = '';
+
+
+    if (
+      this.vehiculoEditandoId === null
+    ) {
+
+      this.crearVehiculo();
+
+    } else {
+
+      this.actualizarVehiculo();
+
+    }
+
+  }
+
+
+  // =========================
+  // CREAR VEHÍCULO
+  // =========================
+
+  crearVehiculo(): void {
+
+    this.vehiculoService
+      .crearVehiculo(this.formulario)
+      .subscribe({
+
+        next: () => {
+
+          this.guardando = false;
+
+          this.mensaje =
+            'Vehículo creado exitosamente.';
+
+          this.formularioVisible = false;
+
+          this.vehiculoEditandoId = null;
+
+          this.formulario =
+            this.crearFormularioVacio();
+
+          this.cargarVehiculos();
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al crear el vehículo:',
+            error
+          );
+
+          this.error =
+            'No fue posible crear el vehículo.';
+
+          this.guardando = false;
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
+
+  }
+
+
+  // =========================
+  // ACTUALIZAR VEHÍCULO
+  // =========================
+
+  actualizarVehiculo(): void {
+
+    if (
+      this.vehiculoEditandoId === null
+    ) {
+
+      return;
+
+    }
+
+
+    this.vehiculoService
+      .actualizarVehiculo(
+        this.vehiculoEditandoId,
+        this.formulario
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.guardando = false;
+
+          this.mensaje =
+            'Vehículo actualizado exitosamente.';
+
+          this.formularioVisible = false;
+
+          this.vehiculoEditandoId = null;
+
+          this.formulario =
+            this.crearFormularioVacio();
+
+          this.cargarVehiculos();
+
+          this.cdr.detectChanges();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al actualizar el vehículo:',
+            error
+          );
+
+          this.error =
+            'No fue posible actualizar el vehículo.';
+
+          this.guardando = false;
+
+          this.cdr.detectChanges();
+
+        }
+
+      });
+
+  }
+
+
+  // =========================
+  // ELIMINAR VEHÍCULO
+  // =========================
 
   eliminarVehiculo(
     vehiculo: Vehiculo
   ): void {
 
     const confirmar =
-      confirm(
-        `¿Deseas eliminar el vehículo ${vehiculo.placa}?`
+      window.confirm(
+        `¿Deseas eliminar el vehículo "${vehiculo.placa}"?`
       );
 
+
     if (!confirmar) {
+
       return;
+
     }
+
+
+    this.error = '';
+
+    this.mensaje = '';
+
 
     this.vehiculoService
       .eliminarVehiculo(
@@ -166,24 +473,104 @@ export class Vehiculos implements OnInit {
 
         next: () => {
 
+          this.mensaje =
+            'Vehículo eliminado exitosamente.';
+
           this.cargarVehiculos();
+
+          this.cdr.detectChanges();
 
         },
 
         error: (error) => {
 
           console.error(
-            'Error al eliminar:',
+            'Error al eliminar el vehículo:',
             error
           );
 
-          alert(
-            'No se pudo eliminar el vehículo.'
-          );
+          this.error =
+            'No fue posible eliminar el vehículo.';
+
+          this.cdr.detectChanges();
 
         }
 
       });
+
+  }
+
+
+  // =========================
+  // CANCELAR FORMULARIO
+  // =========================
+
+  cancelarFormulario(): void {
+
+    this.formularioVisible = false;
+
+    this.vehiculoEditandoId = null;
+
+    this.guardando = false;
+
+    this.formulario =
+      this.crearFormularioVacio();
+
+    this.error = '';
+
+  }
+
+
+  // =========================
+  // VALIDAR FORMULARIO
+  // =========================
+
+  formularioValido(): boolean {
+
+    return (
+
+      this.formulario.idClientes > 0 &&
+
+      this.formulario.placa
+        .trim() !== '' &&
+
+      this.formulario.marca
+        .trim() !== '' &&
+
+      this.formulario.modelo
+        .trim() !== '' &&
+
+      this.formulario.ano >= 1900 &&
+
+      this.formulario.kilometraje_total >= 0
+
+    );
+
+  }
+
+
+  // =========================
+  // FORMULARIO VACÍO
+  // =========================
+
+  crearFormularioVacio():
+    VehiculoFormulario {
+
+    return {
+
+      idClientes: 0,
+
+      placa: '',
+
+      marca: '',
+
+      modelo: '',
+
+      ano: new Date().getFullYear(),
+
+      kilometraje_total: 0
+
+    };
 
   }
 
