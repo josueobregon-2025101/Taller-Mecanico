@@ -1,11 +1,22 @@
 :host {
+  --fondo-sidebar: #061326;
+  --fondo-profundo: #040b16;
+  --azul-principal: #087cf5;
+  --azul-claro: #1594ff;
+  --cyan: #00bfff;
+  --texto-claro: #f4f7fb;
+  --texto-secundario: #7890ad;
+  --borde: rgba(30, 139, 235, 0.25);
+  --peligro: #ff6078;
+
   display: block;
 }
 
 .sidebar {
   position: fixed;
-  left: 0;
   top: 0;
+  left: 0;
+  z-index: 100;
 
   width: 270px;
   height: 100vh;
@@ -13,155 +24,184 @@
   display: flex;
   flex-direction: column;
 
-  background: linear-gradient(180deg, #080f1c 0%, #050a13 100%);
-
-  border-right: 1px solid var(--border);
-
   padding: 24px 16px 18px;
 
+  overflow-x: hidden;
   overflow-y: auto;
 
-  z-index: 100;
+  box-sizing: border-box;
 
-  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.25);
+  background:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(8, 124, 245, 0.14),
+      transparent 25%
+    ),
+    linear-gradient(
+      180deg,
+      var(--fondo-sidebar) 0%,
+      var(--fondo-profundo) 100%
+    );
+
+  border-right: 1px solid var(--borde);
+
+  box-shadow:
+    10px 0 40px rgba(0, 0, 0, 0.25);
 
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 168, 255, 0.25) transparent;
+  scrollbar-color:
+    rgba(21, 148, 255, 0.3)
+    transparent;
 }
 
 .sidebar::-webkit-scrollbar {
   width: 4px;
 }
+
 .sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .sidebar::-webkit-scrollbar-thumb {
-  background: rgba(0, 168, 255, 0.25);
   border-radius: 20px;
+
+  background:
+    rgba(21, 148, 255, 0.3);
 }
 
-/* =========================================================
-   LOGO
-   ========================================================= */
-
 .logo {
+  position: relative;
+
   display: flex;
   align-items: center;
-
   gap: 12px;
 
   padding: 5px 10px 25px;
-
-  position: relative;
 }
 
 .logo::after {
   content: "";
 
   position: absolute;
-
+  right: 10px;
   bottom: 0;
   left: 10px;
-  right: 10px;
 
   height: 1px;
 
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 168, 255, 0.35),
-    transparent
-  );
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 191, 255, 0.38),
+      transparent
+    );
 }
 
 .logo-icon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 12px;
+  padding: 3px;
 
-  font-size: 22px;
+  overflow: hidden;
 
-  background: linear-gradient(
-    135deg,
-    rgba(0, 168, 255, 0.25),
-    rgba(0, 102, 255, 0.08)
-  );
+  border: 1px solid rgba(0, 191, 255, 0.42);
+  border-radius: 13px;
 
-  border: 1px solid rgba(0, 168, 255, 0.35);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(8, 124, 245, 0.3),
+      rgba(0, 191, 255, 0.09)
+    );
 
   box-shadow:
-    0 0 20px rgba(0, 168, 255, 0.15),
-    inset 0 0 15px rgba(0, 168, 255, 0.05);
+    0 0 20px rgba(0, 191, 255, 0.16),
+    inset 0 0 15px rgba(0, 191, 255, 0.06);
 
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
 }
 
+.logo-icon img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 9px;
+}
+
 .logo:hover .logo-icon {
-  transform: translateY(-2px) rotate(-3deg);
+  transform:
+    translateY(-2px)
+    rotate(-2deg);
 
   box-shadow:
-    0 0 30px rgba(0, 168, 255, 0.35),
-    inset 0 0 20px rgba(0, 168, 255, 0.08);
+    0 0 30px rgba(0, 191, 255, 0.3),
+    inset 0 0 20px rgba(0, 191, 255, 0.08);
 }
 
 .logo-text {
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
-
-  gap: 2px;
+  gap: 3px;
 }
 
 .logo-text strong {
-  color: white;
+  overflow: hidden;
+
+  color: var(--texto-claro);
 
   font-size: 17px;
   font-weight: 800;
+  letter-spacing: 1.5px;
 
-  letter-spacing: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .logo-text span {
-  color: var(--text-muted);
+  color: var(--texto-secundario);
 
   font-size: 10px;
+  letter-spacing: 0.6px;
 
-  letter-spacing: 0.7px;
+  white-space: nowrap;
 }
-
-/* =========================================================
-   MENU
-   ========================================================= */
 
 .menu {
   display: flex;
   flex-direction: column;
-
   gap: 4px;
 
   padding-top: 22px;
+  padding-bottom: 22px;
 }
 
 .menu-section {
+  margin-top: 18px;
+  margin-bottom: 6px;
+  padding: 0 12px;
+
   color: #4f6783;
 
   font-size: 9px;
   font-weight: 800;
-
   text-transform: uppercase;
-
   letter-spacing: 1.5px;
-
-  margin-top: 18px;
-  margin-bottom: 6px;
-
-  padding: 0 12px;
 }
 
 .menu-section:first-child {
@@ -171,21 +211,20 @@
 .menu > a {
   position: relative;
 
+  min-height: 42px;
+
   display: flex;
   align-items: center;
-
   gap: 11px;
-
-  min-height: 42px;
 
   padding: 10px 12px;
 
+  border: 1px solid transparent;
   border-radius: 10px;
 
   color: #91a5bd;
 
   text-decoration: none;
-
   font-size: 12px;
   font-weight: 500;
 
@@ -194,12 +233,15 @@
   transition:
     color 0.25s ease,
     background 0.25s ease,
+    border-color 0.25s ease,
     transform 0.25s ease,
     box-shadow 0.25s ease;
 }
 
 .menu > a > span {
   width: 20px;
+
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
@@ -215,20 +257,19 @@
 }
 
 .menu > a small {
-  margin-left: auto;
-
   min-width: 22px;
 
+  margin-left: auto;
   padding: 3px 6px;
-
-  text-align: center;
 
   border-radius: 6px;
 
-  background: rgba(255, 255, 255, 0.045);
+  background:
+    rgba(255, 255, 255, 0.045);
 
   color: #617995;
 
+  text-align: center;
   font-size: 9px;
 
   transition:
@@ -239,44 +280,47 @@
 .menu > a:hover {
   color: #dceeff;
 
-  background: linear-gradient(
-    90deg,
-    rgba(0, 168, 255, 0.10),
-    rgba(0, 168, 255, 0.025)
-  );
+  border-color:
+    rgba(0, 191, 255, 0.09);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 124, 245, 0.13),
+      rgba(0, 191, 255, 0.025)
+    );
 
   transform: translateX(3px);
 }
 
 .menu > a:hover > span {
-  color: var(--blue-light);
+  color: var(--azul-claro);
 
   transform: scale(1.12);
 }
 
 .menu > a:hover small {
-  color: var(--blue-light);
+  color: var(--azul-claro);
 
-  background: rgba(0, 168, 255, 0.10);
+  background:
+    rgba(8, 124, 245, 0.13);
 }
-
-/* =========================================================
-   ACTIVE (routerLinkActive)
-   ========================================================= */
 
 .menu > a.active {
   color: #ffffff;
 
-  background: linear-gradient(
-    90deg,
-    rgba(0, 168, 255, 0.18),
-    rgba(0, 102, 255, 0.055)
-  );
+  border-color:
+    rgba(0, 191, 255, 0.18);
 
-  border: 1px solid rgba(0, 168, 255, 0.16);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 124, 245, 0.24),
+      rgba(0, 191, 255, 0.06)
+    );
 
   box-shadow:
-    inset 0 0 20px rgba(0, 168, 255, 0.04),
+    inset 0 0 20px rgba(0, 191, 255, 0.04),
     0 5px 20px rgba(0, 0, 0, 0.12);
 }
 
@@ -284,68 +328,81 @@
   content: "";
 
   position: absolute;
-
-  left: -16px;
   top: 8px;
   bottom: 8px;
+  left: -16px;
 
   width: 3px;
 
   border-radius: 0 5px 5px 0;
 
-  background: var(--blue);
+  background: var(--cyan);
 
   box-shadow:
-    0 0 12px var(--blue),
-    0 0 25px rgba(0, 168, 255, 0.6);
+    0 0 12px var(--cyan),
+    0 0 24px rgba(0, 191, 255, 0.45);
 
-  animation: activeGlow 2.5s ease-in-out infinite;
+  animation:
+    activeGlow 2.5s ease-in-out infinite;
 }
 
 .menu > a.active > span {
-  color: var(--blue-light);
+  color: var(--cyan);
 
-  text-shadow: 0 0 10px rgba(0, 168, 255, 0.7);
+  text-shadow:
+    0 0 10px rgba(0, 191, 255, 0.65);
 }
 
 .menu > a.active small {
-  color: var(--blue-light);
+  color: var(--azul-claro);
 
-  background: rgba(0, 168, 255, 0.12);
+  border:
+    1px solid rgba(0, 191, 255, 0.15);
 
-  border: 1px solid rgba(0, 168, 255, 0.16);
+  background:
+    rgba(8, 124, 245, 0.14);
 }
 
 @keyframes activeGlow {
   0%,
   100% {
     opacity: 0.65;
-    box-shadow: 0 0 10px var(--blue);
+
+    box-shadow:
+      0 0 10px var(--cyan);
   }
 
   50% {
     opacity: 1;
+
     box-shadow:
-      0 0 18px var(--blue),
-      0 0 30px rgba(0, 168, 255, 0.4);
+      0 0 18px var(--cyan),
+      0 0 30px rgba(0, 191, 255, 0.35);
   }
 }
 
-/* =========================================================
-   USER
-   ========================================================= */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 14px;
+
+  border-top:
+    1px solid var(--borde);
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(8, 124, 245, 0.025)
+    );
+}
 
 .user {
-  margin-top: auto;
-
   display: flex;
   align-items: center;
-
   gap: 10px;
 
-  padding: 14px 10px 4px;
-
-  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: 4px 8px 13px;
 }
 
 .avatar {
@@ -358,56 +415,142 @@
   align-items: center;
   justify-content: center;
 
+  border: 1px solid rgba(0, 191, 255, 0.3);
   border-radius: 50%;
 
-  color: white;
+  color: #ffffff;
 
   font-size: 10px;
   font-weight: 800;
 
-  background: linear-gradient(135deg, var(--blue), #0057ff);
+  background:
+    linear-gradient(
+      135deg,
+      var(--azul-principal),
+      var(--cyan)
+    );
 
-  box-shadow: 0 0 18px rgba(0, 168, 255, 0.25);
+  box-shadow:
+    0 0 18px rgba(0, 191, 255, 0.22);
 }
 
-.user > div:last-child {
+.user-info {
   min-width: 0;
 
   display: flex;
   flex-direction: column;
-
-  gap: 2px;
+  gap: 3px;
 }
 
-.user strong {
+.user-info strong {
+  max-width: 165px;
+
+  overflow: hidden;
+
   color: #dce8f5;
 
   font-size: 11px;
 
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.user span {
-  color: var(--text-muted);
+.user-info span {
+  color: var(--texto-secundario);
 
   font-size: 9px;
 }
 
-/* =========================================================
-   RESPONSIVE — TABLET
-   ========================================================= */
+.logout-button {
+  width: 100%;
+  min-height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 10px 12px;
+
+  border:
+    1px solid rgba(255, 96, 120, 0.22);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 96, 120, 0.08),
+      rgba(255, 96, 120, 0.025)
+    );
+
+  color: #ff8fa0;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.logout-button:hover {
+  transform: translateY(-1px);
+
+  color: #ffffff;
+
+  border-color:
+    rgba(255, 96, 120, 0.5);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 96, 120, 0.2),
+      rgba(255, 96, 120, 0.08)
+    );
+
+  box-shadow:
+    0 7px 18px rgba(255, 96, 120, 0.11);
+}
+
+.logout-button:active {
+  transform: translateY(0);
+}
+
+.logout-icon {
+  width: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ff7187;
+
+  font-size: 17px;
+}
+
+.logout-text {
+  white-space: nowrap;
+}
 
 @media (max-width: 1000px) {
   .sidebar {
     width: 225px;
   }
-}
 
-/* =========================================================
-   RESPONSIVE — MOBILE
-   ========================================================= */
+  .user-info strong {
+    max-width: 125px;
+  }
+
+  .logo-text strong {
+    font-size: 15px;
+  }
+}
 
 @media (max-width: 760px) {
   .sidebar {
@@ -415,31 +558,32 @@
 
     width: 100%;
     height: auto;
-
     max-height: none;
 
     border-right: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom:
+      1px solid var(--borde);
   }
 
   .menu {
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
   .menu-section {
     grid-column: 1 / -1;
   }
 
-  .user {
+  .sidebar-footer {
     margin-top: 20px;
   }
-}
 
-/* =========================================================
-   RESPONSIVE — SMALL MOBILE
-   ========================================================= */
+  .logout-button {
+    max-width: 260px;
+  }
+}
 
 @media (max-width: 480px) {
   .sidebar {
@@ -452,5 +596,19 @@
 
   .menu-section {
     grid-column: auto;
+  }
+
+  .logout-button {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-icon,
+  .menu > a,
+  .logout-button,
+  .menu > a.active::before {
+    animation: none;
+    transition: none;
   }
 }

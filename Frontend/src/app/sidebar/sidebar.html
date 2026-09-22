@@ -1,99 +1,216 @@
-<!-- sidebar.component.html -->
 <aside class="sidebar">
 
   <div class="logo">
-    <div class="logo-icon">🚗</div>
+
+    <div class="logo-icon">
+      <img src="/images/logoo.png" alt="Logo">
+    </div>
+
     <div class="logo-text">
       <strong>Mecatronik</strong>
       <span>Gestión de taller</span>
     </div>
+
   </div>
 
   <nav class="menu">
 
-    <div class="menu-section">Resumen</div>
+    <div class="menu-section">
+      Resumen
+    </div>
 
-    <a routerLink="/panel" routerLinkActive="active">
+    <a
+      routerLink="/panel"
+      routerLinkActive="active"
+    >
       <span>▦</span>
       Panel general
     </a>
 
-    <div class="menu-section">Operaciones</div>
+    <div class="menu-section">
+      Operaciones
+    </div>
 
-    <a routerLink="/citas" routerLinkActive="active">
+    <a
+      routerLink="/citas"
+      routerLinkActive="active"
+    >
       <span>▣</span>
       Citas
-      <small>{{ estadisticas.total_citas }}</small>
+
+      <small>
+        {{ estadisticas.total_citas }}
+      </small>
     </a>
 
-    <a routerLink="/servicios" routerLinkActive="active">
+    <a
+      routerLink="/servicios"
+      routerLinkActive="active"
+    >
       <span>🔧</span>
       Servicios
-      <small>{{ estadisticas.total_servicios }}</small>
+
+      <small>
+        {{ estadisticas.total_servicios }}
+      </small>
     </a>
 
-    <a routerLink="/detalle-servicios" routerLinkActive="active">
+    <a
+      routerLink="/detalle-servicios"
+      routerLinkActive="active"
+    >
       <span>☷</span>
       Detalle de servicios
-      <small>{{ estadisticas.total_detalle }}</small>
+
+      <small>
+        {{ estadisticas.total_detalle }}
+      </small>
     </a>
 
-    <div class="menu-section">Clientes y flota</div>
+    <div class="menu-section">
+      Clientes y flota
+    </div>
 
-    <a routerLink="/clientes" routerLinkActive="active">
+    <a
+      routerLink="/clientes"
+      routerLinkActive="active"
+    >
       <span>♙</span>
       Clientes
-      <small>{{ estadisticas.total_clientes }}</small>
+
+      <small>
+        {{ estadisticas.total_clientes }}
+      </small>
     </a>
 
-    <a routerLink="/vehiculos" routerLinkActive="active">
+    <a
+      routerLink="/vehiculos"
+      routerLinkActive="active"
+    >
       <span>🚘</span>
       Vehículos
-      <small>{{ estadisticas.total_vehiculos }}</small>
+
+      <small>
+        {{ estadisticas.total_vehiculos }}
+      </small>
     </a>
 
-    <div class="menu-section">Inventario</div>
+    <div class="menu-section">
+      Inventario
+    </div>
 
-    <a routerLink="/inventario" routerLinkActive="active">
+    <a
+      routerLink="/inventario"
+      routerLinkActive="active"
+    >
       <span>◇</span>
       Inventario
-      <small>{{ estadisticas.total_inventario }}</small>
+
+      <small>
+        {{ estadisticas.total_inventario }}
+      </small>
     </a>
 
-    <a routerLink="/proveedores" routerLinkActive="active">
+    <a
+      routerLink="/proveedores"
+      routerLinkActive="active"
+    >
       <span>▣</span>
       Proveedores
-      <small>{{ estadisticas.total_proveedores }}</small>
+
+      <small>
+        {{ estadisticas.total_proveedores }}
+      </small>
     </a>
 
-    <a routerLink="/movimientos-inventario" routerLinkActive="active">
+    <a
+      routerLink="/movimientos-inventario"
+      routerLinkActive="active"
+    >
       <span>↔</span>
       Movimientos de inventario
-      <small>{{ estadisticas.total_movimientos }}</small>
+
+      <small>
+        {{ estadisticas.total_movimientos }}
+      </small>
     </a>
 
-    <div class="menu-section">Personal y accesos</div>
+    <div class="menu-section">
+      Personal y accesos
+    </div>
 
-    <a routerLink="/empleados" routerLinkActive="active">
+    <a
+      routerLink="/empleados"
+      routerLinkActive="active"
+    >
       <span>♙</span>
       Empleados
-      <small>{{ estadisticas.total_empleados }}</small>
+
+      <small>
+        {{ estadisticas.total_empleados }}
+      </small>
     </a>
 
-    <a routerLink="/usuarios" routerLinkActive="active">
+    <a
+      routerLink="/usuarios"
+      routerLinkActive="active"
+    >
       <span>♢</span>
       Usuarios
-      <small>{{ estadisticas.total_usuarios }}</small>
+
+      <small>
+        {{ estadisticas.total_usuarios }}
+      </small>
     </a>
 
-    <div class="menu-section">Finanzas</div>
+    <div class="menu-section">
+      Finanzas
+    </div>
 
-    <a routerLink="/control-ventas" routerLinkActive="active">
+    <a
+      routerLink="/control-ventas"
+      routerLinkActive="active"
+    >
       <span>▤</span>
       Control de ventas
-      <small>{{ estadisticas.total_control }}</small>
+
+      <small>
+        {{ estadisticas.total_control }}
+      </small>
     </a>
 
   </nav>
+
+  <footer class="sidebar-footer">
+
+    <div class="user">
+
+      <div class="avatar">
+        {{ obtenerIniciales() }}
+      </div>
+
+      <div class="user-info">
+        <strong>
+          {{ usuario?.nombreUsuario || 'Usuario' }}
+        </strong>
+      </div>
+
+    </div>
+
+    <button
+      type="button"
+      class="logout-button"
+      (click)="cerrarSesion()"
+    >
+      <span class="logout-icon">
+        ↪
+      </span>
+
+      <span class="logout-text">
+        Cerrar sesión
+      </span>
+    </button>
+
+  </footer>
 
 </aside>
