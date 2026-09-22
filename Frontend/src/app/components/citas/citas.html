@@ -8,39 +8,150 @@
 
     <div class="top-actions">
       <input
-        type="text"
         class="search"
-        placeholder="Buscar en esta tabla..."
+        type="text"
+        placeholder="Buscar cita..."
         (input)="buscar($event)"
       >
-      <button class="new-button" (click)="nuevaCita()">
-        ＋ Nueva cita
+      <button type="button" class="new-button" (click)="nuevaCita()">
+        + Nueva cita
       </button>
     </div>
   </header>
 
   <section class="content">
 
+    <div class="success-message" *ngIf="mensaje">
+      {{ mensaje }}
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="form-card" *ngIf="formularioVisible">
+
+      <h2>
+        {{ citaEditandoId === null ? 'Nueva cita' : 'Editar cita' }}
+      </h2>
+
+      <form (ngSubmit)="guardarCita()">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="idVehiculo">ID del vehículo</label>
+            <input
+              id="idVehiculo"
+              name="idVehiculo"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idVehiculo"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="idClientes">ID del cliente</label>
+            <input
+              id="idClientes"
+              name="idClientes"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idClientes"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="idEmpleado">ID del empleado (opcional)</label>
+            <input
+              id="idEmpleado"
+              name="idEmpleado"
+              type="number"
+              min="1"
+              [(ngModel)]="formulario.idEmpleado"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="fecha_hora">Fecha y hora</label>
+            <input
+              id="fecha_hora"
+              name="fecha_hora"
+              type="datetime-local"
+              [(ngModel)]="formulario.fecha_hora"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="estadoCita">Estado</label>
+            <select
+              id="estadoCita"
+              name="estadoCita"
+              [(ngModel)]="formulario.estadoCita"
+              required
+            >
+              <option value="Pendiente">Pendiente</option>
+              <option value="Confirmada">Confirmada</option>
+              <option value="Completada">Completada</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <input
+              id="descripcion"
+              name="descripcion"
+              type="text"
+              [(ngModel)]="formulario.descripcion"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : citaEditandoId === null
+                  ? 'Crear cita'
+                  : 'Guardar cambios'
+            }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
     <div class="table-card">
 
       <div class="table-header">
-        <div>
-          <h2>Listado de citas</h2>
-          <p>Administra la agenda del taller</p>
-        </div>
-        <span>{{ citasFiltradas.length }} citas</span>
+        <h2>Listado de citas</h2>
+        <span>{{ citasFiltradas.length }} registros</span>
       </div>
 
       <div class="loading" *ngIf="cargando">
         Cargando citas...
       </div>
 
-      <div class="error-message" *ngIf="error">
-        {{ error }}
-        <button (click)="cargarCitas()">Reintentar</button>
-      </div>
-
-      <div class="table-container" *ngIf="!cargando && !error">
+      <div class="table-container" *ngIf="!cargando">
         <table>
           <thead>
             <tr>
@@ -66,11 +177,19 @@
               <td>{{ cita.estadocita }}</td>
               <td>
                 <div class="row-actions">
-                  <button class="edit-button" (click)="editarCita(cita)">
-                    ✎ Editar
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarCita(cita)"
+                  >
+                    Editar
                   </button>
-                  <button class="delete-button" (click)="eliminarCita(cita)">
-                    × Eliminar
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarCita(cita)"
+                  >
+                    Eliminar
                   </button>
                 </div>
               </td>
@@ -78,7 +197,7 @@
 
             <tr *ngIf="citasFiltradas.length === 0">
               <td colspan="8" class="empty">
-                No hay citas registradas.
+                No se encontraron citas.
               </td>
             </tr>
           </tbody>

@@ -1,87 +1,87 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {
-  Cita,
-  CitaService
-} from '../../services/citas.service';
+export type EstadoCita = 'Pendiente' | 'Confirmada' | 'Completada';
 
-@Component({
-  selector: 'app-citas',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
-  templateUrl: './citas.html',
-  styleUrl: './citas.css'
+export interface Cita {
+  idcita: number;
+  idvehiculo: number;
+  idclientes: number;
+  idempleado: number | null;
+  fecha_hora: string;
+  descripcion: string;
+  estadocita: EstadoCita;
+}
+
+export interface CitaFormulario {
+  idVehiculo: number;
+  idClientes: number;
+  idEmpleado: number | null;
+  fecha_hora: string;
+  descripcion: string;
+  estadoCita: EstadoCita;
+}
+
+export interface CrearCitaResponse {
+  status: string;
+  message: string;
+  data: Cita;
+}
+
+export interface ActualizarCitaResponse {
+  status: string;
+  message: string;
+  result: Cita | null;
+}
+
+export interface EliminarCitaResponse {
+  status: string;
+  message: string;
+  result: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
 })
-export class Citas implements OnInit {
+export class CitaService {
 
-  private citaService = inject(CitaService);
-  private cdr = inject(ChangeDetectorRef);
+  private apiUrl = 'http://localhost:3000/api/citas';
 
-  citas: Cita[] = [];
-  citasFiltradas: Cita[] = [];
+  constructor(private http: HttpClient) {}
 
-  cargando = false;
-  error = '';
-
-  ngOnInit(): void {
-    this.cargarCitas();
+  obtenerCitas(): Observable<Cita[]> {
+    return this.http.get<Cita[]>(this.apiUrl);
   }
 
-  cargarCitas(): void {
-    this.cargando = true;
-    this.error = '';
-
-    this.citaService.obtenerCitas().subscribe({
-      next: (datos) => {
-        this.citas = datos;
-        this.citasFiltradas = [...datos];
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.error = 'No se pudieron cargar las citas.';
-        this.cargando = false;
-        this.cdr.detectChanges();
-      }
-    });
+  obtenerCita(id: number): Observable<Cita> {
+    return this.http.get<Cita>(`${this.apiUrl}/${id}`);
   }
 
-  buscar(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const texto = input.value.toLowerCase().trim();
-
-    this.citasFiltradas = this.citas.filter(cita =>
-      cita.descripcion.toLowerCase().includes(texto)
-      || cita.estadocita.toLowerCase().includes(texto)
-      || String(cita.idvehiculo).includes(texto)
-      || String(cita.idclientes).includes(texto)
+  crearCita(
+    cita: CitaFormulario
+  ): Observable<CrearCitaResponse> {
+    return this.http.post<CrearCitaResponse>(
+      this.apiUrl,
+      cita
     );
   }
 
-  nuevaCita(): void {
-    console.log('Abrir formulario nueva cita');
-  }
-
-  editarCita(cita: Cita): void {
-    console.log('Editar cita:', cita);
-  }
-
-  eliminarCita(cita: Cita): void {
-    const confirmar = confirm(
-      `¿Deseas eliminar la cita #${cita.idcita}?`
+  actualizarCita(
+    id: number,
+    cita: CitaFormulario
+  ): Observable<ActualizarCitaResponse> {
+    return this.http.put<ActualizarCitaResponse>(
+      `${this.apiUrl}/${id}`,
+      cita
     );
+  }
 
-    if (!confirmar) return;
-
-    this.citaService.eliminarCita(cita.idcita).subscribe({
-      next: () => this.cargarCitas(),
-      error: (error) => {
-        console.error('Error al eliminar:', error);
-        alert('No se pudo eliminar la cita.');
-      }
-    });
+  eliminarCita(
+    id: number
+  ): Observable<EliminarCitaResponse> {
+    return this.http.delete<EliminarCitaResponse>(
+      `${this.apiUrl}/${id}`
+    );
   }
 }
