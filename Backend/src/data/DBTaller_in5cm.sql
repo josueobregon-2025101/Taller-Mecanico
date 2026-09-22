@@ -136,6 +136,26 @@ Create Table Control_Ventas (
     Constraint pk_control_ventas Primary Key (idVentas)
 );
 
+CREATE TABLE Actividad_Sistema (
+    idActividad SERIAL,
+    tipo VARCHAR(50) NOT NULL,
+    accion VARCHAR(30) NOT NULL,
+    idRegistro INTEGER,
+    titulo VARCHAR(120) NOT NULL,
+    descripcion VARCHAR(255) NOT NULL,
+    estado VARCHAR(50),
+    idUsuario INTEGER,
+    fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_actividad_sistema
+        PRIMARY KEY (idActividad),
+
+    CONSTRAINT fk_actividad_usuario
+        FOREIGN KEY (idUsuario)
+        REFERENCES Usuarios(idUsuario)
+        ON DELETE SET NULL
+);
+
 CREATE OR REPLACE FUNCTION obtener_estadisticas()
 RETURNS TABLE (
   total_clientes     BIGINT,
@@ -295,3 +315,249 @@ Insert Into Movimientos_Inventario (idInventario, movimientos, cantidad, motivo,
 Insert Into Control_Ventas (idServicio, idCliente, fecha, subtotal, impuesto, total, forma_pago, estadoVenta) Values
 (1, 1, '2026-09-02', 4000.00, 760.00, 4760.00, 'Efectivo', 'Pagado'),
 (2, 2, '2026-09-03', 3000.00, 570.00, 3570.00, 'Tarjeta', 'Pendiente');
+
+
+-- =========================================================
+-- HISTORIAL AUTOMATICO DE ACTIVIDAD
+-- Los triggers se crean despues de los datos iniciales para
+-- evitar que las cargas de ejemplo llenen el historial.
+-- =========================================================
+
+CREATE INDEX idx_actividad_sistema_fecha
+ON Actividad_Sistema(fecha DESC, idActividad DESC);
+
+CREATE OR REPLACE FUNCTION registrar_actividad_automatica()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    datos JSONB;
+    identificador INTEGER;
+    nombre_registro TEXT;
+    estado_registro TEXT;
+    tipo_actividad TEXT;
+    accion_actividad TEXT;
+    titulo_actividad TEXT;
+    descripcion_actividad TEXT;
+BEGIN
+    tipo_actividad := TG_ARGV[0];
+
+    IF TG_OP = 'DELETE' THEN
+        datos := to_jsonb(OLD);
+    ELSE
+        datos := to_jsonb(NEW);
+    END IF;
+
+    identificador :=
+        NULLIF(datos ->> TG_ARGV[1], '')::INTEGER;
+
+    IF TG_NARGS > 2 AND TG_ARGV[2] <> '' THEN
+        nombre_registro :=
+            NULLIF(datos ->> TG_ARGV[2], '');
+    ELSE
+        nombre_registro := NULL;
+    END IF;
+
+    IF TG_NARGS > 3 AND TG_ARGV[3] <> '' THEN
+        estado_registro :=
+            NULLIF(datos ->> TG_ARGV[3], '');
+    ELSE
+        estado_registro := NULL;
+    END IF;
+
+    IF TG_OP = 'INSERT' THEN
+        accion_actividad := 'Creación';
+        titulo_actividad :=
+            tipo_actividad || ' #' || identificador;
+
+        IF nombre_registro IS NOT NULL THEN
+            descripcion_actividad :=
+                'Se registró ' || LOWER(tipo_actividad) ||
+                ': ' || nombre_registro;
+        ELSE
+            descripcion_actividad :=
+                'Se creó el registro #' || identificador ||
+                ' en ' || tipo_actividad;
+        END IF;
+
+    ELSIF TG_OP = 'UPDATE' THEN
+        accion_actividad := 'Actualización';
+        titulo_actividad :=
+            tipo_actividad || ' #' || identificador;
+
+        IF nombre_registro IS NOT NULL THEN
+            descripcion_actividad :=
+                'Se actualizó ' || LOWER(tipo_actividad) ||
+                ': ' || nombre_registro;
+        ELSE
+            descripcion_actividad :=
+                'Se actualizó el registro #' || identificador ||
+                ' de ' || tipo_actividad;
+        END IF;
+
+    ELSIF TG_OP = 'DELETE' THEN
+        accion_actividad := 'Eliminación';
+        titulo_actividad :=
+            tipo_actividad || ' #' || identificador;
+
+        IF nombre_registro IS NOT NULL THEN
+            descripcion_actividad :=
+                'Se eliminó ' || LOWER(tipo_actividad) ||
+                ': ' || nombre_registro;
+        ELSE
+            descripcion_actividad :=
+                'Se eliminó el registro #' || identificador ||
+                ' de ' || tipo_actividad;
+        END IF;
+    END IF;
+
+    INSERT INTO Actividad_Sistema
+    (
+        tipo,
+        accion,
+        idRegistro,
+        titulo,
+        descripcion,
+        estado,
+        idUsuario
+    )
+    VALUES
+    (
+        tipo_actividad,
+        accion_actividad,
+        identificador,
+        titulo_actividad,
+        descripcion_actividad,
+        estado_registro,
+        NULL
+    );
+
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_actividad_inventario ON Inventario;
+CREATE TRIGGER trg_actividad_inventario
+AFTER INSERT OR UPDATE OR DELETE ON Inventario
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Inventario',
+    'idinventario',
+    'nombre',
+    ''
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_servicios ON Servicios;
+CREATE TRIGGER trg_actividad_servicios
+AFTER INSERT OR UPDATE OR DELETE ON Servicios
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Servicio',
+    'idservicios',
+    'diagnostico',
+    'estadoservicio'
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_detalle_servicios ON Detalle_Servicios;
+CREATE TRIGGER trg_actividad_detalle_servicios
+AFTER INSERT OR UPDATE OR DELETE ON Detalle_Servicios
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Detalle de servicio',
+    'iddetalle',
+    'descripciondetalle',
+    ''
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_clientes ON Clientes;
+CREATE TRIGGER trg_actividad_clientes
+AFTER INSERT OR UPDATE OR DELETE ON Clientes
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Cliente',
+    'idclientes',
+    'nombrecliente',
+    ''
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_vehiculos ON Vehiculos;
+CREATE TRIGGER trg_actividad_vehiculos
+AFTER INSERT OR UPDATE OR DELETE ON Vehiculos
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Vehículo',
+    'idvehiculo',
+    'placa',
+    ''
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_citas ON Citas;
+CREATE TRIGGER trg_actividad_citas
+AFTER INSERT OR UPDATE OR DELETE ON Citas
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Cita',
+    'idcita',
+    'descripción',
+    'estadocita'
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_proveedores ON Proveedores;
+CREATE TRIGGER trg_actividad_proveedores
+AFTER INSERT OR UPDATE OR DELETE ON Proveedores
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Proveedor',
+    'idproveedor',
+    'nombreproveedor',
+    ''
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_empleados ON Empleados;
+CREATE TRIGGER trg_actividad_empleados
+AFTER INSERT OR UPDATE OR DELETE ON Empleados
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Empleado',
+    'idempleado',
+    'nombreempleado',
+    'estadoempleado'
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_usuarios ON Usuarios;
+CREATE TRIGGER trg_actividad_usuarios
+AFTER INSERT OR UPDATE OR DELETE ON Usuarios
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Usuario',
+    'idusuario',
+    'nombreusuario',
+    'estadousuario'
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_movimientos ON Movimientos_Inventario;
+CREATE TRIGGER trg_actividad_movimientos
+AFTER INSERT OR UPDATE OR DELETE ON Movimientos_Inventario
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Movimiento de inventario',
+    'idmovimientos',
+    'motivo',
+    'movimientos'
+);
+
+DROP TRIGGER IF EXISTS trg_actividad_ventas ON Control_Ventas;
+CREATE TRIGGER trg_actividad_ventas
+AFTER INSERT OR UPDATE OR DELETE ON Control_Ventas
+FOR EACH ROW
+EXECUTE FUNCTION registrar_actividad_automatica(
+    'Venta',
+    'idventas',
+    '',
+    'estadoventa'
+);
+

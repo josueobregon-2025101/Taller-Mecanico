@@ -1,8 +1,16 @@
-import { EstadisticasController } from "../Controllers/estadisticasController";
-import { Router } from "express";
+import { Router } from 'express';
+import {EstadisticasController} from '../Controllers/estadisticasController';
 
 const estadisticasRouter = Router();
 
-estadisticasRouter.get('/',EstadisticasController.getEstadisticas);
+estadisticasRouter.get(
+    '/',
+    EstadisticasController.getEstadisticas
+);
+
+estadisticasRouter.get(
+    '/actividad-reciente',
+    EstadisticasController.getActividadReciente
+);
 
 export default estadisticasRouter;
