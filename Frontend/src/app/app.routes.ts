@@ -16,6 +16,7 @@ import { Citas } from './components/citas/citas';
 
 import {Proveedores} from './components/proveedores/proveedores'
 import { MovimientoInventarios } from './components/movimiento-inventario/movimiento-inventario';
+import { ControlVentas } from './components/control-ventas/control-ventas';
 
 export const routes: Routes = [
 
@@ -86,6 +87,10 @@ export const routes: Routes = [
   {
     path:'movimientos-inventario',
     component:MovimientoInventarios
+  },
+  {
+    path:'control-ventas',
+    component:ControlVentas
   },
 
   {
