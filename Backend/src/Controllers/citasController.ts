@@ -27,11 +27,11 @@ export class CitaController {
 
     static async createCita(req: Request, res: Response) {
         try {
-            const { idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita } = req.body;
-            if (!idVehiculo || !idClientes || !fecha_hora || !descripción || !estadoCita) {
+            const { idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita } = req.body;
+            if (!idVehiculo || !idClientes || !fecha_hora || !descripcion || !estadoCita) {
                 return res.status(400).json({ error: 'Faltan datos requeridos' });
             }
-            const nuevaCita = await citaService.createCita({ idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita });
+            const nuevaCita = await citaService.createCita({ idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita });
             res.status(201).json({
                 status: 'success',
                 message: 'Cita creada exitosamente',
@@ -45,11 +45,11 @@ export class CitaController {
     static async updateCita(req: Request, res: Response) {
         try {
             const id = parseInt(req.params.id as string);
-            const { idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita } = req.body;
-            if (!idVehiculo || !idClientes || !fecha_hora || !descripción || !estadoCita) {
+            const { idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita } = req.body;
+            if (!idVehiculo || !idClientes || !fecha_hora || !descripcion || !estadoCita) {
                 return res.status(400).json({ error: 'Faltan datos requeridos' });
             }
-            const actualizada = await citaService.updateCita(id, { idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita });
+            const actualizada = await citaService.updateCita(id, { idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita });
             return res.status(200).json({
                 status: 'success',
                 message: 'Cita Actualizada Exitosamente',

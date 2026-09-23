@@ -1,0 +1,1008 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.register-page {
+  --azul-principal: #087cf5;
+  --azul-claro: #1594ff;
+  --cyan: #00bfff;
+  --blanco: #f4f7fb;
+  --texto-suave: #7890ad;
+  --borde: rgba(30, 139, 235, 0.25);
+
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  overflow: hidden;
+  box-sizing: border-box;
+
+  color: var(--blanco);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(20, 94, 190, 0.35),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(0, 119, 255, 0.2),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #0a2047 0%,
+      #0b2857 45%,
+      #071a38 100%
+    );
+}
+
+.register-page::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(64, 151, 255, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(64, 151, 255, 0.08) 1px,
+      transparent 1px
+    );
+
+  background-size: 55px 55px;
+
+  pointer-events: none;
+
+  animation: rejillaPulso 8s ease-in-out infinite;
+}
+
+@keyframes rejillaPulso {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.orbe {
+  position: absolute;
+
+  border-radius: 50%;
+  filter: blur(70px);
+
+  pointer-events: none;
+
+  animation: orbeFlotar 18s ease-in-out infinite;
+}
+
+.orbe1 {
+  width: 500px;
+  height: 500px;
+
+  left: -180px;
+  top: -170px;
+
+  background: rgba(0, 140, 255, 0.32);
+}
+
+.orbe2 {
+  width: 430px;
+  height: 430px;
+
+  right: -150px;
+  bottom: -150px;
+
+  background: rgba(0, 200, 255, 0.24);
+
+  animation-delay: 3s;
+}
+
+.orbe3 {
+  width: 350px;
+  height: 350px;
+
+  top: -120px;
+  right: -120px;
+
+  background: rgba(0, 180, 255, 0.18);
+
+  animation-delay: 1s;
+}
+
+.orbe4 {
+  width: 300px;
+  height: 300px;
+
+  left: -120px;
+  bottom: -110px;
+
+  background: rgba(90, 130, 255, 0.2);
+
+  animation-delay: 5s;
+}
+
+@keyframes orbeFlotar {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(35px, -25px) scale(1.08);
+  }
+}
+
+.particulas {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+.particulas span {
+  position: absolute;
+
+  left: var(--x, 50%);
+  bottom: -20px;
+
+  width: var(--tam, 4px);
+  height: var(--tam, 4px);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(150, 215, 255, 1),
+      rgba(0, 149, 255, 0.2) 70%,
+      transparent
+    );
+
+  box-shadow:
+    0 0 10px rgba(0, 180, 255, 0.75);
+
+  opacity: 0;
+
+  animation:
+    particulaSubir var(--dur, 12s)
+    linear infinite;
+
+  animation-delay: var(--retraso, 0s);
+}
+
+@keyframes particulaSubir {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  85% {
+    opacity: 0.45;
+  }
+
+  100% {
+    transform:
+      translateY(-100vh)
+      translateX(25px);
+
+    opacity: 0;
+  }
+}
+
+.fondo-brillo {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(0, 166, 255, 0.22),
+      transparent 45%,
+      transparent 70%,
+      rgba(0, 119, 255, 0.18),
+      transparent 90%
+    );
+
+  background-size: 300% 300%;
+
+  animation: fondoMovimiento 9s linear infinite;
+
+  pointer-events: none;
+}
+
+@keyframes fondoMovimiento {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.contenedor-register {
+  position: relative;
+  z-index: 5;
+
+  width: 100%;
+  max-width: 1120px;
+
+  animation: entrada 0.7s ease;
+}
+
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-card {
+  position: relative;
+
+  min-height: 690px;
+
+  display: grid;
+
+  grid-template-columns:
+    1.05fr 0.95fr;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(38, 142, 230, 0.3);
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgb(15, 51, 90),
+      rgb(7, 27, 55)
+    );
+
+  box-shadow:
+    0 35px 80px rgba(0, 0, 0, 0.36),
+    0 0 70px rgba(0, 104, 255, 0.1);
+}
+
+.register-info {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 55px 50px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 70% 55%,
+      rgba(0, 130, 255, 0.14),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #0d3157,
+      #09213f
+    );
+}
+
+.register-info::after {
+  content: "";
+
+  position: absolute;
+
+  top: 8%;
+  right: 0;
+  bottom: 8%;
+
+  width: 1px;
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(0, 157, 255, 0.65),
+      transparent
+    );
+}
+
+.register-info::before {
+  content: "";
+
+  position: absolute;
+
+  width: 290px;
+  height: 290px;
+
+  right: 35px;
+  bottom: 30px;
+
+  border:
+    1px solid rgba(0, 150, 255, 0.08);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      transparent 0 20%,
+      rgba(0, 157, 255, 0.08) 20.5% 21%,
+      transparent 21.5% 38%,
+      rgba(0, 157, 255, 0.07) 38.5% 39%,
+      transparent 39.5% 58%,
+      rgba(0, 157, 255, 0.05) 58.5% 59%,
+      transparent 59.5%
+    );
+
+  pointer-events: none;
+
+  animation: radar 12s linear infinite;
+}
+
+@keyframes radar {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo {
+  position: relative;
+  z-index: 2;
+
+  width: 150px;
+  height: 150px;
+
+  align-self: center;
+
+  margin-bottom: 34px;
+  padding: 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(0, 157, 255, 0.36);
+
+  border-radius: 30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 130, 255, 0.28),
+      rgba(0, 79, 160, 0.15)
+    );
+
+  box-shadow:
+    0 0 30px rgba(0, 130, 255, 0.14),
+    inset 0 0 20px rgba(0, 150, 255, 0.08);
+
+  animation: logoFlota 3s ease-in-out infinite;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  border-radius: 23px;
+}
+
+@keyframes logoFlota {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.register-info h1 {
+  position: relative;
+  z-index: 2;
+
+  margin: 0;
+
+  color: var(--blanco);
+
+  font-size: clamp(38px, 4.5vw, 55px);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -1.5px;
+}
+
+.register-info h1 span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--azul-claro);
+
+  text-shadow:
+    0 0 28px rgba(0, 132, 255, 0.26);
+}
+
+.register-info > p {
+  position: relative;
+  z-index: 2;
+
+  max-width: 470px;
+
+  margin: 23px 0 0;
+
+  color: #8da5c1;
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.features {
+  position: relative;
+  z-index: 2;
+
+  max-width: 450px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin: 30px 0 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.features li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 14px;
+
+  border:
+    1px solid rgba(49, 112, 172, 0.32);
+
+  border-radius: 999px;
+
+  background:
+    rgba(6, 32, 64, 0.5);
+
+  color: #cddff2;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.features li span {
+  font-size: 14px;
+}
+
+.register-form {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 45px 58px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      160deg,
+      rgb(11, 36, 68),
+      rgb(8, 29, 57)
+    );
+}
+
+.burbuja {
+  position: absolute;
+
+  border:
+    1px solid rgba(80, 185, 255, 0.3);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(120, 205, 255, 0.18),
+      rgba(20, 130, 255, 0.08) 55%,
+      transparent
+    );
+
+  box-shadow:
+    inset 0 0 25px rgba(0, 170, 255, 0.12),
+    0 0 35px rgba(0, 150, 255, 0.08);
+
+  pointer-events: none;
+
+  animation:
+    burbujaFlotar 12s ease-in-out infinite;
+}
+
+.b1 {
+  width: 170px;
+  height: 170px;
+
+  left: 6%;
+  bottom: -80px;
+}
+
+.b2 {
+  width: 65px;
+  height: 65px;
+
+  top: 15%;
+  right: 14%;
+
+  animation-delay: 2s;
+}
+
+.b3 {
+  width: 100px;
+  height: 100px;
+
+  right: 4%;
+  bottom: 8%;
+
+  animation-delay: 4s;
+}
+
+.b4 {
+  width: 43px;
+  height: 43px;
+
+  top: 22%;
+  left: 22%;
+
+  animation-delay: 1s;
+}
+
+.b5 {
+  width: 28px;
+  height: 28px;
+
+  right: 30%;
+  bottom: 30%;
+
+  animation-delay: 3s;
+}
+
+@keyframes burbujaFlotar {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(18px, -28px);
+  }
+}
+
+.register-form h2,
+.register-form > p,
+.register-form form,
+.mensaje-error,
+.mensaje-exito {
+  position: relative;
+  z-index: 2;
+}
+
+.register-form h2 {
+  margin: 0 0 8px;
+
+  color: #f5f7fb;
+
+  font-size: 37px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1px;
+}
+
+.register-form h2 span {
+  display: block;
+
+  color: #7591b4;
+
+  font-weight: 500;
+}
+
+.register-form > p {
+  margin: 0 0 20px;
+
+  color: #7088a5;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.mensaje-error,
+.mensaje-exito {
+  margin-bottom: 14px;
+  padding: 10px 13px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+}
+
+.mensaje-error {
+  border:
+    1px solid rgba(255, 113, 132, 0.3);
+
+  background:
+    rgba(255, 77, 103, 0.1);
+
+  color: #ff9cab;
+}
+
+.mensaje-exito {
+  border:
+    1px solid rgba(55, 212, 173, 0.3);
+
+  background:
+    rgba(55, 212, 173, 0.1);
+
+  color: #afffe7;
+}
+
+.register-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.register-form label {
+  margin-top: 10px;
+
+  color: #89a2c0;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.register-form form > label:first-of-type {
+  margin-top: 0;
+}
+
+.register-form input {
+  width: 100%;
+  height: 47px;
+
+  padding: 0 16px;
+
+  border:
+    1px solid rgba(49, 112, 172, 0.28);
+
+  border-radius: 10px;
+  outline: none;
+
+  box-sizing: border-box;
+
+  background:
+    rgba(4, 22, 44, 0.74);
+
+  color: #e8f1fb;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 13px;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.register-form input::placeholder {
+  color: #4e6784;
+}
+
+.register-form input:hover {
+  border-color:
+    rgba(0, 139, 255, 0.45);
+}
+
+.register-form input:focus {
+  border-color:
+    var(--azul-principal);
+
+  background:
+    rgba(5, 28, 56, 0.95);
+
+  box-shadow:
+    0 0 0 3px rgba(0, 126, 255, 0.1),
+    0 0 22px rgba(0, 126, 255, 0.08);
+}
+
+.register-form input:disabled,
+.register-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.campo-pass {
+  position: relative;
+}
+
+.campo-pass input {
+  padding-right: 55px;
+}
+
+.toggle-pass {
+  position: absolute;
+
+  top: 50%;
+  right: 7px;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateY(-50%);
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #7f9ac0;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease;
+}
+
+.toggle-pass:hover:not(:disabled) {
+  background:
+    rgba(0, 126, 255, 0.14);
+}
+
+.registro-info {
+  position: relative;
+  z-index: 2;
+
+  margin-top: 13px;
+  padding: 10px 12px;
+
+  border:
+    1px solid rgba(0, 191, 255, 0.17);
+
+  border-radius: 8px;
+
+  background:
+    rgba(0, 191, 255, 0.06);
+
+  color: #789bbd;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.submit-button {
+  position: relative;
+
+  height: 49px;
+
+  margin-top: 16px;
+
+  overflow: hidden;
+
+  border: none;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #076bd7,
+      #0788f5
+    );
+
+  color: #ffffff;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 28px rgba(0, 126, 255, 0.28);
+}
+
+.submit-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-link {
+  margin: 14px 0 0;
+
+  text-align: center;
+
+  color: #7088a5;
+
+  font-size: 13px;
+}
+
+.login-link a {
+  margin-left: 4px;
+
+  color: var(--azul-claro);
+
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  color: #49b4ff;
+
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 850px) {
+  .register-page {
+    align-items: flex-start;
+
+    padding: 20px;
+
+    overflow-y: auto;
+  }
+
+  .register-card {
+    grid-template-columns: 1fr;
+
+    min-height: auto;
+  }
+
+  .register-info {
+    min-height: 380px;
+
+    padding: 42px 34px;
+  }
+
+  .register-info::after {
+    display: none;
+  }
+
+  .register-form {
+    padding: 42px 34px;
+  }
+}
+
+@media (max-width: 500px) {
+  .register-page {
+    padding: 12px;
+  }
+
+  .register-card {
+    border-radius: 17px;
+  }
+
+  .register-info {
+    min-height: 330px;
+
+    padding: 32px 23px;
+  }
+
+  .logo {
+    width: 105px;
+    height: 105px;
+
+    margin-bottom: 25px;
+
+    border-radius: 24px;
+  }
+
+  .logo img {
+    border-radius: 18px;
+  }
+
+  .register-info h1 {
+    font-size: 35px;
+  }
+
+  .register-info > p {
+    font-size: 13px;
+  }
+
+  .features {
+    margin-top: 24px;
+  }
+
+  .register-form {
+    padding: 32px 23px;
+  }
+
+  .register-form h2 {
+    font-size: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbe,
+  .particulas span,
+  .fondo-brillo,
+  .logo,
+  .contenedor-register,
+  .burbuja,
+  .register-info::before {
+    animation: none;
+  }
+}

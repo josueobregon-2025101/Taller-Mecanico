@@ -1,205 +1,216 @@
-<div class="logo">
+<aside class="sidebar">
 
-  <div class="logo-icon">
-    🚗
+  <div class="logo">
+
+    <div class="logo-icon">
+      <img src="/images/logoo.png" alt="Logo">
+    </div>
+
+    <div class="logo-text">
+      <strong>Mecatronik</strong>
+      <span>Gestión de taller</span>
+    </div>
+
   </div>
 
-  <div class="logo-text">
-    <strong>Motronik</strong>
-    <span>Gestión de taller</span>
-  </div>
+  <nav class="menu">
 
-</div>
+    <div class="menu-section">
+      Resumen
+    </div>
 
+    <a
+      routerLink="/panel"
+      routerLinkActive="active"
+    >
+      <span>▦</span>
+      Panel general
+    </a>
 
-<nav class="menu">
+    <div class="menu-section">
+      Operaciones
+    </div>
 
-  <div class="menu-section">
-    Resumen
-  </div>
+    <a
+      routerLink="/citas"
+      routerLinkActive="active"
+    >
+      <span>▣</span>
+      Citas
 
-  <a
-    routerLink="/panel"
-    routerLinkActive="active"
-  >
-    <span>▦</span>
-    Panel general
-  </a>
+      <small>
+        {{ estadisticas.total_citas }}
+      </small>
+    </a>
 
+    <a
+      routerLink="/servicios"
+      routerLinkActive="active"
+    >
+      <span>🔧</span>
+      Servicios
 
-  <div class="menu-section">
-    Operaciones
-  </div>
+      <small>
+        {{ estadisticas.total_servicios }}
+      </small>
+    </a>
 
-  <a
-    routerLink="/citas"
-    routerLinkActive="active"
-  >
-    <span>▣</span>
-    Citas
+    <a
+      routerLink="/detalle-servicios"
+      routerLinkActive="active"
+    >
+      <span>☷</span>
+      Detalle de servicios
 
-    <small>
-      {{ estadisticas.citas }}
-    </small>
-  </a>
+      <small>
+        {{ estadisticas.total_detalle }}
+      </small>
+    </a>
 
-  <a
-    routerLink="/servicios"
-    routerLinkActive="active"
-  >
-    <span>🔧</span>
-    Servicios
+    <div class="menu-section">
+      Clientes y flota
+    </div>
 
-    <small>
-      {{ estadisticas.servicios }}
-    </small>
-  </a>
+    <a
+      routerLink="/clientes"
+      routerLinkActive="active"
+    >
+      <span>♙</span>
+      Clientes
 
-  <a
-    routerLink="/detalle-servicios"
-    routerLinkActive="active"
-  >
-    <span>☷</span>
-    Detalle de servicios
+      <small>
+        {{ estadisticas.total_clientes }}
+      </small>
+    </a>
 
-    <small>
-      {{ estadisticas.detallesServicios }}
-    </small>
-  </a>
+    <a
+      routerLink="/vehiculos"
+      routerLinkActive="active"
+    >
+      <span>🚘</span>
+      Vehículos
 
+      <small>
+        {{ estadisticas.total_vehiculos }}
+      </small>
+    </a>
 
-  <div class="menu-section">
-    Clientes y flota
-  </div>
+    <div class="menu-section">
+      Inventario
+    </div>
 
-  <a
-    routerLink="/clientes"
-    routerLinkActive="active"
-  >
-    <span>♙</span>
-    Clientes
+    <a
+      routerLink="/inventario"
+      routerLinkActive="active"
+    >
+      <span>◇</span>
+      Inventario
 
-    <small>
-      {{ estadisticas.clientes }}
-    </small>
-  </a>
+      <small>
+        {{ estadisticas.total_inventario }}
+      </small>
+    </a>
 
-  <a
-    routerLink="/vehiculos"
-    routerLinkActive="active"
-  >
-    <span>🚘</span>
-    Vehículos
+    <a
+      routerLink="/proveedores"
+      routerLinkActive="active"
+    >
+      <span>▣</span>
+      Proveedores
 
-    <small>
-      {{ estadisticas.vehiculos }}
-    </small>
-  </a>
+      <small>
+        {{ estadisticas.total_proveedores }}
+      </small>
+    </a>
 
+    <a
+      routerLink="/movimientos-inventario"
+      routerLinkActive="active"
+    >
+      <span>↔</span>
+      Movimientos de inventario
 
-  <div class="menu-section">
-    Inventario
-  </div>
+      <small>
+        {{ estadisticas.total_movimientos }}
+      </small>
+    </a>
 
-  <a
-    routerLink="/inventario"
-    routerLinkActive="active"
-  >
-    <span>◇</span>
-    Inventario
+    <div class="menu-section">
+      Personal y accesos
+    </div>
 
-    <small>
-      {{ estadisticas.inventario }}
-    </small>
-  </a>
+    <a
+      routerLink="/empleados"
+      routerLinkActive="active"
+    >
+      <span>♙</span>
+      Empleados
 
-  <a
-    routerLink="/proveedores"
-    routerLinkActive="active"
-  >
-    <span>▣</span>
-    Proveedores
+      <small>
+        {{ estadisticas.total_empleados }}
+      </small>
+    </a>
 
-    <small>
-      {{ estadisticas.proveedores }}
-    </small>
-  </a>
+    <a
+      routerLink="/usuarios"
+      routerLinkActive="active"
+    >
+      <span>♢</span>
+      Usuarios
 
-  <a
-    routerLink="/movimientos-inventario"
-    routerLinkActive="active"
-  >
-    <span>↔</span>
-    Movimientos de inventario
+      <small>
+        {{ estadisticas.total_usuarios }}
+      </small>
+    </a>
 
-    <small>
-      {{ estadisticas.movimientosInventario }}
-    </small>
-  </a>
+    <div class="menu-section">
+      Finanzas
+    </div>
 
+    <a
+      routerLink="/control-ventas"
+      routerLinkActive="active"
+    >
+      <span>▤</span>
+      Control de ventas
 
-  <div class="menu-section">
-    Personal y accesos
-  </div>
+      <small>
+        {{ estadisticas.total_control }}
+      </small>
+    </a>
 
-  <a
-    routerLink="/empleados"
-    routerLinkActive="active"
-  >
-    <span>♙</span>
-    Empleados
+  </nav>
 
-    <small>
-      {{ estadisticas.empleados }}
-    </small>
-  </a>
+  <footer class="sidebar-footer">
 
-  <a
-    routerLink="/usuarios"
-    routerLinkActive="active"
-  >
-    <span>♢</span>
-    Usuarios
+    <div class="user">
 
-    <small>
-      {{ estadisticas.usuarios }}
-    </small>
-  </a>
+      <div class="avatar">
+        {{ obtenerIniciales() }}
+      </div>
 
+      <div class="user-info">
+        <strong>
+          {{ usuario?.nombreUsuario || 'Usuario' }}
+        </strong>
+      </div>
 
-  <div class="menu-section">
-    Finanzas
-  </div>
+    </div>
 
-  <a
-    routerLink="/ventas"
-    routerLinkActive="active"
-  >
-    <span>▤</span>
-    Control de ventas
+    <button
+      type="button"
+      class="logout-button"
+      (click)="cerrarSesion()"
+    >
+      <span class="logout-icon">
+        ↪
+      </span>
 
-    <small>
-      {{ estadisticas.ventas }}
-    </small>
-  </a>
+      <span class="logout-text">
+        Cerrar sesión
+      </span>
+    </button>
 
-</nav>
+  </footer>
 
-
-<div class="user">
-
-  <div class="avatar">
-    EM
-  </div>
-
-  <div>
-    <strong>
-      Elena Marroquín
-    </strong>
-
-    <span>
-      Administradora
-    </span>
-  </div>
-
-</div>
+</aside>

@@ -56,7 +56,7 @@ Create Table Vehiculos (
 Create Table Usuarios (
     idUsuario Serial,
     nombreUsuario Varchar(45) Unique Not Null,
-    password Varchar(45) Not Null,
+    password Varchar(255) Not Null,
     email Varchar(45) Unique,
     rol rol_usuario Not Null,
     estadoUsuario estado_usuario Default 'Activo',
@@ -82,7 +82,7 @@ Create Table Citas (
     idClientes Int Not Null,
     idEmpleado Int Null,
     fecha_hora Timestamp Not Null,
-    descripción Text,
+    descripcion Text,
     estadoCita estado_cita Default 'Pendiente',
     Constraint pk_citas Primary Key (idCita)
 );
@@ -136,6 +136,36 @@ Create Table Control_Ventas (
     Constraint pk_control_ventas Primary Key (idVentas)
 );
 
+CREATE OR REPLACE FUNCTION obtener_estadisticas()
+RETURNS TABLE (
+  total_clientes     BIGINT,
+  total_proveedores  BIGINT,
+  total_empleados    BIGINT,
+  total_vehiculos    BIGINT,
+  total_usuarios     BIGINT,
+  total_inventario   BIGINT,
+  total_citas        BIGINT,
+  total_servicios    BIGINT,
+  total_detalle      BIGINT,
+  total_movimientos  BIGINT,
+  total_control      BIGINT
+)
+LANGUAGE sql
+STABLE
+AS $$
+	SELECT
+	(SELECT COUNT(*) FROM Clientes) AS total_clientes,
+	(SELECT COUNT(*) FROM Proveedores) AS total_proveedores,
+	(SELECT COUNT(*) FROM Empleados)AS total_empleados,
+	(SELECT COUNT(*) FROM  Vehiculos)AS total_vehiculos,
+	(SELECT COUNT(*) FROM Usuarios)AS total_usuarios,
+	(SELECT COUNT(*) FROM Inventario)AS total_inventario,
+	(SELECT COUNT(*) FROM Citas) AS total_citas,
+	(SELECT COUNT(*) FROM Servicios) AS total_servicios,
+	(SELECT COUNT(*) FROM Detalle_Servicios)AS total_detalle,
+	(SELECT COUNT(*) FROM Movimientos_Inventario)AS total_movimientos,
+	(SELECT COUNT(*) FROM Control_Ventas)AS total_control
+$$ ;
 
 Alter Table Vehiculos
 Add Constraint fk_idClientes Foreign Key (idClientes) References Clientes(idClientes)
@@ -214,6 +244,154 @@ Create Index idx_vehiculos_idClientes On Vehiculos(idClientes);
 
 Create Index idx_servicios_idEmpleado On Servicios(idEmpleado);
 
+-- |PROCEDIMIENTOS DE DATOS|
+
+Create Or Replace Function PoblarClientes()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Clientes (nombreCliente, apellido, documento, telefono) Values
+    ('Juan', 'Pérez', '1234', 5551234),
+    ('María', 'Gómez', '5678', 5555678),
+    ('Carlos', 'López', '9012', 5559012);
+End;
+$$;
+
+Create Or Replace Function PoblarProveedores()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Proveedores (nombreProveedor, RUC, teléfonoProveedor) Values
+    ('Repuestos El Rápido', '20123456789', '123'),
+    ('Lubricantes Central', '20987654321', '456'),
+    ('Frenos y Más', '20456789012', '789');
+End;
+$$;
+
+Create Or Replace Function PoblarEmpleados()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Empleados (nombreEmpleado, apellidoEmpleado, cedula, telefonoEmpleado, puesto, estadoEmpleado) Values
+    ('Roberto', 'Martínez', '11111111', '5551111', 'Mecánico', 'Activo'),
+    ('Laura', 'Fernández', '22222222', '5552222', 'Electromecánico', 'Activo'),
+    ('Pedro', 'Ramírez', '33333333', '5553333', 'Auxiliar', 'Activo');
+End;
+$$;
+
+Create Or Replace Function PoblarVehiculos()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Vehiculos (idClientes, placa, marca, modelo, año, kilometraje_total) Values
+    (1, 'ABC-123', 'Toyota', 'Corolla', 2020, '15000'),
+    (2, 'DEF-456', 'Honda', 'Civic', 2019, '22000'),
+    (1, 'GHI-789', 'Ford', 'Fiesta', 2018, '30000');
+End;
+$$;
+
+Create Or Replace Function PoblarUsuarios()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Usuarios (nombreUsuario, password, email, rol, estadoUsuario) Values
+    ('Admin', 'hash_admin', 'dueno@taller.com', 'Admin', 'Activo'),
+    ('secre1', 'hash_secre', 'secre@taller.com', 'Secretario', 'Activo');
+End;
+$$;
+
+Create Or Replace Function PoblarInventario()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Inventario (nombre, descripcion, marca, categoria, stock_actual, precio_compra, precio_venta, idProveedor) Values
+    ('Aceite 5W-30', 'Aceite sintético para motor', 'Mobil', 'Lubricantes', 20, 15.00, 25.00, 2),
+    ('Filtro de aceite', 'Filtro para motor 4 cilindros', 'Bosch', 'Filtros', 15, 8.00, 15.00, 1),
+    ('Pastillas de freno', 'Juego de pastillas delanteras', 'Brembo', 'Frenos', 10, 30.00, 50.00, 3);
+End;
+$$;
+
+Create Or Replace Function PoblarCitas()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita) Values
+    (1, 1, 1, '2026-09-01 10:00:00', 'Cambio de aceite y revisión general', 'Confirmada'),
+    (2, 2, 2, '2026-09-02 14:30:00', 'Problema con el sistema eléctrico', 'Pendiente');
+End;
+$$;
+
+Create Or Replace Function PoblarServicios()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Servicios (idVehiculos, idCliente, idEmpleado, idCita, fecha_ingreso, fecha_entrega, diagnostico, estadoServicio, kilometraje_ing) Values
+    (1, 1, 1, 1, '2026-09-01', '2026-09-02', 'Cambio de aceite y filtro, todo en orden', 'Terminado', '15000'),
+    (2, 2, 2, Null, '2026-09-03', Null, 'Falla en alternador, requiere revisión', 'En reparación', '22000');
+End;
+$$;
+
+Create Or Replace Function PoblarDetalleServicios()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Detalle_Servicios (idServicio, descripcionDetalle, cantidadHoras, idInventario, cantidad_repuesto, precio_unitario) Values
+    (1, 'Cambio de aceite', 1, 1, 1, 2500),
+    (1, 'Cambio de filtro', 0.5, 2, 1, 1500),
+    (2, 'Revisión del sistema eléctrico', 2, Null, Null, 3000);
+End;
+$$;
+
+Create Or Replace Function PoblarMovimientosInventario()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Movimientos_Inventario (idInventario, movimientos, cantidad, motivo, idServicio) Values
+    (1, 'Entrada', 10, 'Compra a proveedor', Null),
+    (1, 'Salida', 1, 'Uso en servicio #1', 1),
+    (2, 'Salida', 1, 'Uso en servicio #1', 1);
+End;
+$$;
+
+Create Or Replace Function PoblarControlVentas()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Insert Into Control_Ventas (idServicio, idCliente, fecha, subtotal, impuesto, total, forma_pago, estadoVenta) Values
+    (1, 1, '2026-09-02', 4000.00, 760.00, 4760.00, 'Efectivo', 'Pagado'),
+    (2, 2, '2026-09-03', 3000.00, 570.00, 3570.00, 'Tarjeta', 'Pendiente');
+End;
+$$;
+
+Create Or Replace Function PoblarDatosIniciales()
+Returns void
+Language plpgsql
+As $$
+Begin
+    Perform PoblarClientes();
+    Perform PoblarProveedores();
+    Perform PoblarEmpleados();
+    Perform PoblarVehiculos();
+    Perform PoblarUsuarios();
+    Perform PoblarInventario();
+    Perform PoblarCitas();
+    Perform PoblarServicios();
+    Perform PoblarDetalleServicios();
+    Perform PoblarMovimientosInventario();
+    Perform PoblarControlVentas();
+End;
+$$;
 
 Insert Into Clientes (nombreCliente, apellido, documento, telefono) Values
 ('Juan', 'Pérez', '1234', 5551234),
@@ -244,7 +422,7 @@ Insert Into Inventario (nombre, descripcion, marca, categoria, stock_actual, pre
 ('Filtro de aceite', 'Filtro para motor 4 cilindros', 'Bosch', 'Filtros', 15, 8.00, 15.00, 1),
 ('Pastillas de freno', 'Juego de pastillas delanteras', 'Brembo', 'Frenos', 10, 30.00, 50.00, 3);
 
-Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripción, estadoCita) Values
+Insert Into Citas (idVehiculo, idClientes, idEmpleado, fecha_hora, descripcion, estadoCita) Values
 (1, 1, 1, '2026-09-01 10:00:00', 'Cambio de aceite y revisión general', 'Confirmada'),
 (2, 2, 2, '2026-09-02 14:30:00', 'Problema con el sistema eléctrico', 'Pendiente');
 
@@ -265,3 +443,4 @@ Insert Into Movimientos_Inventario (idInventario, movimientos, cantidad, motivo,
 Insert Into Control_Ventas (idServicio, idCliente, fecha, subtotal, impuesto, total, forma_pago, estadoVenta) Values
 (1, 1, '2026-09-02', 4000.00, 760.00, 4760.00, 'Efectivo', 'Pagado'),
 (2, 2, '2026-09-03', 3000.00, 570.00, 3570.00, 'Tarjeta', 'Pendiente');
+

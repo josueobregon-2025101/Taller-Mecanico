@@ -1,0 +1,195 @@
+<main class="main">
+
+  <header class="topbar">
+    <div class="title">
+      <h1>Usuarios</h1>
+      <span>{{ usuarios.length }} registros</span>
+    </div>
+
+    <div class="top-actions">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar usuario..."
+        (input)="buscar($event)"
+      >
+      <button type="button" class="new-button" (click)="nuevoUsuario()">
+        + Nuevo usuario
+      </button>
+    </div>
+  </header>
+
+  <section class="content">
+
+    <div class="success-message" *ngIf="mensaje">
+      {{ mensaje }}
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="form-card" *ngIf="formularioVisible">
+
+      <h2>
+        {{ usuarioEditandoId === null ? 'Nuevo usuario' : 'Editar usuario' }}
+      </h2>
+
+      <form (ngSubmit)="guardarUsuario()">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nombreUsuario">Nombre de usuario</label>
+            <input
+              id="nombreUsuario"
+              name="nombreUsuario"
+              type="text"
+              [(ngModel)]="formulario.nombreUsuario"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              [(ngModel)]="formulario.password"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              [(ngModel)]="formulario.email"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="rol">Rol</label>
+            <select
+              id="rol"
+              name="rol"
+              [(ngModel)]="formulario.rol"
+              required
+            >
+              <option value="Dueño">Dueño</option>
+              <option value="Secretario">Secretario</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="estadoUsuario">Estado</label>
+            <select
+              id="estadoUsuario"
+              name="estadoUsuario"
+              [(ngModel)]="formulario.estadoUsuario"
+              required
+            >
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : usuarioEditandoId === null
+                  ? 'Crear usuario'
+                  : 'Guardar cambios'
+            }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <h2>Listado de usuarios</h2>
+        <span>{{ usuariosFiltrados.length }} registros</span>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        Cargando usuarios...
+      </div>
+
+      <div class="table-container" *ngIf="!cargando">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let usuario of usuariosFiltrados">
+              <td>#{{ usuario.idusuario }}</td>
+              <td>{{ usuario.nombreusuario }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>{{ usuario.rol }}</td>
+              <td>{{ usuario.estadousuario }}</td>
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarUsuario(usuario)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarUsuario(usuario)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="usuariosFiltrados.length === 0">
+              <td colspan="6" class="empty">
+                No se encontraron usuarios.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
