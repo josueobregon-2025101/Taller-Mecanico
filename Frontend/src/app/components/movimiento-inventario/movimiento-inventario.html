@@ -1,0 +1,209 @@
+<main class="main">
+
+  <header class="topbar">
+    <div class="title">
+      <h1>Usuarios</h1>
+      <span>{{ movimientos.length }} registros</span>
+    </div>
+
+    <div class="top-actions">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar Movimientos..."
+        (input)="buscar($event)"
+      >
+      <button type="button" class="new-button" (click)="nuevoMovimiento()">
+        + Nuevo movimiento
+      </button>
+    </div>
+  </header>
+
+  <section class="content">
+
+    <div class="success-message" *ngIf="mensaje">
+      {{ mensaje }}
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="form-card" *ngIf="formularioVisible">
+
+      <h2>
+        {{ movimientoEditandoId === null ? 'Nuevo movimiento' : 'Editar movimiento' }}
+      </h2>
+
+      <form (ngSubmit)="guardarMovimiento()">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="idInventario">ID inventario</label>
+            <input
+              id="idInventario"
+              name="idInventario"
+              type="number"
+              [(ngModel)]="formulario.idInventario"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="movimientos">movimientos</label>
+            <select
+              id="movimientos"
+              name="movimientos"
+              [(ngModel)]="formulario.movimientos"
+              required
+            >
+              <option value="Entrada">Entrada</option>
+              <option value="Salida">Salida</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cantidad">cantidad</label>
+            <input
+              id="cantidad"
+              name="cantidad"
+              type="number"
+              [(ngModel)]="formulario.cantidad"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="fechahora">fecha hora</label>
+            <input
+              id="fechahora"
+              name="fechahora"
+              type="datetime"
+              [(ngModel)]="formulario.fechahora"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="motivo">motivo</label>
+            <input
+              id="motivo"
+              name="motivo"
+              type="text"
+              [(ngModel)]="formulario.motivo"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="idServicio">id Servicio</label>
+            <input
+              id="idServicio"
+              name="idServicio"
+              type="number"
+              [(ngModel)]="formulario.idServicio"
+              required
+            >
+          </div>
+
+          
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : movimientoEditandoId === null
+                  ? 'Crear movimiento'
+                  : 'Guardar cambios'
+            }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <h2>Listado de movimientos</h2>
+        <span>{{ movimientosFiltrados.length }} registros</span>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        Cargando movimientos...
+      </div>
+
+      <div class="table-container" *ngIf="!cargando">
+        <table>
+          <thead>
+            <tr>
+              <th>ID Movimientos</th>
+              <th>ID Inventario</th>
+              <th>movimientos</th>
+              <th>cantidad</th>
+              <th>fechahora</th>
+              <th>motivo</th>
+              <th>ID Servicio</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let movimiento of movimientosFiltrados">
+              <td>#{{ movimiento.idmovimientos }}</td>
+              <td>{{ movimiento.idinventario }}</td>
+              <td>{{ movimiento.movimientos }}</td>
+              <td>{{ movimiento.cantidad }}</td>
+              <td>{{ movimiento.fechahora }}</td>
+              <td>{{ movimiento.motivo}}</td>
+              <td>{{ movimiento.idservicio}}</td>
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarMovimiento(movimiento)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarMovimiento(movimiento)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="movimientosFiltrados.length === 0">
+              <td colspan="6" class="empty">
+                No se encontraron movimientos.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
