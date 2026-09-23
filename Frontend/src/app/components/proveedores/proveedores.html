@@ -1,0 +1,166 @@
+<main class="main">
+
+  <header class="topbar">
+    <div class="title">
+      <h1>Proveedores</h1>
+      <span>{{ proveedores.length }} registros</span>
+    </div>
+
+    <div class="top-actions">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar proveedor..."
+        (input)="buscar($event)"
+      >
+      <button type="button" class="new-button" (click)="nuevoProveedor()">
+        + Nuevo proveedor
+      </button>
+    </div>
+  </header>
+
+  <section class="content">
+
+    <div class="success-message" *ngIf="mensaje">
+      {{ mensaje }}
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+
+    <div class="form-card" *ngIf="formularioVisible">
+
+      <h2>
+        {{ proveedorEditandoId === null ? 'Nuevo proveedor' : 'Editar proveedor' }}
+      </h2>
+
+      <form (ngSubmit)="guardarProveedor()">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nombreProveedor">Nombre de proveedor</label>
+            <input
+              id="nombreProveedor"
+              name="nombreProveedor"
+              type="text"
+              [(ngModel)]="formulario.nombreProveedor"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="RUC">RUC</label>
+            <input
+              id="RUC"
+              name="RUC"
+              type="text"
+              [(ngModel)]="formulario.RUC"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="telefonoProveedor">telefono Proveedor</label>
+            <input
+              id="telefonoProveedor"
+              name="telefonoProveedor"
+              type="text"
+              [(ngModel)]="formulario.telefonoProveedor"
+              required
+            >
+          </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="cancel-button"
+            (click)="cancelarFormulario()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="save-button"
+            [disabled]="guardando"
+          >
+            {{
+              guardando
+                ? 'Guardando...'
+                : proveedorEditandoId === null
+                  ? 'Crear proveedor'
+                  : 'Guardar cambios'
+            }}
+          </button>
+        </div>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-header">
+        <h2>Listado de proveedores</h2>
+        <span>{{ proveedoresFiltrados.length }} registros</span>
+      </div>
+
+      <div class="loading" *ngIf="cargando">
+        Cargando proveedores...
+      </div>
+
+      <div class="table-container" *ngIf="!cargando">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>nombre Proveedor</th>
+              <th>RUC</th>
+              <th>telefono Proveedor</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let proveedor of proveedoresFiltrados">
+              <td>#{{ proveedor.idproveedor }}</td>
+              <td>{{ proveedor.nombreproveedor }}</td>
+              <td>{{ proveedor.ruc }}</td>
+              <td>{{ proveedor.telefonoproveedor }}</td>
+              <td>
+                <div class="row-actions">
+                  <button
+                    type="button"
+                    class="edit-button"
+                    (click)="editarProveedor(proveedor)"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    class="delete-button"
+                    (click)="eliminarProveedor(proveedor)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="proveedoresFiltrados.length === 0">
+              <td colspan="6" class="empty">
+                No se encontraron proveedores.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
