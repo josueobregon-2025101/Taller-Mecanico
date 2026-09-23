@@ -95,7 +95,7 @@ export class RegisterComponent {
 
           setTimeout(() => {
             this.router.navigate([
-              '/panel'
+              '/login'
             ]);
           }, 800);
         },
