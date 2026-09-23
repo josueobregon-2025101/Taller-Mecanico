@@ -1,0 +1,234 @@
+<main class="main">
+
+  <header class="topbar">
+    <div class="title">
+      <h1>Control de Ventas</h1>
+      <span>{{ controlVentas.length }} registros</span>
+    </div>
+
+    <div class="top-actions">
+      <input
+        class="search"
+        type="text"
+        placeholder="Buscar control venta..."
+        (input)="buscar($event)"
+      >
+      <button type="button" class="new-button" (click)="nuevoControlVenta()">
+        + Nuevo control venta
+      </button>
+    </div>
+  </header>
+
+    <section class="content">
+
+        <div class="success-message" *ngIf="mensaje">
+          {{ mensaje }}
+        </div>
+
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+
+        <div class="form-card" *ngIf="formularioVisible">
+
+          <h2>
+            {{ controlVentaEditandoId === null ? 'Nuevo control venta' : 'Editar control venta' }}
+          </h2>
+
+          <form (ngSubmit)="guardarControlVenta()">
+
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label for="idServicio">ID Servicio</label>
+                <input
+                  id="idServicio"
+                  name="idServicio"
+                  type="text"
+                  [(ngModel)]="formulario.idServicio"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="idCliente">ID Cliente</label>
+                <input
+                  id="idCliente"
+                  name="idCliente"
+                  type="text"
+                  [(ngModel)]="formulario.idCliente"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input
+                  id="fecha"
+                  name="fecha"
+                  type="datetime-local"
+                  [(ngModel)]="formulario.fecha"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="subtotal">Subtotal</label>
+                <input
+                  id="subtotal"
+                  name="subtotal"
+                  type="text"
+                  [(ngModel)]="formulario.subtotal"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="impuesto">Impuesto</label>
+                <input
+                  id="impuesto"
+                  name="impuesto"
+                  type="text"
+                  [(ngModel)]="formulario.impuesto"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="total">Total</label>
+                <input
+                  id="total"
+                  name="total"
+                  type="text"
+                  [(ngModel)]="formulario.total"
+                  required
+                >
+              </div>
+
+               <div class="form-group">
+                <label for="forma_pago">Forma de pago</label>
+                <select
+                  id="forma_pago"
+                  name="forma_pago"
+                  [(ngModel)]="formulario.forma_pago"
+                  required
+                >
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Tarjeta">Tarjeta</option>
+                  <option value="Transferencia">Transferencia</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="estadoVenta">Estado de venta</label>
+                <select
+                  id="estadoVenta"
+                  name="estadoVenta"
+                  [(ngModel)]="formulario.estadoVenta"
+                  required
+                >
+                  <option value="Pagado">Pagado</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Anulado">Anulado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="cancel-button"
+                (click)="cancelarFormulario()"
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="submit"
+                class="save-button"
+                [disabled]="guardando"
+              >
+                {{
+                  guardando
+                    ? 'Guardando...'
+                    : controlVentaEditandoId === null
+                      ? 'Crear venta'
+                      : 'Guardar cambios'
+                }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="table-card">
+
+          <div class="table-header">
+            <h2>Listado de ventas</h2>
+            <span>{{ controlVentasFiltrados.length }} registros</span>
+          </div>
+
+          <div class="loading" *ngIf="cargando">
+            Cargando ventas...
+          </div>
+
+          <div class="table-container" *ngIf="!cargando">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID Venta</th>
+                  <th>ID Servicio</th>
+                  <th>ID Cliente</th>
+                    <th>Fecha</th>
+                    <th>Subtotal</th>
+                    <th>Impuesto</th>
+                    <th>Total</th>
+                    <th>Forma de pago</th>
+                    <th>Estado de venta</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let controlVenta of controlVentasFiltrados">
+                  <td>#{{ controlVenta.idventas }}</td>
+                  <td>{{ controlVenta.idservicio }}</td>
+                  <td>{{ controlVenta.idcliente }}</td>
+                  <td>{{ controlVenta.fecha | date:'short' }}</td>
+                  <td>{{ controlVenta.subtotal }}</td>
+                  <td>{{ controlVenta.impuesto }}</td>
+                  <td>{{ controlVenta.total }}</td>
+                  <td>{{ controlVenta.forma_pago }}</td>
+                  <td>{{ controlVenta.estadoventa }}</td>
+                  <td>
+                    <div class="row-actions">
+                      <button
+                        type="button"
+                        class="edit-button"
+                        (click)="editarControlVenta(controlVenta)"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        class="delete-button"
+                        (click)="eliminarControlVenta(controlVenta)"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr *ngIf="controlVentasFiltrados.length === 0">
+                  <td colspan="10" class="empty">
+                    No se encontraron ventas.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+    </section>
+
+</main>
