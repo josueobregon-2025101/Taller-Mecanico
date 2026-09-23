@@ -14,6 +14,8 @@ import { Usuarios } from './components/usuarios/usuarios';
 import { Empleados } from './components/empleados/empleados';
 import { Citas } from './components/citas/citas';
 
+import {Proveedores} from './components/proveedores/proveedores'
+
 export const routes: Routes = [
 
   {
@@ -75,6 +77,10 @@ export const routes: Routes = [
   {
     path: 'citas',
     component: Citas
+  },
+  {
+    path:'proveedores',
+    component:Proveedores
   },
 
   {
